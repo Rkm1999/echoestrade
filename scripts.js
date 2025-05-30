@@ -477,8 +477,9 @@ function refreshInitialViewLists() {
                     priceChart.data.labels = [];
                     priceChart.data.datasets = [];
                     priceChart.update();
+                    calculateAndDisplayPriceStatistics([], []);
                  } else {
-                    initializeChart();
+                    initializeChart(); // This already calls calculateAndDisplayPriceStatistics([], [])
                  }
             });
         showChartView();
@@ -570,6 +571,69 @@ function refreshInitialViewLists() {
         });
     }
 
+function calculateAndDisplayPriceStatistics(labels, prices) {
+    const statsDisplay = document.getElementById('priceStatsDisplay');
+    if (!statsDisplay) {
+        console.error('Error: priceStatsDisplay element not found.');
+        return;
+    }
+
+    if (!prices || prices.length < 1) {
+        statsDisplay.innerHTML = '<p>No price data available for the selected period.</p>';
+        return;
+    }
+
+    const startPrice = prices[0];
+    const currentPrice = prices[prices.length - 1];
+    const highestPrice = Math.max(...prices.filter(p => p !== null));
+    const lowestPrice = Math.min(...prices.filter(p => p !== null));
+
+    function calculatePercentageChange(current, start) {
+        if (start === null || start === 0 || current === null) {
+            return 'N/A';
+        }
+        return (((current - start) / start) * 100).toFixed(1);
+    }
+
+    let currentPricePercentChange = 'N/A';
+    let highestPricePercentChange = 'N/A';
+    let lowestPricePercentChange = 'N/A';
+
+    if (prices.length >= 2) { // Only calculate percent changes if there are at least two data points
+        currentPricePercentChange = calculatePercentageChange(currentPrice, startPrice);
+        highestPricePercentChange = calculatePercentageChange(highestPrice, startPrice);
+        lowestPricePercentChange = calculatePercentageChange(lowestPrice, startPrice);
+    }
+
+function formatPriceStat(value, percentChange) {
+    if (value === null || !isFinite(value)) return 'N/A';
+
+    let priceText = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ISK';
+    let priceHtml;
+
+    if (percentChange !== 'N/A') {
+        const isPositive = parseFloat(percentChange) >= 0;
+        const valueClass = isPositive ? 'price-value-positive' : 'price-value-negative';
+        priceHtml = `<span class="${valueClass}">${priceText}</span>`;
+
+        const changePrefix = isPositive ? '+' : '';
+        const changeClass = isPositive ? 'price-change-positive' : 'price-change-negative';
+        priceHtml += ` (<span class="${changeClass}">${changePrefix}${percentChange}%</span>)`;
+    } else {
+        priceHtml = priceText; // No coloring for price or percentage if percentChange is 'N/A'
+    }
+    return priceHtml;
+}
+
+    let htmlContent = '<ul>';
+    htmlContent += `<li>Current Price: ${formatPriceStat(currentPrice, currentPricePercentChange)}</li>`;
+    htmlContent += `<li>Highest Price (Period): ${formatPriceStat(highestPrice, highestPricePercentChange)}</li>`;
+    htmlContent += `<li>Lowest Price (Period): ${formatPriceStat(lowestPrice, lowestPricePercentChange)}</li>`;
+    htmlContent += '</ul>';
+
+    statsDisplay.innerHTML = htmlContent;
+}
+
     if (addSMAButton) {
         addSMAButton.addEventListener('click', function() {
             if (!newSMAPeriodInput) return;
@@ -648,6 +712,7 @@ function refreshInitialViewLists() {
           }
         });
         renderActiveSMAList();
+        calculateAndDisplayPriceStatistics([], []);
     }
 
     function updateChartWithIndicators() {
@@ -716,6 +781,7 @@ function refreshInitialViewLists() {
 
         priceChart.data.datasets = datasets;
         priceChart.update();
+        calculateAndDisplayPriceStatistics(filteredLabels, filteredPrices);
     }
 
     // Initial calls

@@ -228,3 +228,46 @@
 .favorite-toggle-initial[title="Remove from favorites"]:hover {
     background-color: #e0a800;
 }
+
+#priceStatsDisplay {
+    margin-top: 15px; /* Matches controls */
+    margin-bottom: 20px; /* Space before chart */
+    padding: 10px;
+    border: 1px solid #ddd; /* Softer border than chart controls */
+    background-color: #fdfdfd; /* Slightly different background */
+    border-radius: 4px;
+}
+
+#priceStatsDisplay ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+#priceStatsDisplay li {
+    padding: 4px 0; /* Vertical padding, no horizontal */
+    font-size: 0.9em;
+    color: #333; /* Dark grey text */
+}
+
+#priceStatsDisplay .price-change-positive {
+    color: #28a745; /* Green */
+    font-weight: bold;
+}
+
+#priceStatsDisplay .price-change-negative {
+    color: #dc3545; /* Red */
+    font-weight: bold;
+}
+
+/* Styles for coloring the actual price values */
+#priceStatsDisplay .price-value-positive {
+    color: #28a745; /* Green, same as price-change-positive */
+    /* font-weight: bold; /* Optional: if price itself should be bold too */
+}
+
+#priceStatsDisplay .price-value-negative {
+    color: #dc3545; /* Red, same as price-change-negative */
+    /* font-weight: bold; /* Optional: if price itself should be bold too */
+}
