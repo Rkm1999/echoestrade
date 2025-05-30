@@ -11,6 +11,9 @@
     #controls { margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9; }
     #controls div { margin-bottom: 5px; }
     #controls label { margin-right: 5px; }
+    #activeSMAList .sma-item { margin-right: 10px; background-color: #e0e0e0; padding: 3px 6px; border-radius: 4px; display: inline-block; margin-bottom: 5px;}
+    #activeSMAList .sma-item button { margin-left: 8px; cursor: pointer; border: none; background: #ff6b6b; color: white; border-radius: 3px; padding: 2px 5px;}
+    #activeSMAList .sma-item button:hover { background: #e04f4f;}
   </style>
 </head>
 <body>
@@ -18,18 +21,14 @@
   <div id="controls">
     <h2>Indicators</h2>
     <div>
-      <input type="checkbox" id="showSMA" name="showSMA">
-      <label for="showSMA">Show Simple Moving Average (SMA)</label>
-      <input type="number" id="smaPeriod" name="smaPeriod" value="7" min="2" style="width: 50px;">
-      <label for="smaPeriod">Period (days)</label>
+      <label for="newSMAPeriod">New SMA Period (days):</label>
+      <input type="number" id="newSMAPeriod" value="14" min="2" style="width: 60px;">
+      <button id="addSMAButton" type="button">Add SMA</button>
     </div>
-    <div>
-      <input type="checkbox" id="showEMA" name="showEMA">
-      <label for="showEMA">Show Exponential Moving Average (EMA)</label>
-      <input type="number" id="emaPeriod" name="emaPeriod" value="7" min="2" style="width: 50px;">
-      <label for="emaPeriod">Period (days)</label>
+    <div id="activeSMAList" style="margin-top: 10px;">
+      <!-- Active SMAs will be listed here by JavaScript -->
     </div>
-    <!-- Placeholder for future EMA and Momentum controls -->
+    <!-- Placeholder for future Momentum controls -->
   </div>
   <canvas id="priceChart"></canvas>
   <h2>Raw CSV Data</h2>
@@ -41,17 +40,24 @@
       const canvas = document.getElementById('priceChart');
       const localFileUrl = './plex_data.csv';
 
-      // --- DOM References for Controls ---
-      const showSMACheckbox = document.getElementById('showSMA');
-      const smaPeriodInput = document.getElementById('smaPeriod');
-      const showEMACheckbox = document.getElementById('showEMA'); // Added EMA ref
-      const emaPeriodInput = document.getElementById('emaPeriod');   // Added EMA ref
+      const newSMAPeriodInput = document.getElementById('newSMAPeriod');
+      const addSMAButton = document.getElementById('addSMAButton');
+      const activeSMAListDiv = document.getElementById('activeSMAList');
       
       let priceChart = null; 
       let originalPriceData = []; 
       let originalLabels = []; 
+      let activeSMAPeriods = [7]; 
 
-      // --- Utility function to calculate Time-Aware Simple Moving Average (SMA) ---
+      const smaColors = [ // Defined outside updateChartWithIndicators
+          'rgb(255, 99, 132)',  // Pink/Red
+          'rgb(54, 162, 235)',  // Blue
+          'rgb(255, 206, 86)',  // Yellow
+          'rgb(153, 102, 255)', // Purple
+          'rgb(255, 159, 64)',  // Orange 
+          'rgb(46, 204, 113)'   // Green
+      ];
+
       function calculateSMA(dates, prices, periodDays) {
         if (!dates || !prices || dates.length !== prices.length || periodDays <= 0) {
           return new Array(prices ? prices.length : 0).fill(null);
@@ -82,133 +88,118 @@
         }
         return smaValues;
       }
-      // --- End of SMA function ---
 
-      // --- Utility function to calculate Exponential Moving Average (EMA) ---
-      function calculateEMA(prices, period) {
-        if (!prices || prices.length === 0 || period <= 0) {
-          return new Array(prices ? prices.length : 0).fill(null);
+      function renderActiveSMAList() {
+        activeSMAListDiv.innerHTML = ''; 
+        if (activeSMAPeriods.length === 0) {
+          activeSMAListDiv.textContent = 'No active SMAs.';
+          return;
         }
-        if (period > prices.length) { 
-            return new Array(prices.length).fill(null);
-        }
-        const emaValues = new Array(prices.length).fill(null);
-        const multiplier = 2 / (period + 1);
-        let initialSum = 0;
-        let validPointsForInitialSMA = 0;
-        for (let i = 0; i < period; i++) {
-            if (prices[i] !== null && !isNaN(prices[i])) {
-                initialSum += prices[i];
-                validPointsForInitialSMA++;
-            }
-        }
-        if (validPointsForInitialSMA === period) {
-            emaValues[period - 1] = initialSum / period;
-            for (let i = period; i < prices.length; i++) {
-                const currentPrice = prices[i];
-                const previousEMA = emaValues[i - 1];
-                if (currentPrice === null || isNaN(currentPrice)) {
-                    emaValues[i] = null; 
-                } else if (previousEMA === null) {
-                    emaValues[i] = null;
-                } else {
-                    emaValues[i] = (currentPrice - previousEMA) * multiplier + previousEMA;
-                }
-            }
-        }
-        return emaValues;
+        activeSMAPeriods.forEach(period => {
+          const itemDiv = document.createElement('div');
+          itemDiv.classList.add('sma-item');
+          const periodText = document.createElement('span');
+          periodText.textContent = `SMA(${period})`;
+          const removeButton = document.createElement('button');
+          removeButton.textContent = 'Remove';
+          removeButton.dataset.period = period;
+          removeButton.addEventListener('click', function() {
+            const periodToRemove = parseInt(this.dataset.period, 10);
+            activeSMAPeriods = activeSMAPeriods.filter(p => p !== periodToRemove);
+            renderActiveSMAList(); 
+            updateChartWithIndicators(); 
+          });
+          itemDiv.appendChild(periodText);
+          itemDiv.appendChild(removeButton);
+          activeSMAListDiv.appendChild(itemDiv);
+        });
       }
-      // --- End of EMA function ---
 
-      // --- Function to Update Chart with Indicators ---
+      addSMAButton.addEventListener('click', function() {
+        const newPeriod = parseInt(newSMAPeriodInput.value, 10);
+        if (isNaN(newPeriod) || newPeriod < 2) {
+          alert('Please enter a valid SMA period (minimum 2 days).');
+          return;
+        }
+        if (activeSMAPeriods.includes(newPeriod)) {
+          alert(`SMA(${newPeriod}) is already active.`);
+          return;
+        }
+        if (activeSMAPeriods.length >= smaColors.length) { // Limit by available colors
+            alert(`Maximum of ${smaColors.length} SMAs can be added.`);
+            return;
+        }
+        activeSMAPeriods.push(newPeriod);
+        activeSMAPeriods.sort((a, b) => a - b); 
+        renderActiveSMAList();
+        updateChartWithIndicators();
+      });
+
       function updateChartWithIndicators() {
         if (!priceChart || !originalPriceData.length) return; 
-
-        const showSMA = showSMACheckbox.checked;
-        const smaPeriodDays = parseInt(smaPeriodInput.value, 10);
-        const showEMA = showEMACheckbox.checked; // Added EMA check
-        const emaPeriodDays = parseInt(emaPeriodInput.value, 10); // Added EMA period
 
         priceChart.data.labels = originalLabels.slice(); 
         priceChart.data.datasets = [{
           label: 'Item Price', 
           data: originalPriceData.slice(), 
-          borderColor: 'rgb(75, 192, 192)',
-          backgroundColor: 'rgba(75, 192, 192, 0.1)',
+          borderColor: 'rgb(0, 0, 0)', // Changed to Black for distinction
+          backgroundColor: 'rgba(0, 0, 0, 0.1)', // Optional fill for price line
           tension: 0.1,
           borderWidth: 2, 
           pointRadius: 2, 
           pointHoverRadius: 4,
-          order: 0 // Ensure price line is drawn first (on bottom)
+          order: 0 
         }];
 
-        // SMA Logic
-        if (showSMA && smaPeriodDays >= 2) { 
-          const smaData = calculateSMA(originalLabels, originalPriceData, smaPeriodDays);
-          priceChart.data.datasets.push({
-            label: `SMA(${smaPeriodDays})`, 
-            data: smaData,
-            borderColor: 'rgb(255, 99, 132)', 
-            backgroundColor: 'rgba(255, 99, 132, 0.1)',
-            tension: 0.1,
-            borderWidth: 1.5, 
-            pointRadius: 0, 
-            pointHoverRadius: 0,
-            order: 1 // Draw SMA above price
-          });
-        }
+        activeSMAPeriods.forEach((period, index) => {
+            const smaData = calculateSMA(originalLabels, originalPriceData, period);
+            const color = smaColors[index % smaColors.length]; // Cycle through defined smaColors
 
-        // EMA Logic - Added
-        if (showEMA && emaPeriodDays >= 2) {
-          const emaData = calculateEMA(originalPriceData, emaPeriodDays); // EMA uses only prices and period length
-          priceChart.data.datasets.push({
-            label: `EMA(${emaPeriodDays})`,
-            data: emaData,
-            borderColor: 'rgb(255, 159, 64)', // Orange for EMA
-            backgroundColor: 'rgba(255, 159, 64, 0.1)',
-            tension: 0.1,
-            borderWidth: 1.5,
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            order: 2 // Draw EMA above SMA
-          });
-        }
+            priceChart.data.datasets.push({
+                label: `SMA(${period})`,
+                data: smaData,
+                borderColor: color,
+                // backgroundColor: color.replace('rgb(', 'rgba(').replace(')', ', 0.1)'), // Removed as per prompt
+                fill: false, // Explicitly set fill to false
+                tension: 0.1,
+                borderWidth: 1.5,
+                pointRadius: 0,
+                pointHoverRadius: 0,
+                order: index + 1 
+            });
+        });
+        
         priceChart.update();
       }
-      // --- End of Update Chart Function ---
 
-      if (!canvas) { /* ... existing canvas checks ... */ return; }
+      if (!canvas) { return; } 
       const ctx = canvas.getContext('2d');
-      if (!ctx) { /* ... existing context checks ... */ return; }
+      if (!ctx) { return; } 
 
       fetch(localFileUrl)
-      .then(response => { /* ... existing fetch error handling ... */ return response.text(); })
+      .then(response => {
+          if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+          return response.text();
+      })
       .then(csvData => {
         dataContainer.textContent = csvData; 
         const lines = csvData.trim().split(/\r?\n/);
         if (lines.length <= 1) { throw new Error("CSV data has no data rows."); }
-        const header = lines[0].split(',');
-        const dataRows = lines.slice(1);
+        const dataRows = lines.slice(1); 
         const tempLabels = [];
         const tempPriceData = [];
         const priceIndex = 2; 
         const dateCreatedIndex = 5;
-
         dataRows.forEach(row => {
           const columns = row.split(',');
           if (columns.length > Math.max(priceIndex, dateCreatedIndex)) {
             const rawDate = columns[dateCreatedIndex];
             tempLabels.push(rawDate.substring(0, 10)); 
             const price = parseFloat(columns[priceIndex]);
-            if (!isNaN(price)) {
-              tempPriceData.push(price);
-            } else {
-              tempPriceData.push(null); 
-            }
+            tempPriceData.push(isNaN(price) ? null : price); 
           }
         });
-
-        if (tempLabels.length === 0) { throw new Error("No data parsed."); }
+        if (tempLabels.length === 0) { throw new Error("No data parsed from CSV."); }
         
         originalLabels = tempLabels.slice();
         originalPriceData = tempPriceData.slice();
@@ -216,10 +207,10 @@
         priceChart = new Chart(ctx, {
           type: 'line',
           data: {
-            labels: originalLabels.slice(), // Use already parsed labels
-            datasets: [] // Datasets are populated by updateChartWithIndicators
+            labels: originalLabels.slice(), 
+            datasets: [] 
           },
-          options: {
+          options: { 
             responsive: true,
             maintainAspectRatio: false, 
             scales: {
@@ -232,9 +223,7 @@
                 time: {
                     unit: 'day',
                     tooltipFormat: 'MMM d, yyyy', 
-                    displayFormats: {
-                        day: 'MMM d' 
-                    }
+                    displayFormats: { day: 'MMM d' }
                 },
                 ticks: { autoSkip: true, maxTicksLimit: 20 }
               }
@@ -249,18 +238,16 @@
                     return label;
                   }
                 }
+              },
+              legend: {
+                position: 'top', // Example: move legend to top
               }
             }
           }
         });
         
+        renderActiveSMAList(); 
         updateChartWithIndicators(); 
-
-        // Event Listeners
-        showSMACheckbox.addEventListener('change', updateChartWithIndicators);
-        smaPeriodInput.addEventListener('change', updateChartWithIndicators);
-        showEMACheckbox.addEventListener('change', updateChartWithIndicators); // Added EMA listener
-        emaPeriodInput.addEventListener('change', updateChartWithIndicators);   // Added EMA listener
       })
       .catch(error => {
         dataContainer.textContent = 'Failed to load or process data: ' + error;
