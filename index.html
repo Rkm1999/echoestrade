@@ -39,6 +39,11 @@
     #activeSMAList .sma-item { margin-right: 10px; background-color: #e0e0e0; padding: 3px 6px; border-radius: 4px; display: inline-block; margin-bottom: 5px;}
     #activeSMAList .sma-item button { margin-left: 8px; cursor: pointer; border: none; background: #ff6b6b; color: white; border-radius: 3px; padding: 2px 5px;}
     #activeSMAList .sma-item button:hover { background: #e04f4f;}
+    #timeframeControls button { margin-right: 5px; padding: 5px 10px; cursor: pointer; border: 1px solid #ccc; background-color: #f0f0f0; border-radius: 4px; }
+    #timeframeControls button:hover { background-color: #e0e0e0; }
+    #timeframeControls button.active { background-color: #007bff; color: white; border-color: #007bff; }
+    #customDateControls label { margin-right: 5px; }
+    #customDateControls input[type="date"] { padding: 4px; border: 1px solid #ccc; border-radius: 4px; }
   </style>
        <link rel="stylesheet" href="style.css"> <!-- Add this line -->
 </head>
@@ -64,6 +69,22 @@
       <!-- Active SMAs will be listed here by JavaScript -->
     </div>
     <!-- Placeholder for future Momentum controls -->
+    <div id="timeframeControls" style="margin-top: 10px;">
+      <label>Timeframe:</label>
+      <button id="btn30D" data-timeframe="30D">30D</button>
+      <button id="btn3M" data-timeframe="3M">3M</button>
+      <button id="btn6M" data-timeframe="6M">6M</button>
+      <button id="btn1Y" data-timeframe="1Y">1Y</button>
+      <button id="btnAll" data-timeframe="All" class="active">All Time</button>
+      <button id="btnCustomTimeframe" data-timeframe="Custom">Custom</button>
+      <div id="customDateControls" style="display: none; margin-top: 5px;">
+        <label for="customStartDate">Start:</label>
+        <input type="date" id="customStartDate" style="width: 130px;">
+        <label for="customEndDate" style="margin-left: 5px;">End:</label>
+        <input type="date" id="customEndDate" style="width: 130px;">
+        <button id="applyCustomTimeframe" style="margin-left: 5px;">Apply</button>
+      </div>
+    </div>
   </div>
   <canvas id="priceChart"></canvas>
 </div> <!-- This is the new closing div for main-content -->
