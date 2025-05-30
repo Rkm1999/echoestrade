@@ -3,6 +3,25 @@
     font-family: Arial, sans-serif; /* Consistent font */
 }
 
+#showInitialViewBtn {
+    display: block; /* Make it a block element to take full width */
+    width: 100%;    /* Span full width of sidebar */
+    padding: 10px;
+    margin-bottom: 15px; /* Space before the "Items" title */
+    background-color: #007bff; /* Blue background, similar to active timeframe button */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+#showInitialViewBtn:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
 #sidebar h2 {
     margin-top: 0;
     font-size: 1.2em;
@@ -108,3 +127,104 @@
    #top-level-item-list li .sub-container.expanded (not used in this way)
    #top-level-item-list li .sub-container select (no selects anymore)
 */
+
+#chart-view-content {
+    display: none; /* Hidden by default, JS will manage visibility */
+}
+
+/* Styles for Initial View Content (Favorites & Recents) */
+#initial-view-content {
+    padding: 20px; /* Add some padding around the initial content */
+}
+
+#initial-view-content h2 { /* Welcome message style */
+    text-align: center;
+    margin-top: 20px;
+    color: #333;
+    font-size: 1.8em; /* Slightly smaller than main chart title */
+}
+
+#initial-view-content p { /* Welcome paragraph style */
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1em;
+    color: #555;
+}
+
+#initial-view-content section { /* For favorites-section and recent-section */
+    margin-bottom: 30px;
+    background-color: #f9f9f9; /* Light background for each section */
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+#initial-view-content section h3 { /* Section titles: "Favorite Items", "Recently Viewed Items" */
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 0.5rem;
+    margin-top: 0; /* Remove default top margin for h3 within section */
+    margin-bottom: 1rem;
+    font-size: 1.3em;
+}
+
+#initial-view-content #favorite-items-list ul,
+#initial-view-content #recently-viewed-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+#initial-view-content #favorite-items-list li,
+#initial-view-content #recently-viewed-list li {
+    padding: 0.75rem;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#initial-view-content #favorite-items-list li:last-child,
+#initial-view-content #recently-viewed-list li:last-child {
+    border-bottom: none;
+}
+
+/* Styling for the clickable item names in initial view lists */
+#initial-view-content #favorite-items-list span[style*="cursor: pointer"],
+#initial-view-content #recently-viewed-list span[style*="cursor: pointer"] {
+    text-decoration: none; /* JS adds underline, this ensures base is none if preferred */
+    color: #007bff;
+    transition: color 0.3s ease;
+}
+
+#initial-view-content #favorite-items-list span[style*="cursor: pointer"]:hover,
+#initial-view-content #recently-viewed-list span[style*="cursor: pointer"]:hover {
+    color: #0056b3;
+    text-decoration: underline; /* Explicitly add underline on hover */
+}
+
+/* Styling for favorite toggle buttons in initial view */
+.favorite-toggle-initial { /* Using the class specified in JS for these buttons */
+    padding: 0.3rem 0.6rem;
+    font-size: 0.9rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #f0f0f0;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-left: 10px; /* Ensure spacing */
+}
+
+.favorite-toggle-initial:hover {
+    background-color: #e0e0e0;
+}
+
+/* Style for when an item IS favorited (Unfavorite button state) */
+.favorite-toggle-initial[title="Remove from favorites"] {
+    background-color: #ffc107; /* Amber color */
+    color: #333;
+    border-color: #f0ad4e;
+}
+
+.favorite-toggle-initial[title="Remove from favorites"]:hover {
+    background-color: #e0a800;
+}
