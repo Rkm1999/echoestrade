@@ -6,11 +6,24 @@
   <style>
     body { font-family: sans-serif; margin: 20px; }
     #priceChart { max-width: 800px; max-height: 400px; margin-bottom: 20px; }
-    #data-container { white-space: pre-wrap; word-wrap: break-word; background-color: #f4f4f4; padding: 10px; border: 1px solid #ccc; }
+    #data-container { white-space: pre-wrap; word-wrap: break-word; background-color: #f4f4f4; padding: 10px; border: 1px solid #ccc; max-height: 200px; overflow-y: auto; }
+    #controls { margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9; }
+    #controls div { margin-bottom: 5px; }
+    #controls label { margin-right: 5px; }
   </style>
 </head>
 <body>
   <h1>PLEX Price Over Time</h1>
+  <div id="controls">
+    <h2>Indicators</h2>
+    <div>
+      <input type="checkbox" id="showSMA" name="showSMA">
+      <label for="showSMA">Show Simple Moving Average (SMA)</label>
+      <input type="number" id="smaPeriod" name="smaPeriod" value="7" min="2" style="width: 50px;">
+      <label for="smaPeriod">Period (days)</label>
+    </div>
+    <!-- Placeholder for future EMA and Momentum controls -->
+  </div>
   <canvas id="priceChart"></canvas>
   <h2>Raw CSV Data</h2>
   <pre id="data-container">Loading data...</pre>
@@ -20,6 +33,74 @@
       const dataContainer = document.getElementById('data-container');
       const canvas = document.getElementById('priceChart');
       const localFileUrl = './plex_data.csv';
+
+      // --- DOM References for Controls ---
+      const showSMACheckbox = document.getElementById('showSMA');
+      const smaPeriodInput = document.getElementById('smaPeriod');
+      
+      let priceChart = null; // Will hold the chart instance
+      let originalPriceData = []; // To store the base price data after fetch
+      let originalLabels = []; // To store the base labels after fetch
+
+      // --- Utility function to calculate Simple Moving Average (SMA) ---
+      function calculateSMA(prices, period) {
+        if (!prices || prices.length === 0 || period <= 0 || period > prices.length) {
+          return new Array(prices ? prices.length : 0).fill(null);
+        }
+        const smaValues = [];
+        for (let i = 0; i < prices.length; i++) {
+          if (i < period - 1) {
+            smaValues.push(null);
+          } else {
+            let sum = 0;
+            for (let j = 0; j < period; j++) {
+              sum += prices[i - j];
+            }
+            smaValues.push(sum / period);
+          }
+        }
+        return smaValues;
+      }
+      // --- End of SMA function ---
+
+      // --- Function to Update Chart with Indicators ---
+      function updateChartWithIndicators() {
+        if (!priceChart || !originalPriceData.length) return; // Chart or data not ready
+
+        const showSMA = showSMACheckbox.checked;
+        const smaPeriod = parseInt(smaPeriodInput.value, 10);
+
+        // Start with the base price dataset
+        priceChart.data.labels = originalLabels.slice(); // Use slice to avoid modifying original if Chart.js mutates
+        priceChart.data.datasets = [{
+          label: 'Item Price', // Base price series
+          data: originalPriceData.slice(), // Use slice
+          borderColor: 'rgb(75, 192, 192)',
+          backgroundColor: 'rgba(75, 192, 192, 0.1)',
+          tension: 0.1,
+          borderWidth: 2, // Main line a bit thicker
+          pointRadius: 2, // Smaller points for main line
+          pointHoverRadius: 4
+        }];
+
+        // Add SMA dataset if checked and period is valid
+        if (showSMA && smaPeriod >= 2) {
+          const smaData = calculateSMA(originalPriceData, smaPeriod);
+          priceChart.data.datasets.push({
+            label: `SMA(${smaPeriod})`,
+            data: smaData,
+            borderColor: 'rgb(255, 99, 132)', // Different color for SMA
+            backgroundColor: 'rgba(255, 99, 132, 0.1)',
+            tension: 0.1,
+            borderWidth: 1.5, // SMA line a bit thinner
+            pointRadius: 0, // No points for SMA line
+            pointHoverRadius: 0
+          });
+        }
+        priceChart.update();
+      }
+      // --- End of Update Chart Function ---
+
 
       if (!canvas) {
         console.error("Canvas element with ID 'priceChart' not found.");
@@ -44,95 +125,85 @@
         return response.text();
       })
       .then(csvData => {
-        // Keep displaying raw CSV data
-        dataContainer.textContent = csvData;
+        dataContainer.textContent = csvData; // Keep displaying raw CSV
 
-        // Parse CSV data for the chart
         const lines = csvData.trim().split(/\r?\n/);
+        if (lines.length <= 1) {
+            throw new Error("CSV data has no data rows (only header or empty).");
+        }
         const header = lines[0].split(',');
         const dataRows = lines.slice(1);
 
-        const labels = [];
-        const dataPoints = [];
-
-        // Assuming 'price' is the 3rd column (index 2) and 'date_created' is the 6th column (index 5)
-        // For robustness, it's better to find indices by header names, but problem statement allows assumption.
-        const priceIndex = 2; // 'price'
-        const dateCreatedIndex = 5; // 'date_created'
+        const tempLabels = [];
+        const tempPriceData = [];
+        const priceIndex = 2; 
+        const dateCreatedIndex = 5;
 
         dataRows.forEach(row => {
           const columns = row.split(',');
           if (columns.length > Math.max(priceIndex, dateCreatedIndex)) {
             const rawDate = columns[dateCreatedIndex];
-            // Extract YYYY-MM-DD from the timestamp
-            labels.push(rawDate.substring(0, 10)); 
-            
+            tempLabels.push(rawDate.substring(0, 10));
             const price = parseFloat(columns[priceIndex]);
             if (!isNaN(price)) {
-              dataPoints.push(price);
+              tempPriceData.push(price);
             } else {
               console.warn('Skipping invalid price value:', columns[priceIndex]);
-              // Potentially push null or handle as per requirements if gaps are needed in chart
-              // For now, we just skip, which might misalign data if not all rows have valid prices
+              tempPriceData.push(null); // Push null to keep data aligned
             }
           } else {
             console.warn('Skipping malformed CSV row:', row);
           }
         });
 
-        if (labels.length === 0 || dataPoints.length === 0) {
+        if (tempLabels.length === 0 || tempPriceData.length === 0) {
             throw new Error("No data points found after parsing CSV. Check CSV format and content.");
         }
         
-        // Create the chart
-        new Chart(ctx, {
+        originalLabels = tempLabels.slice();
+        originalPriceData = tempPriceData.slice();
+        
+        priceChart = new Chart(ctx, {
           type: 'line',
-          data: {
-            labels: labels,
-            datasets: [{
-              label: 'Item Price Over Time',
-              data: dataPoints,
-              borderColor: 'rgb(75, 192, 192)',
-              tension: 0.1
-            }]
+          data: { // Initial data will be set by updateChartWithIndicators
+            labels: [],
+            datasets: [] 
           },
           options: {
             responsive: true,
-            maintainAspectRatio: true, // Set to true or false based on desired behavior with max-width/height
+            maintainAspectRatio: false, // Allow chart to shrink/grow with canvas CSS
             scales: {
               y: {
                 beginAtZero: false,
-                ticks: {
-                    callback: function(value, index, values) {
-                        return value.toLocaleString(); // Format Y-axis numbers
-                    }
-                }
+                ticks: { callback: function(value) { return value.toLocaleString(); } }
               },
               x: {
-                ticks: {
-                    autoSkip: true,
-                    maxTicksLimit: 20 // Adjust based on how many labels you want to see
-                }
+                ticks: { autoSkip: true, maxTicksLimit: 20 }
               }
             },
             plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.dataset.label || '';
-                            if (label) {
-                                label += ': ';
-                            }
-                            if (context.parsed.y !== null) {
-                                label += context.parsed.y.toLocaleString();
-                            }
-                            return label;
-                        }
-                    }
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    let label = context.dataset.label || '';
+                    if (label) { label += ': '; }
+                    if (context.parsed.y !== null) { label += context.parsed.y.toLocaleString(); }
+                    return label;
+                  }
                 }
+              }
             }
           }
         });
+
+        // Initial chart draw with current control states
+        updateChartWithIndicators(); 
+
+        // Add event listeners to controls
+        showSMACheckbox.addEventListener('change', updateChartWithIndicators);
+        smaPeriodInput.addEventListener('change', updateChartWithIndicators);
+        // Consider 'input' event for smaPeriodInput for more responsiveness if needed
+        // smaPeriodInput.addEventListener('input', updateChartWithIndicators);
 
       })
       .catch(error => {
