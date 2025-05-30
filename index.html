@@ -213,7 +213,46 @@
         originalLabels = tempLabels.slice();
         originalPriceData = tempPriceData.slice();
         
-        priceChart = new Chart(ctx, { /* ... existing chart config ... */ });
+        priceChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: originalLabels.slice(), // Use already parsed labels
+            datasets: [] // Datasets are populated by updateChartWithIndicators
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false, 
+            scales: {
+              y: {
+                beginAtZero: false,
+                ticks: { callback: function(value) { return value.toLocaleString(); } }
+              },
+              x: {
+                type: 'time', 
+                time: {
+                    unit: 'day',
+                    tooltipFormat: 'MMM d, yyyy', 
+                    displayFormats: {
+                        day: 'MMM d' 
+                    }
+                },
+                ticks: { autoSkip: true, maxTicksLimit: 20 }
+              }
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    let label = context.dataset.label || '';
+                    if (label) { label += ': '; }
+                    if (context.parsed.y !== null) { label += context.parsed.y.toLocaleString(); }
+                    return label;
+                  }
+                }
+              }
+            }
+          }
+        });
         
         updateChartWithIndicators(); 
 
