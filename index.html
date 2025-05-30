@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Data Display</title>
+</head>
+<body>
+  <pre id="data-container">Loading data...</pre>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const dataContainer = document.getElementById('data-container');
+      const url = 'https://echoes.mobi/api/item_weekly_average_prices?page=1&itemId=28007000000';
+
+      fetch(url, {
+        headers: {
+          'accept': 'text/csv'
+        }
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok: ' + response.statusText);
+        }
+        return response.text();
+      })
+      .then(csvData => {
+        dataContainer.textContent = csvData;
+      })
+      .catch(error => {
+        dataContainer.textContent = 'Failed to load data: ' + error;
+        console.error('There was a problem with the fetch operation:', error);
+      });
+    });
+  </script>
+</body>
+</html>
