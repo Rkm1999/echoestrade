@@ -40,23 +40,46 @@
       
       let priceChart = null; // Will hold the chart instance
       let originalPriceData = []; // To store the base price data after fetch
-      let originalLabels = []; // To store the base labels after fetch
+      let originalLabels = []; // To store the base labels after fetch (date strings)
 
-      // --- Utility function to calculate Simple Moving Average (SMA) ---
-      function calculateSMA(prices, period) {
-        if (!prices || prices.length === 0 || period <= 0 || period > prices.length) {
+      // --- Utility function to calculate Time-Aware Simple Moving Average (SMA) ---
+      function calculateSMA(dates, prices, periodDays) {
+        if (!dates || !prices || dates.length !== prices.length || periodDays <= 0) {
+          // Return array of nulls if inputs are invalid or mismatched
           return new Array(prices ? prices.length : 0).fill(null);
         }
-        const smaValues = [];
-        for (let i = 0; i < prices.length; i++) {
-          if (i < period - 1) {
-            smaValues.push(null);
-          } else {
-            let sum = 0;
-            for (let j = 0; j < period; j++) {
-              sum += prices[i - j];
+
+        const smaValues = new Array(prices.length).fill(null);
+
+        for (let i = 0; i < dates.length; i++) {
+          const currentDateStr = dates[i]; // Assuming "YYYY-MM-DD"
+          const currentDate = new Date(currentDateStr + "T00:00:00"); // Treat as local start of day
+
+          // Calculate the start date for the lookback window
+          const startDate = new Date(currentDate);
+          startDate.setDate(currentDate.getDate() - (periodDays - 1)); // Window includes current day
+
+          let sum = 0;
+          let count = 0;
+
+          // Iterate backwards from the current point to find data within the window
+          for (let j = i; j >= 0; j--) {
+            const loopDateStr = dates[j];
+            const loopDate = new Date(loopDateStr + "T00:00:00"); // Treat as local start of day
+
+            if (loopDate >= startDate && loopDate <= currentDate) {
+              if (prices[j] !== null && !isNaN(prices[j])) { // Ensure price is valid
+                sum += prices[j];
+                count++;
+              }
+            } else if (loopDate < startDate) {
+              // Optimization: if we've gone past the window start, no need to check further
+              break; 
             }
-            smaValues.push(sum / period);
+          }
+
+          if (count > 0) { // SMA is valid only if there's at least one data point in the window
+            smaValues[i] = sum / count;
           }
         }
         return smaValues;
@@ -68,39 +91,37 @@
         if (!priceChart || !originalPriceData.length) return; // Chart or data not ready
 
         const showSMA = showSMACheckbox.checked;
-        const smaPeriod = parseInt(smaPeriodInput.value, 10);
+        const smaPeriodDays = parseInt(smaPeriodInput.value, 10); // Renamed for clarity
 
-        // Start with the base price dataset
-        priceChart.data.labels = originalLabels.slice(); // Use slice to avoid modifying original if Chart.js mutates
+        priceChart.data.labels = originalLabels.slice(); 
         priceChart.data.datasets = [{
-          label: 'Item Price', // Base price series
-          data: originalPriceData.slice(), // Use slice
+          label: 'Item Price', 
+          data: originalPriceData.slice(), 
           borderColor: 'rgb(75, 192, 192)',
           backgroundColor: 'rgba(75, 192, 192, 0.1)',
           tension: 0.1,
-          borderWidth: 2, // Main line a bit thicker
-          pointRadius: 2, // Smaller points for main line
+          borderWidth: 2, 
+          pointRadius: 2, 
           pointHoverRadius: 4
         }];
 
-        // Add SMA dataset if checked and period is valid
-        if (showSMA && smaPeriod >= 2) {
-          const smaData = calculateSMA(originalPriceData, smaPeriod);
+        if (showSMA && smaPeriodDays >= 2) { // Use smaPeriodDays
+          // Call with new signature: dates, prices, periodDays
+          const smaData = calculateSMA(originalLabels, originalPriceData, smaPeriodDays);
           priceChart.data.datasets.push({
-            label: `SMA(${smaPeriod})`,
+            label: `SMA(${smaPeriodDays})`, // Use smaPeriodDays
             data: smaData,
-            borderColor: 'rgb(255, 99, 132)', // Different color for SMA
+            borderColor: 'rgb(255, 99, 132)', 
             backgroundColor: 'rgba(255, 99, 132, 0.1)',
             tension: 0.1,
-            borderWidth: 1.5, // SMA line a bit thinner
-            pointRadius: 0, // No points for SMA line
+            borderWidth: 1.5, 
+            pointRadius: 0, 
             pointHoverRadius: 0
           });
         }
         priceChart.update();
       }
       // --- End of Update Chart Function ---
-
 
       if (!canvas) {
         console.error("Canvas element with ID 'priceChart' not found.");
@@ -125,7 +146,7 @@
         return response.text();
       })
       .then(csvData => {
-        dataContainer.textContent = csvData; // Keep displaying raw CSV
+        dataContainer.textContent = csvData; 
 
         const lines = csvData.trim().split(/\r?\n/);
         if (lines.length <= 1) {
@@ -143,13 +164,13 @@
           const columns = row.split(',');
           if (columns.length > Math.max(priceIndex, dateCreatedIndex)) {
             const rawDate = columns[dateCreatedIndex];
-            tempLabels.push(rawDate.substring(0, 10));
+            tempLabels.push(rawDate.substring(0, 10)); // "YYYY-MM-DD"
             const price = parseFloat(columns[priceIndex]);
             if (!isNaN(price)) {
               tempPriceData.push(price);
             } else {
               console.warn('Skipping invalid price value:', columns[priceIndex]);
-              tempPriceData.push(null); // Push null to keep data aligned
+              tempPriceData.push(null); 
             }
           } else {
             console.warn('Skipping malformed CSV row:', row);
@@ -165,19 +186,27 @@
         
         priceChart = new Chart(ctx, {
           type: 'line',
-          data: { // Initial data will be set by updateChartWithIndicators
+          data: { 
             labels: [],
             datasets: [] 
           },
           options: {
             responsive: true,
-            maintainAspectRatio: false, // Allow chart to shrink/grow with canvas CSS
+            maintainAspectRatio: false, 
             scales: {
               y: {
                 beginAtZero: false,
                 ticks: { callback: function(value) { return value.toLocaleString(); } }
               },
               x: {
+                type: 'time', // Important for time-series data if dates are not perfectly sequential
+                time: {
+                    unit: 'day',
+                    tooltipFormat: 'MMM dd, yyyy', // e.g., Jan 01, 2023
+                    displayFormats: {
+                        day: 'MMM dd' // e.g., Jan 01
+                    }
+                },
                 ticks: { autoSkip: true, maxTicksLimit: 20 }
               }
             },
@@ -195,16 +224,11 @@
             }
           }
         });
-
-        // Initial chart draw with current control states
+        
         updateChartWithIndicators(); 
 
-        // Add event listeners to controls
         showSMACheckbox.addEventListener('change', updateChartWithIndicators);
         smaPeriodInput.addEventListener('change', updateChartWithIndicators);
-        // Consider 'input' event for smaPeriodInput for more responsiveness if needed
-        // smaPeriodInput.addEventListener('input', updateChartWithIndicators);
-
       })
       .catch(error => {
         dataContainer.textContent = 'Failed to load or process data: ' + error;
