@@ -595,26 +595,37 @@ function calculateAndDisplayPriceStatistics(labels, prices) {
         return (((current - start) / start) * 100).toFixed(1);
     }
 
-    const currentPricePercentChange = calculatePercentageChange(currentPrice, startPrice);
-    const highestPricePercentChange = calculatePercentageChange(highestPrice, startPrice);
-    const lowestPricePercentChange = calculatePercentageChange(lowestPrice, startPrice);
+    let currentPricePercentChange = 'N/A';
+    let highestPricePercentChange = 'N/A';
+    let lowestPricePercentChange = 'N/A';
 
-    function formatPriceStat(value, percentChange) {
-        if (value === null) {
-            return 'N/A';
-        }
-        let priceStr = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ISK';
-        if (percentChange === 'N/A' || prices.length < 2) {
-            return priceStr;
-        }
-        let changePrefix = parseFloat(percentChange) >= 0 ? '+' : '';
-        // Class names for CSS styling based on positive/negative change
-        let changeClass = parseFloat(percentChange) >= 0 ? 'price-change-positive' : 'price-change-negative';
-        return `${priceStr} (<span class="${changeClass}">${changePrefix}${percentChange}%</span>)`;
+    if (prices.length >= 2) { // Only calculate percent changes if there are at least two data points
+        currentPricePercentChange = calculatePercentageChange(currentPrice, startPrice);
+        highestPricePercentChange = calculatePercentageChange(highestPrice, startPrice);
+        lowestPricePercentChange = calculatePercentageChange(lowestPrice, startPrice);
     }
 
+function formatPriceStat(value, percentChange) {
+    if (value === null || !isFinite(value)) return 'N/A';
+
+    let priceText = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ISK';
+    let priceHtml;
+
+    if (percentChange !== 'N/A') {
+        const isPositive = parseFloat(percentChange) >= 0;
+        const valueClass = isPositive ? 'price-value-positive' : 'price-value-negative';
+        priceHtml = `<span class="${valueClass}">${priceText}</span>`;
+
+        const changePrefix = isPositive ? '+' : '';
+        const changeClass = isPositive ? 'price-change-positive' : 'price-change-negative';
+        priceHtml += ` (<span class="${changeClass}">${changePrefix}${percentChange}%</span>)`;
+    } else {
+        priceHtml = priceText; // No coloring for price or percentage if percentChange is 'N/A'
+    }
+    return priceHtml;
+}
+
     let htmlContent = '<ul>';
-    htmlContent += `<li>Start Price: ${startPrice !== null ? startPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ISK' : 'N/A'}</li>`;
     htmlContent += `<li>Current Price: ${formatPriceStat(currentPrice, currentPricePercentChange)}</li>`;
     htmlContent += `<li>Highest Price (Period): ${formatPriceStat(highestPrice, highestPricePercentChange)}</li>`;
     htmlContent += `<li>Lowest Price (Period): ${formatPriceStat(lowestPrice, lowestPricePercentChange)}</li>`;

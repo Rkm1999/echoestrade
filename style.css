@@ -260,3 +260,14 @@
     color: #dc3545; /* Red */
     font-weight: bold;
 }
+
+/* Styles for coloring the actual price values */
+#priceStatsDisplay .price-value-positive {
+    color: #28a745; /* Green, same as price-change-positive */
+    /* font-weight: bold; /* Optional: if price itself should be bold too */
+}
+
+#priceStatsDisplay .price-value-negative {
+    color: #dc3545; /* Red, same as price-change-negative */
+    /* font-weight: bold; /* Optional: if price itself should be bold too */
+}
