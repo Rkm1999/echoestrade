@@ -1,0 +1,110 @@
+/* Sidebar specific styles */
+#sidebar {
+    font-family: Arial, sans-serif; /* Consistent font */
+}
+
+#sidebar h2 {
+    margin-top: 0;
+    font-size: 1.2em;
+    color: #333;
+}
+
+#item-selector-container div { /* Style for each dropdown's container div */
+    margin-bottom: 10px;
+}
+
+#item-selector-container label {
+    display: block;
+    margin-bottom: 3px;
+    font-weight: bold;
+    font-size: 0.9em;
+    color: #555;
+}
+
+/* Style for placeholder text in item-selector-container (might still be relevant if JS shows it initially) */
+#item-selector-container p {
+   font-style: italic;
+   color: #777;
+}
+
+/* Search input styling */
+#sidebarSearch {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px; /* Increased margin a bit */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Ensures padding doesn't add to width */
+    font-size: 0.9em;
+}
+
+#sidebarSearch:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* General List Resets for the new structure */
+#item-selector-container ul {
+    list-style-type: none;
+    padding-left: 0; /* Base padding, specific indentation per level handled by JS or child-list-container */
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+/* List Item Styling (.nav-item) */
+#item-selector-container .nav-item {
+    /* Base styles for li - padding/border applied to span instead for better click area */
+}
+
+#item-selector-container .nav-item > span {
+    display: inline-block;
+    padding: 8px 5px;
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 3px;
+    /* border-bottom: 1px solid #f0f0f0; */ /* Optional: if items need bottom borders */
+}
+
+#item-selector-container .nav-item > span:hover {
+    background-color: #e9e9e9;
+}
+
+/* Category Item Styling (.item-category) */
+#item-selector-container .item-category > span {
+    font-weight: bold;
+    color: #444;
+}
+
+/* Leaf Item Styling (.item-leaf) */
+#item-selector-container .item-leaf > span {
+    color: #2266AA;
+}
+
+#item-selector-container .item-leaf.selected-leaf > span { /* Style for the selected item */
+    background-color: #cce7ff;
+    font-weight: bold;
+}
+
+/* Indentation and styling for Nested Lists */
+#item-selector-container .child-list-container {
+    /* JS adds padding-left to the UL itself (ul.style.paddingLeft = level > 0 ? '20px' : '0';) */
+    /* This container div can have a border or margin if needed */
+    border-left: 1px solid #e0e0e0;
+    margin-left: 7px; /* Small margin for the border to align better with text above */
+    padding-left: 13px; /* Space after the border, so content in nested UL aligns well */
+    margin-top: 2px; /* Small space between parent item and child container's border */
+}
+
+/* Removed old styles:
+   #item-selector-container div (too generic, replaced by more specific .nav-item or .child-list-container)
+   #item-selector-container label (no labels for list items)
+   #item-selector-container select (no selects anymore)
+   #item-selector-container select:focus (no selects anymore)
+   #top-level-item-list (replaced by generic #item-selector-container ul and specific level classes if needed)
+   #top-level-item-list li (replaced by .nav-item and its variants)
+   #top-level-item-list li:hover (replaced by .nav-item > span:hover)
+   #top-level-item-list li .sub-container (replaced by .child-list-container)
+   #top-level-item-list li .sub-container.expanded (not used in this way)
+   #top-level-item-list li .sub-container select (no selects anymore)
+*/

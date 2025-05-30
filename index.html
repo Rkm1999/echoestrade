@@ -5,19 +5,54 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@^3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
   <style>
-    body { font-family: sans-serif; margin: 20px; }
+    body {
+      font-family: sans-serif;
+      /* margin: 20px; */ /* Removed */
+      padding-left: 0; /* Added */
+    }
     #priceChart { max-width: 800px; max-height: 400px; margin-bottom: 20px; }
     #data-container { white-space: pre-wrap; word-wrap: break-word; background-color: #f4f4f4; padding: 10px; border: 1px solid #ccc; max-height: 200px; overflow-y: auto; }
     #controls { margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9; }
+    #sidebar {
+      width: 250px; /* Adjust width as needed */
+      height: 100vh; /* Full viewport height */
+      position: fixed; /* Fixed position */
+      left: 0;
+      top: 0;
+      background-color: #f0f0f0; /* Light grey background */
+      padding: 15px;
+      overflow-y: auto; /* Allow scrolling if content overflows */
+      border-right: 1px solid #ccc;
+    }
+
+    #main-content {
+      margin-left: 270px; /* Adjust to be slightly more than sidebar width + padding */
+      padding: 20px;
+    }
+
+    /* Ensure h1 and controls are within the flow of main-content, not affected by fixed sidebar directly */
+    #main-content h1, #main-content #controls, #main-content #priceChart, #main-content h2 {
+        margin-left: 0; /* Reset any potential inherited left margin */
+    }
     #controls div { margin-bottom: 5px; }
     #controls label { margin-right: 5px; }
     #activeSMAList .sma-item { margin-right: 10px; background-color: #e0e0e0; padding: 3px 6px; border-radius: 4px; display: inline-block; margin-bottom: 5px;}
     #activeSMAList .sma-item button { margin-left: 8px; cursor: pointer; border: none; background: #ff6b6b; color: white; border-radius: 3px; padding: 2px 5px;}
     #activeSMAList .sma-item button:hover { background: #e04f4f;}
   </style>
+       <link rel="stylesheet" href="style.css"> <!-- Add this line -->
 </head>
 <body>
-  <h1>PLEX Price Over Time</h1>
+<div id="sidebar">
+  <h2>Items</h2>
+  <input type="text" id="sidebarSearch" placeholder="Search items...">
+  <div id="item-selector-container">
+    <!-- Dropdowns will be dynamically inserted here by JavaScript -->
+    <p>Loading items...</p>
+  </div>
+</div>
+<div id="main-content">
+  <h1 id="chartDisplayTitle">PLEX Price Over Time</h1>
   <div id="controls">
     <h2>Indicators</h2>
     <div>
@@ -33,227 +68,8 @@
   <canvas id="priceChart"></canvas>
   <h2>Raw CSV Data</h2>
   <pre id="data-container">Loading data...</pre>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const dataContainer = document.getElementById('data-container');
-      const canvas = document.getElementById('priceChart');
-      const localFileUrl = './plex_data.csv';
-
-      const newSMAPeriodInput = document.getElementById('newSMAPeriod');
-      const addSMAButton = document.getElementById('addSMAButton');
-      const activeSMAListDiv = document.getElementById('activeSMAList');
-      
-      let priceChart = null; 
-      let originalPriceData = []; 
-      let originalLabels = []; 
-      let activeSMAPeriods = [7]; 
-
-      const smaColors = [ // Defined outside updateChartWithIndicators
-          'rgb(255, 99, 132)',  // Pink/Red
-          'rgb(54, 162, 235)',  // Blue
-          'rgb(255, 206, 86)',  // Yellow
-          'rgb(153, 102, 255)', // Purple
-          'rgb(255, 159, 64)',  // Orange 
-          'rgb(46, 204, 113)'   // Green
-      ];
-
-      function calculateSMA(dates, prices, periodDays) {
-        if (!dates || !prices || dates.length !== prices.length || periodDays <= 0) {
-          return new Array(prices ? prices.length : 0).fill(null);
-        }
-        const smaValues = new Array(prices.length).fill(null);
-        for (let i = 0; i < dates.length; i++) {
-          const currentDateStr = dates[i]; 
-          const currentDate = new Date(currentDateStr + "T00:00:00"); 
-          const startDate = new Date(currentDate);
-          startDate.setDate(currentDate.getDate() - (periodDays - 1)); 
-          let sum = 0;
-          let count = 0;
-          for (let j = i; j >= 0; j--) {
-            const loopDateStr = dates[j];
-            const loopDate = new Date(loopDateStr + "T00:00:00"); 
-            if (loopDate >= startDate && loopDate <= currentDate) {
-              if (prices[j] !== null && !isNaN(prices[j])) { 
-                sum += prices[j];
-                count++;
-              }
-            } else if (loopDate < startDate) {
-              break; 
-            }
-          }
-          if (count > 0) { 
-            smaValues[i] = sum / count;
-          }
-        }
-        return smaValues;
-      }
-
-      function renderActiveSMAList() {
-        activeSMAListDiv.innerHTML = ''; 
-        if (activeSMAPeriods.length === 0) {
-          activeSMAListDiv.textContent = 'No active SMAs.';
-          return;
-        }
-        activeSMAPeriods.forEach(period => {
-          const itemDiv = document.createElement('div');
-          itemDiv.classList.add('sma-item');
-          const periodText = document.createElement('span');
-          periodText.textContent = `SMA(${period})`;
-          const removeButton = document.createElement('button');
-          removeButton.textContent = 'Remove';
-          removeButton.dataset.period = period;
-          removeButton.addEventListener('click', function() {
-            const periodToRemove = parseInt(this.dataset.period, 10);
-            activeSMAPeriods = activeSMAPeriods.filter(p => p !== periodToRemove);
-            renderActiveSMAList(); 
-            updateChartWithIndicators(); 
-          });
-          itemDiv.appendChild(periodText);
-          itemDiv.appendChild(removeButton);
-          activeSMAListDiv.appendChild(itemDiv);
-        });
-      }
-
-      addSMAButton.addEventListener('click', function() {
-        const newPeriod = parseInt(newSMAPeriodInput.value, 10);
-        if (isNaN(newPeriod) || newPeriod < 2) {
-          alert('Please enter a valid SMA period (minimum 2 days).');
-          return;
-        }
-        if (activeSMAPeriods.includes(newPeriod)) {
-          alert(`SMA(${newPeriod}) is already active.`);
-          return;
-        }
-        if (activeSMAPeriods.length >= smaColors.length) { // Limit by available colors
-            alert(`Maximum of ${smaColors.length} SMAs can be added.`);
-            return;
-        }
-        activeSMAPeriods.push(newPeriod);
-        activeSMAPeriods.sort((a, b) => a - b); 
-        renderActiveSMAList();
-        updateChartWithIndicators();
-      });
-
-      function updateChartWithIndicators() {
-        if (!priceChart || !originalPriceData.length) return; 
-
-        priceChart.data.labels = originalLabels.slice(); 
-        priceChart.data.datasets = [{
-          label: 'Item Price', 
-          data: originalPriceData.slice(), 
-          borderColor: 'rgb(0, 0, 0)', // Changed to Black for distinction
-          backgroundColor: 'rgba(0, 0, 0, 0.1)', // Optional fill for price line
-          tension: 0.1,
-          borderWidth: 2, 
-          pointRadius: 2, 
-          pointHoverRadius: 4,
-          order: 0 
-        }];
-
-        activeSMAPeriods.forEach((period, index) => {
-            const smaData = calculateSMA(originalLabels, originalPriceData, period);
-            const color = smaColors[index % smaColors.length]; // Cycle through defined smaColors
-
-            priceChart.data.datasets.push({
-                label: `SMA(${period})`,
-                data: smaData,
-                borderColor: color,
-                // backgroundColor: color.replace('rgb(', 'rgba(').replace(')', ', 0.1)'), // Removed as per prompt
-                fill: false, // Explicitly set fill to false
-                tension: 0.1,
-                borderWidth: 1.5,
-                pointRadius: 0,
-                pointHoverRadius: 0,
-                order: index + 1 
-            });
-        });
-        
-        priceChart.update();
-      }
-
-      if (!canvas) { return; } 
-      const ctx = canvas.getContext('2d');
-      if (!ctx) { return; } 
-
-      fetch(localFileUrl)
-      .then(response => {
-          if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
-          return response.text();
-      })
-      .then(csvData => {
-        dataContainer.textContent = csvData; 
-        const lines = csvData.trim().split(/\r?\n/);
-        if (lines.length <= 1) { throw new Error("CSV data has no data rows."); }
-        const dataRows = lines.slice(1); 
-        const tempLabels = [];
-        const tempPriceData = [];
-        const priceIndex = 2; 
-        const dateCreatedIndex = 5;
-        dataRows.forEach(row => {
-          const columns = row.split(',');
-          if (columns.length > Math.max(priceIndex, dateCreatedIndex)) {
-            const rawDate = columns[dateCreatedIndex];
-            tempLabels.push(rawDate.substring(0, 10)); 
-            const price = parseFloat(columns[priceIndex]);
-            tempPriceData.push(isNaN(price) ? null : price); 
-          }
-        });
-        if (tempLabels.length === 0) { throw new Error("No data parsed from CSV."); }
-        
-        originalLabels = tempLabels.slice();
-        originalPriceData = tempPriceData.slice();
-        
-        priceChart = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: originalLabels.slice(), 
-            datasets: [] 
-          },
-          options: { 
-            responsive: true,
-            maintainAspectRatio: false, 
-            scales: {
-              y: {
-                beginAtZero: false,
-                ticks: { callback: function(value) { return value.toLocaleString(); } }
-              },
-              x: {
-                type: 'time', 
-                time: {
-                    unit: 'day',
-                    tooltipFormat: 'MMM d, yyyy', 
-                    displayFormats: { day: 'MMM d' }
-                },
-                ticks: { autoSkip: true, maxTicksLimit: 20 }
-              }
-            },
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: function(context) {
-                    let label = context.dataset.label || '';
-                    if (label) { label += ': '; }
-                    if (context.parsed.y !== null) { label += context.parsed.y.toLocaleString(); }
-                    return label;
-                  }
-                }
-              },
-              legend: {
-                position: 'top', // Example: move legend to top
-              }
-            }
-          }
-        });
-        
-        renderActiveSMAList(); 
-        updateChartWithIndicators(); 
-      })
-      .catch(error => {
-        dataContainer.textContent = 'Failed to load or process data: ' + error;
-        console.error('There was a problem with the fetch or chart operation:', error);
-      });
-    });
-  </script>
+</div> <!-- This is the new closing div for main-content -->
+  <!-- Removed inline script -->
+<script src="scripts.js" defer></script>
 </body>
 </html>
