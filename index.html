@@ -8,21 +8,21 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const dataContainer = document.getElementById('data-container');
-      const url = 'https://echoes.mobi/api/item_weekly_average_prices?page=1&itemId=28007000000';
+      const localFileUrl = './plex_data.csv'; // Path to the local CSV file
 
-      fetch(url, {
-        headers: {
-          'accept': 'text/csv'
-        }
-      })
+      fetch(localFileUrl)
       .then(response => {
         if (!response.ok) {
-          throw new Error('Network response was not ok: ' + response.statusText);
+          // Check for common issues like file not found (404)
+          if (response.status === 404) {
+            throw new Error('Error: plex_data.csv not found. Status: ' + response.status);
+          }
+          throw new Error('Network response was not ok: ' + response.statusText + ' (Status: ' + response.status + ')');
         }
-        return response.text();
+        return response.text(); // Get the response body as text
       })
       .then(csvData => {
-        dataContainer.textContent = csvData;
+        dataContainer.textContent = csvData; // Display CSV data in the <pre> tag
       })
       .catch(error => {
         dataContainer.textContent = 'Failed to load data: ' + error;
