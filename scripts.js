@@ -724,6 +724,13 @@ function refreshInitialViewLists() {
     // The call to updateActiveTimeframeButton(btnAll) can remain.
     // The initial text for chartDisplayTitleElement when no item is selected from sidebar can also remain.
 
+    const showInitialViewBtn = document.getElementById('showInitialViewBtn');
+    if (showInitialViewBtn) {
+        showInitialViewBtn.addEventListener('click', function() {
+            showInitialView();
+        });
+    }
+
     // --- Timeframe Button Event Listeners ---
     const predefinedTimeframeButtons = [
         { el: btn30D, timeframe: "30D" },
