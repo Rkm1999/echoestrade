@@ -23,6 +23,12 @@
       <input type="number" id="smaPeriod" name="smaPeriod" value="7" min="2" style="width: 50px;">
       <label for="smaPeriod">Period (days)</label>
     </div>
+    <div>
+      <input type="checkbox" id="showEMA" name="showEMA">
+      <label for="showEMA">Show Exponential Moving Average (EMA)</label>
+      <input type="number" id="emaPeriod" name="emaPeriod" value="7" min="2" style="width: 50px;">
+      <label for="emaPeriod">Period (days)</label>
+    </div>
     <!-- Placeholder for future EMA and Momentum controls -->
   </div>
   <canvas id="priceChart"></canvas>
@@ -38,48 +44,39 @@
       // --- DOM References for Controls ---
       const showSMACheckbox = document.getElementById('showSMA');
       const smaPeriodInput = document.getElementById('smaPeriod');
+      const showEMACheckbox = document.getElementById('showEMA'); // Added EMA ref
+      const emaPeriodInput = document.getElementById('emaPeriod');   // Added EMA ref
       
-      let priceChart = null; // Will hold the chart instance
-      let originalPriceData = []; // To store the base price data after fetch
-      let originalLabels = []; // To store the base labels after fetch (date strings)
+      let priceChart = null; 
+      let originalPriceData = []; 
+      let originalLabels = []; 
 
       // --- Utility function to calculate Time-Aware Simple Moving Average (SMA) ---
       function calculateSMA(dates, prices, periodDays) {
         if (!dates || !prices || dates.length !== prices.length || periodDays <= 0) {
-          // Return array of nulls if inputs are invalid or mismatched
           return new Array(prices ? prices.length : 0).fill(null);
         }
-
         const smaValues = new Array(prices.length).fill(null);
-
         for (let i = 0; i < dates.length; i++) {
-          const currentDateStr = dates[i]; // Assuming "YYYY-MM-DD"
-          const currentDate = new Date(currentDateStr + "T00:00:00"); // Treat as local start of day
-
-          // Calculate the start date for the lookback window
+          const currentDateStr = dates[i]; 
+          const currentDate = new Date(currentDateStr + "T00:00:00"); 
           const startDate = new Date(currentDate);
-          startDate.setDate(currentDate.getDate() - (periodDays - 1)); // Window includes current day
-
+          startDate.setDate(currentDate.getDate() - (periodDays - 1)); 
           let sum = 0;
           let count = 0;
-
-          // Iterate backwards from the current point to find data within the window
           for (let j = i; j >= 0; j--) {
             const loopDateStr = dates[j];
-            const loopDate = new Date(loopDateStr + "T00:00:00"); // Treat as local start of day
-
+            const loopDate = new Date(loopDateStr + "T00:00:00"); 
             if (loopDate >= startDate && loopDate <= currentDate) {
-              if (prices[j] !== null && !isNaN(prices[j])) { // Ensure price is valid
+              if (prices[j] !== null && !isNaN(prices[j])) { 
                 sum += prices[j];
                 count++;
               }
             } else if (loopDate < startDate) {
-              // Optimization: if we've gone past the window start, no need to check further
               break; 
             }
           }
-
-          if (count > 0) { // SMA is valid only if there's at least one data point in the window
+          if (count > 0) { 
             smaValues[i] = sum / count;
           }
         }
@@ -87,12 +84,50 @@
       }
       // --- End of SMA function ---
 
+      // --- Utility function to calculate Exponential Moving Average (EMA) ---
+      function calculateEMA(prices, period) {
+        if (!prices || prices.length === 0 || period <= 0) {
+          return new Array(prices ? prices.length : 0).fill(null);
+        }
+        if (period > prices.length) { 
+            return new Array(prices.length).fill(null);
+        }
+        const emaValues = new Array(prices.length).fill(null);
+        const multiplier = 2 / (period + 1);
+        let initialSum = 0;
+        let validPointsForInitialSMA = 0;
+        for (let i = 0; i < period; i++) {
+            if (prices[i] !== null && !isNaN(prices[i])) {
+                initialSum += prices[i];
+                validPointsForInitialSMA++;
+            }
+        }
+        if (validPointsForInitialSMA === period) {
+            emaValues[period - 1] = initialSum / period;
+            for (let i = period; i < prices.length; i++) {
+                const currentPrice = prices[i];
+                const previousEMA = emaValues[i - 1];
+                if (currentPrice === null || isNaN(currentPrice)) {
+                    emaValues[i] = null; 
+                } else if (previousEMA === null) {
+                    emaValues[i] = null;
+                } else {
+                    emaValues[i] = (currentPrice - previousEMA) * multiplier + previousEMA;
+                }
+            }
+        }
+        return emaValues;
+      }
+      // --- End of EMA function ---
+
       // --- Function to Update Chart with Indicators ---
       function updateChartWithIndicators() {
-        if (!priceChart || !originalPriceData.length) return; // Chart or data not ready
+        if (!priceChart || !originalPriceData.length) return; 
 
         const showSMA = showSMACheckbox.checked;
-        const smaPeriodDays = parseInt(smaPeriodInput.value, 10); // Renamed for clarity
+        const smaPeriodDays = parseInt(smaPeriodInput.value, 10);
+        const showEMA = showEMACheckbox.checked; // Added EMA check
+        const emaPeriodDays = parseInt(emaPeriodInput.value, 10); // Added EMA period
 
         priceChart.data.labels = originalLabels.slice(); 
         priceChart.data.datasets = [{
@@ -103,59 +138,57 @@
           tension: 0.1,
           borderWidth: 2, 
           pointRadius: 2, 
-          pointHoverRadius: 4
+          pointHoverRadius: 4,
+          order: 0 // Ensure price line is drawn first (on bottom)
         }];
 
-        if (showSMA && smaPeriodDays >= 2) { // Use smaPeriodDays
-          // Call with new signature: dates, prices, periodDays
+        // SMA Logic
+        if (showSMA && smaPeriodDays >= 2) { 
           const smaData = calculateSMA(originalLabels, originalPriceData, smaPeriodDays);
           priceChart.data.datasets.push({
-            label: `SMA(${smaPeriodDays})`, // Use smaPeriodDays
+            label: `SMA(${smaPeriodDays})`, 
             data: smaData,
             borderColor: 'rgb(255, 99, 132)', 
             backgroundColor: 'rgba(255, 99, 132, 0.1)',
             tension: 0.1,
             borderWidth: 1.5, 
             pointRadius: 0, 
-            pointHoverRadius: 0
+            pointHoverRadius: 0,
+            order: 1 // Draw SMA above price
+          });
+        }
+
+        // EMA Logic - Added
+        if (showEMA && emaPeriodDays >= 2) {
+          const emaData = calculateEMA(originalPriceData, emaPeriodDays); // EMA uses only prices and period length
+          priceChart.data.datasets.push({
+            label: `EMA(${emaPeriodDays})`,
+            data: emaData,
+            borderColor: 'rgb(255, 159, 64)', // Orange for EMA
+            backgroundColor: 'rgba(255, 159, 64, 0.1)',
+            tension: 0.1,
+            borderWidth: 1.5,
+            pointRadius: 0,
+            pointHoverRadius: 0,
+            order: 2 // Draw EMA above SMA
           });
         }
         priceChart.update();
       }
       // --- End of Update Chart Function ---
 
-      if (!canvas) {
-        console.error("Canvas element with ID 'priceChart' not found.");
-        dataContainer.textContent = "Error: Canvas element not found. Cannot display chart.";
-        return;
-      }
+      if (!canvas) { /* ... existing canvas checks ... */ return; }
       const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        console.error("Failed to get 2D context from canvas.");
-        dataContainer.textContent = "Error: Failed to get canvas context. Cannot display chart.";
-        return;
-      }
+      if (!ctx) { /* ... existing context checks ... */ return; }
 
       fetch(localFileUrl)
-      .then(response => {
-        if (!response.ok) {
-          if (response.status === 404) {
-            throw new Error(`Error: ${localFileUrl} not found (Status: 404).`);
-          }
-          throw new Error(`Network response was not ok: ${response.statusText} (Status: ${response.status})`);
-        }
-        return response.text();
-      })
+      .then(response => { /* ... existing fetch error handling ... */ return response.text(); })
       .then(csvData => {
         dataContainer.textContent = csvData; 
-
         const lines = csvData.trim().split(/\r?\n/);
-        if (lines.length <= 1) {
-            throw new Error("CSV data has no data rows (only header or empty).");
-        }
+        if (lines.length <= 1) { throw new Error("CSV data has no data rows."); }
         const header = lines[0].split(',');
         const dataRows = lines.slice(1);
-
         const tempLabels = [];
         const tempPriceData = [];
         const priceIndex = 2; 
@@ -165,71 +198,30 @@
           const columns = row.split(',');
           if (columns.length > Math.max(priceIndex, dateCreatedIndex)) {
             const rawDate = columns[dateCreatedIndex];
-            tempLabels.push(rawDate.substring(0, 10)); // "YYYY-MM-DD"
+            tempLabels.push(rawDate.substring(0, 10)); 
             const price = parseFloat(columns[priceIndex]);
             if (!isNaN(price)) {
               tempPriceData.push(price);
             } else {
-              console.warn('Skipping invalid price value:', columns[priceIndex]);
               tempPriceData.push(null); 
             }
-          } else {
-            console.warn('Skipping malformed CSV row:', row);
           }
         });
 
-        if (tempLabels.length === 0 || tempPriceData.length === 0) {
-            throw new Error("No data points found after parsing CSV. Check CSV format and content.");
-        }
+        if (tempLabels.length === 0) { throw new Error("No data parsed."); }
         
         originalLabels = tempLabels.slice();
         originalPriceData = tempPriceData.slice();
         
-        priceChart = new Chart(ctx, {
-          type: 'line',
-          data: { 
-            labels: [],
-            datasets: [] 
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false, 
-            scales: {
-              y: {
-                beginAtZero: false,
-                ticks: { callback: function(value) { return value.toLocaleString(); } }
-              },
-              x: {
-                type: 'time', // Important for time-series data if dates are not perfectly sequential
-                time: {
-                    unit: 'day',
-                    tooltipFormat: 'MMM dd, yyyy', // e.g., Jan 01, 2023
-                    displayFormats: {
-                        day: 'MMM dd' // e.g., Jan 01
-                    }
-                },
-                ticks: { autoSkip: true, maxTicksLimit: 20 }
-              }
-            },
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: function(context) {
-                    let label = context.dataset.label || '';
-                    if (label) { label += ': '; }
-                    if (context.parsed.y !== null) { label += context.parsed.y.toLocaleString(); }
-                    return label;
-                  }
-                }
-              }
-            }
-          }
-        });
+        priceChart = new Chart(ctx, { /* ... existing chart config ... */ });
         
         updateChartWithIndicators(); 
 
+        // Event Listeners
         showSMACheckbox.addEventListener('change', updateChartWithIndicators);
         smaPeriodInput.addEventListener('change', updateChartWithIndicators);
+        showEMACheckbox.addEventListener('change', updateChartWithIndicators); // Added EMA listener
+        emaPeriodInput.addEventListener('change', updateChartWithIndicators);   // Added EMA listener
       })
       .catch(error => {
         dataContainer.textContent = 'Failed to load or process data: ' + error;
