@@ -477,8 +477,9 @@ function refreshInitialViewLists() {
                     priceChart.data.labels = [];
                     priceChart.data.datasets = [];
                     priceChart.update();
+                    calculateAndDisplayPriceStatistics([], []);
                  } else {
-                    initializeChart();
+                    initializeChart(); // This already calls calculateAndDisplayPriceStatistics([], [])
                  }
             });
         showChartView();
@@ -570,6 +571,58 @@ function refreshInitialViewLists() {
         });
     }
 
+function calculateAndDisplayPriceStatistics(labels, prices) {
+    const statsDisplay = document.getElementById('priceStatsDisplay');
+    if (!statsDisplay) {
+        console.error('Error: priceStatsDisplay element not found.');
+        return;
+    }
+
+    if (!prices || prices.length < 1) {
+        statsDisplay.innerHTML = '<p>No price data available for the selected period.</p>';
+        return;
+    }
+
+    const startPrice = prices[0];
+    const currentPrice = prices[prices.length - 1];
+    const highestPrice = Math.max(...prices.filter(p => p !== null));
+    const lowestPrice = Math.min(...prices.filter(p => p !== null));
+
+    function calculatePercentageChange(current, start) {
+        if (start === null || start === 0 || current === null) {
+            return 'N/A';
+        }
+        return (((current - start) / start) * 100).toFixed(1);
+    }
+
+    const currentPricePercentChange = calculatePercentageChange(currentPrice, startPrice);
+    const highestPricePercentChange = calculatePercentageChange(highestPrice, startPrice);
+    const lowestPricePercentChange = calculatePercentageChange(lowestPrice, startPrice);
+
+    function formatPriceStat(value, percentChange) {
+        if (value === null) {
+            return 'N/A';
+        }
+        let priceStr = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ISK';
+        if (percentChange === 'N/A' || prices.length < 2) {
+            return priceStr;
+        }
+        let changePrefix = parseFloat(percentChange) >= 0 ? '+' : '';
+        // Class names for CSS styling based on positive/negative change
+        let changeClass = parseFloat(percentChange) >= 0 ? 'price-change-positive' : 'price-change-negative';
+        return `${priceStr} (<span class="${changeClass}">${changePrefix}${percentChange}%</span>)`;
+    }
+
+    let htmlContent = '<ul>';
+    htmlContent += `<li>Start Price: ${startPrice !== null ? startPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ISK' : 'N/A'}</li>`;
+    htmlContent += `<li>Current Price: ${formatPriceStat(currentPrice, currentPricePercentChange)}</li>`;
+    htmlContent += `<li>Highest Price (Period): ${formatPriceStat(highestPrice, highestPricePercentChange)}</li>`;
+    htmlContent += `<li>Lowest Price (Period): ${formatPriceStat(lowestPrice, lowestPricePercentChange)}</li>`;
+    htmlContent += '</ul>';
+
+    statsDisplay.innerHTML = htmlContent;
+}
+
     if (addSMAButton) {
         addSMAButton.addEventListener('click', function() {
             if (!newSMAPeriodInput) return;
@@ -648,6 +701,7 @@ function refreshInitialViewLists() {
           }
         });
         renderActiveSMAList();
+        calculateAndDisplayPriceStatistics([], []);
     }
 
     function updateChartWithIndicators() {
@@ -716,6 +770,7 @@ function refreshInitialViewLists() {
 
         priceChart.data.datasets = datasets;
         priceChart.update();
+        calculateAndDisplayPriceStatistics(filteredLabels, filteredPrices);
     }
 
     // Initial calls
