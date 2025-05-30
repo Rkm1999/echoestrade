@@ -20,6 +20,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const customEndDateInput = document.getElementById('customEndDate');
     const applyCustomTimeframeButton = document.getElementById('applyCustomTimeframe');
 
+    const initialViewContentDiv = document.getElementById('initial-view-content');
+    const chartViewContentDiv = document.getElementById('chart-view-content');
+    const favoriteItemsListDiv = document.getElementById('favorite-items-list'); // For initial view
+    const recentlyViewedListDiv = document.getElementById('recently-viewed-list'); // For initial view
     const MAX_RECENT_ITEMS = 10;
     let currentItemPath = null;
     let currentItemName = null;
@@ -80,6 +84,138 @@ document.addEventListener('DOMContentLoaded', function() {
     function saveSMAPeriods() {
         localStorage.setItem('activeSMAPeriods', JSON.stringify(activeSMAPeriods));
     }
+
+function showChartView() {
+    if (initialViewContentDiv) initialViewContentDiv.style.display = 'none';
+    if (chartViewContentDiv) chartViewContentDiv.style.display = 'block';
+}
+
+function showInitialView() {
+    if (chartViewContentDiv) chartViewContentDiv.style.display = 'none';
+    if (initialViewContentDiv) initialViewContentDiv.style.display = 'block';
+    refreshInitialViewLists(); // Refresh lists when showing initial view
+}
+
+function getFromLocalStorage(key) {
+    const data = localStorage.getItem(key);
+    try {
+        return data ? JSON.parse(data) : [];
+    } catch (e) {
+        console.error(`Error parsing ${key} from localStorage:`, e);
+        return [];
+    }
+}
+
+function saveToLocalStorage(key, data) {
+    try {
+        localStorage.setItem(key, JSON.stringify(data));
+    } catch (e) {
+        console.error(`Error saving ${key} to localStorage:`, e);
+    }
+}
+
+function loadFavorites() {
+    return getFromLocalStorage('favoriteItems');
+}
+
+function loadRecentlyViewed() {
+    return getFromLocalStorage('recentlyViewedItems');
+}
+
+function isFavorited(itemPath, favorites) { // Changed signature to take itemPath
+    if (!itemPath) return false;
+    return favorites.some(fav => fav.path === itemPath);
+}
+
+function displayItemsForInitialView(items, containerDiv, listName) {
+    if (!containerDiv) {
+        // console.error(`Container div for "${listName}" not found in initial view.`);
+        return;
+    }
+    containerDiv.innerHTML = ''; // Clear previous items
+
+    if (!items || items.length === 0) {
+        containerDiv.innerHTML = `<p>No ${listName.toLowerCase()} items found.</p>`;
+        return;
+    }
+
+    const ul = document.createElement('ul');
+    // Note: Styles for this ul/li should be in style.css, adapted from start_style.css
+    const currentFavorites = loadFavorites();
+
+    items.forEach(item => {
+        if (!item || !item.name || !item.path) {
+            console.warn('Skipping invalid item for initial view display:', item);
+            return;
+        }
+
+        const li = document.createElement('li');
+
+        const itemLinkSpan = document.createElement('span');
+        itemLinkSpan.textContent = item.name;
+        itemLinkSpan.style.cursor = 'pointer';
+        itemLinkSpan.style.textDecoration = 'underline';
+        itemLinkSpan.style.color = '#007bff'; // Example style
+        itemLinkSpan.addEventListener('click', () => {
+            loadItemData(item.path, item.name);
+            // loadItemData will call showChartView
+        });
+        li.appendChild(itemLinkSpan);
+
+        const favButton = document.createElement('button');
+        favButton.classList.add('favorite-toggle-initial'); // Distinct class if needed
+        const isCurrentlyFavorited = isFavorited(item.path, currentFavorites);
+        favButton.textContent = isCurrentlyFavorited ? 'Unfavorite' : 'Favorite';
+        favButton.title = isCurrentlyFavorited ? 'Remove from favorites' : 'Add to favorites';
+        // Add some basic styling for buttons in JS, or ensure CSS covers it
+        favButton.style.marginLeft = '10px';
+        favButton.style.padding = '3px 6px';
+
+        favButton.addEventListener('click', () => {
+            toggleFavoriteOnItem(item); // Pass the full item object
+        });
+        li.appendChild(favButton);
+        ul.appendChild(li);
+    });
+    containerDiv.appendChild(ul);
+}
+
+function toggleFavoriteOnItem(itemToToggle) {
+    if (!itemToToggle || !itemToToggle.path || !itemToToggle.name) {
+        console.error('Cannot toggle favorite for invalid item:', itemToToggle);
+        return;
+    }
+
+    let favorites = loadFavorites();
+    const itemIndex = favorites.findIndex(fav => fav.path === itemToToggle.path);
+
+    if (itemIndex > -1) { // Already favorited, so remove
+        favorites.splice(itemIndex, 1);
+    } else { // Not favorited, so add
+        // Ensure we are adding an object with name and path
+        favorites.push({ name: itemToToggle.name, path: itemToToggle.path });
+    }
+    saveToLocalStorage('favoriteItems', favorites);
+
+    refreshInitialViewLists(); // Refresh lists in the initial view
+
+    // If the toggled item is the one currently shown in chart view, update its button too
+    if (chartViewContentDiv && chartViewContentDiv.style.display !== 'none' && currentItemPath === itemToToggle.path) {
+        updateCurrentItemFavoriteButton();
+    }
+}
+
+function refreshInitialViewLists() {
+    const favorites = loadFavorites();
+    const recentlyViewed = loadRecentlyViewed();
+    // Check if the divs exist before trying to display items - they are part of index.html now
+    if (favoriteItemsListDiv) {
+        displayItemsForInitialView(favorites, favoriteItemsListDiv, 'Favorite');
+    }
+    if (recentlyViewedListDiv) {
+        displayItemsForInitialView(recentlyViewed, recentlyViewedListDiv, 'Recently Viewed');
+    }
+}
 
     function filterDataByTimeframe(labels, prices, timeframe, startDateStr, endDateStr) {
         if (!labels || !prices || labels.length === 0 || prices.length === 0) {
@@ -326,6 +462,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     initializeChart();
                  }
             });
+        showChartView();
     }
 
     function updateCurrentItemFavoriteButton() {
@@ -563,15 +700,29 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Initial calls
-    fetchItemData();
-    initializeChart();
+    fetchItemData(); // For sidebar
+    initializeChart(); // Prepare chart object
+    refreshInitialViewLists(); // Prepare initial view data
 
-    // Initialize active button (btnAll should have 'active' class from HTML)
-    // updateActiveTimeframeButton(btnAll); // Already set in HTML, but good for consistency if HTML changes
+    // URL Parameter Handling (modified)
+    const urlParams = new URLSearchParams(window.location.search);
+    const itemPathFromUrl = urlParams.get('itemPath');
+    const itemNameFromUrl = urlParams.get('itemName');
 
-    if (chartDisplayTitleElement) {
-        chartDisplayTitleElement.textContent = 'Select an Item to View Data';
+    if (itemPathFromUrl && itemNameFromUrl) {
+        console.log(`Loading item from URL: ${itemNameFromUrl} (${itemPathFromUrl})`);
+        loadItemData(itemPathFromUrl, itemNameFromUrl); // This will also call showChartView
+        if (chartDisplayTitleElement && itemNameFromUrl) { // Redundant if loadItemData sets it, but safe
+             chartDisplayTitleElement.textContent = `${itemNameFromUrl} Price Over Time`;
+        }
+    } else {
+        showInitialView();
+        const favToggleBtn = document.getElementById('currentItemFavoriteToggle');
+        if (favToggleBtn) favToggleBtn.style.display = 'none'; // Hide chart's fav button
     }
+    // The event listener for currentItemFavoriteToggleBtn should remain as is.
+    // The call to updateActiveTimeframeButton(btnAll) can remain.
+    // The initial text for chartDisplayTitleElement when no item is selected from sidebar can also remain.
 
     // --- Timeframe Button Event Listeners ---
     const predefinedTimeframeButtons = [
@@ -717,43 +868,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('No item is currently loaded.');
                 return;
             }
-
-            let favorites = localStorage.getItem('favoriteItems');
-            try {
-                favorites = favorites ? JSON.parse(favorites) : [];
-            } catch (e) {
-                console.error('Error parsing favoriteItems from localStorage:', e);
-                favorites = [];
-            }
-
-            const itemIndex = favorites.findIndex(fav => fav.path === currentItemPath);
-            const itemToToggle = { name: currentItemName, path: currentItemPath };
-
-            if (itemIndex > -1) { // Already favorited, so remove
-                favorites.splice(itemIndex, 1);
-            } else { // Not favorited, so add
-                favorites.push(itemToToggle);
-            }
-            localStorage.setItem('favoriteItems', JSON.stringify(favorites));
-            updateCurrentItemFavoriteButton(); // Update button text/state
+            // Call the centralized toggle function
+            toggleFavoriteOnItem({ name: currentItemName, path: currentItemPath });
+            // toggleFavoriteOnItem will handle localStorage, refreshing initial lists,
+            // and updating this button if the current item matches.
         });
     }
-    // Check for URL parameters to load an item
-    const urlParams = new URLSearchParams(window.location.search);
-    const itemPathFromUrl = urlParams.get('itemPath');
-    const itemNameFromUrl = urlParams.get('itemName');
-
-    if (itemPathFromUrl && itemNameFromUrl) {
-        // Need to ensure sidebar is built or at least data is fetched before trying to select.
-        // For now, just load the data. Highlighting can be a follow-up.
-        console.log(`Loading item from URL: ${itemNameFromUrl} (${itemPathFromUrl})`);
-        loadItemData(itemPathFromUrl, itemNameFromUrl);
-        // Attempt to update title directly, as loadItemData might be async
-        if (chartDisplayTitleElement) {
-             chartDisplayTitleElement.textContent = `${itemNameFromUrl} Price Over Time`;
-        }
-    } else {
-        // Default behavior if no URL params: hide the favorite button until an item is loaded
-        updateCurrentItemFavoriteButton();
-    }
+    // Note: The URL parameter handling was moved up before this event listener block in the new structure.
+    // Ensure this favorite button listener is correctly placed *after* the DOMContentLoaded initial setup.
 });

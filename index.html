@@ -49,7 +49,6 @@
 </head>
 <body>
 <div id="sidebar">
-  <div style="margin-bottom: 15px;"><a href="start.html" style="font-size: 1.1em; text-decoration: none; color: #007bff;">&laquo; Home</a></div>
   <h2>Items</h2>
   <input type="text" id="sidebarSearch" placeholder="Search items...">
   <div id="item-selector-container">
@@ -58,38 +57,58 @@
   </div>
 </div>
 <div id="main-content">
-  <h1 id="chartDisplayTitle">PLEX Price Over Time</h1>
-  <button id="currentItemFavoriteToggle" style="margin-left: 10px; padding: 5px 10px; font-size: 0.9em; cursor: pointer;">Add to Favorites</button>
-  <div id="controls">
-    <h2>Indicators</h2>
-    <div>
-      <label for="newSMAPeriod">New SMA Period (days):</label>
-      <input type="number" id="newSMAPeriod" value="14" min="2" style="width: 60px;">
-      <button id="addSMAButton" type="button">Add SMA</button>
-    </div>
-    <div id="activeSMAList" style="margin-top: 10px;">
-      <!-- Active SMAs will be listed here by JavaScript -->
-    </div>
-    <!-- Placeholder for future Momentum controls -->
-    <div id="timeframeControls" style="margin-top: 10px;">
-      <label>Timeframe:</label>
-      <button id="btn30D" data-timeframe="30D">30D</button>
-      <button id="btn3M" data-timeframe="3M">3M</button>
-      <button id="btn6M" data-timeframe="6M">6M</button>
-      <button id="btn1Y" data-timeframe="1Y">1Y</button>
-      <button id="btnAll" data-timeframe="All" class="active">All Time</button>
-      <button id="btnCustomTimeframe" data-timeframe="Custom">Custom</button>
-      <div id="customDateControls" style="display: none; margin-top: 5px;">
-        <label for="customStartDate">Start:</label>
-        <input type="date" id="customStartDate" style="width: 130px;">
-        <label for="customEndDate" style="margin-left: 5px;">End:</label>
-        <input type="date" id="customEndDate" style="width: 130px;">
-        <button id="applyCustomTimeframe" style="margin-left: 5px;">Apply</button>
+  <div id="initial-view-content">
+    <h2 style="text-align: center; margin-top: 20px;">Welcome to EvE Echoes Market History</h2>
+    <p style="text-align: center; margin-bottom: 30px;">Select an item from the sidebar, your favorites, or recently viewed items to see its market chart.</p>
+    <section id="favorites-section" style="margin-bottom: 30px;">
+        <h3>Favorite Items</h3>
+        <div id="favorite-items-list">
+            <!-- Favorite items will be populated here by JavaScript -->
+            <p>Loading favorites...</p>
+        </div>
+    </section>
+    <section id="recent-section">
+        <h3>Recently Viewed Items</h3>
+        <div id="recently-viewed-list">
+            <!-- Recently viewed items will be populated here by JavaScript -->
+            <p>Loading recently viewed...</p>
+        </div>
+    </section>
+  </div>
+  <div id="chart-view-content" style="display: none;">
+    <h1 id="chartDisplayTitle">PLEX Price Over Time</h1>
+    <button id="currentItemFavoriteToggle" style="margin-left: 10px; padding: 5px 10px; font-size: 0.9em; cursor: pointer;">Add to Favorites</button>
+    <div id="controls">
+      <h2>Indicators</h2>
+      <div>
+        <label for="newSMAPeriod">New SMA Period (days):</label>
+        <input type="number" id="newSMAPeriod" value="14" min="2" style="width: 60px;">
+        <button id="addSMAButton" type="button">Add SMA</button>
+      </div>
+      <div id="activeSMAList" style="margin-top: 10px;">
+        <!-- Active SMAs will be listed here by JavaScript -->
+      </div>
+      <!-- Placeholder for future Momentum controls -->
+      <div id="timeframeControls" style="margin-top: 10px;">
+        <label>Timeframe:</label>
+        <button id="btn30D" data-timeframe="30D">30D</button>
+        <button id="btn3M" data-timeframe="3M">3M</button>
+        <button id="btn6M" data-timeframe="6M">6M</button>
+        <button id="btn1Y" data-timeframe="1Y">1Y</button>
+        <button id="btnAll" data-timeframe="All" class="active">All Time</button>
+        <button id="btnCustomTimeframe" data-timeframe="Custom">Custom</button>
+        <div id="customDateControls" style="display: none; margin-top: 5px;">
+          <label for="customStartDate">Start:</label>
+          <input type="date" id="customStartDate" style="width: 130px;">
+          <label for="customEndDate" style="margin-left: 5px;">End:</label>
+          <input type="date" id="customEndDate" style="width: 130px;">
+          <button id="applyCustomTimeframe" style="margin-left: 5px;">Apply</button>
+        </div>
       </div>
     </div>
+    <canvas id="priceChart"></canvas>
   </div>
-  <canvas id="priceChart"></canvas>
-</div> <!-- This is the new closing div for main-content -->
+</div>
   <!-- Removed inline script -->
 <script src="scripts.js" defer></script>
 </body>
