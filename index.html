@@ -2,31 +2,142 @@
 <html>
 <head>
   <title>Data Display</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    #priceChart { max-width: 800px; max-height: 400px; margin-bottom: 20px; }
+    #data-container { white-space: pre-wrap; word-wrap: break-word; background-color: #f4f4f4; padding: 10px; border: 1px solid #ccc; }
+  </style>
 </head>
 <body>
+  <h1>PLEX Price Over Time</h1>
+  <canvas id="priceChart"></canvas>
+  <h2>Raw CSV Data</h2>
   <pre id="data-container">Loading data...</pre>
+
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const dataContainer = document.getElementById('data-container');
-      const localFileUrl = './plex_data.csv'; // Path to the local CSV file
+      const canvas = document.getElementById('priceChart');
+      const localFileUrl = './plex_data.csv';
+
+      if (!canvas) {
+        console.error("Canvas element with ID 'priceChart' not found.");
+        dataContainer.textContent = "Error: Canvas element not found. Cannot display chart.";
+        return;
+      }
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        console.error("Failed to get 2D context from canvas.");
+        dataContainer.textContent = "Error: Failed to get canvas context. Cannot display chart.";
+        return;
+      }
 
       fetch(localFileUrl)
       .then(response => {
         if (!response.ok) {
-          // Check for common issues like file not found (404)
           if (response.status === 404) {
-            throw new Error('Error: plex_data.csv not found. Status: ' + response.status);
+            throw new Error(`Error: ${localFileUrl} not found (Status: 404).`);
           }
-          throw new Error('Network response was not ok: ' + response.statusText + ' (Status: ' + response.status + ')');
+          throw new Error(`Network response was not ok: ${response.statusText} (Status: ${response.status})`);
         }
-        return response.text(); // Get the response body as text
+        return response.text();
       })
       .then(csvData => {
-        dataContainer.textContent = csvData; // Display CSV data in the <pre> tag
+        // Keep displaying raw CSV data
+        dataContainer.textContent = csvData;
+
+        // Parse CSV data for the chart
+        const lines = csvData.trim().split('\\n');
+        const header = lines[0].split(',');
+        const dataRows = lines.slice(1);
+
+        const labels = [];
+        const dataPoints = [];
+
+        // Assuming 'price' is the 3rd column (index 2) and 'date_created' is the 6th column (index 5)
+        // For robustness, it's better to find indices by header names, but problem statement allows assumption.
+        const priceIndex = 2; // 'price'
+        const dateCreatedIndex = 5; // 'date_created'
+
+        dataRows.forEach(row => {
+          const columns = row.split(',');
+          if (columns.length > Math.max(priceIndex, dateCreatedIndex)) {
+            const rawDate = columns[dateCreatedIndex];
+            // Extract YYYY-MM-DD from the timestamp
+            labels.push(rawDate.substring(0, 10)); 
+            
+            const price = parseFloat(columns[priceIndex]);
+            if (!isNaN(price)) {
+              dataPoints.push(price);
+            } else {
+              console.warn('Skipping invalid price value:', columns[priceIndex]);
+              // Potentially push null or handle as per requirements if gaps are needed in chart
+              // For now, we just skip, which might misalign data if not all rows have valid prices
+            }
+          } else {
+            console.warn('Skipping malformed CSV row:', row);
+          }
+        });
+
+        if (labels.length === 0 || dataPoints.length === 0) {
+            throw new Error("No data points found after parsing CSV. Check CSV format and content.");
+        }
+        
+        // Create the chart
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Item Price Over Time',
+              data: dataPoints,
+              borderColor: 'rgb(75, 192, 192)',
+              tension: 0.1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true, // Set to true or false based on desired behavior with max-width/height
+            scales: {
+              y: {
+                beginAtZero: false,
+                ticks: {
+                    callback: function(value, index, values) {
+                        return value.toLocaleString(); // Format Y-axis numbers
+                    }
+                }
+              },
+              x: {
+                ticks: {
+                    autoSkip: true,
+                    maxTicksLimit: 20 // Adjust based on how many labels you want to see
+                }
+              }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += context.parsed.y.toLocaleString();
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+          }
+        });
+
       })
       .catch(error => {
-        dataContainer.textContent = 'Failed to load data: ' + error;
-        console.error('There was a problem with the fetch operation:', error);
+        dataContainer.textContent = 'Failed to load or process data: ' + error;
+        console.error('There was a problem with the fetch or chart operation:', error);
       });
     });
   </script>
