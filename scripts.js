@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Global Variables
     const itemSelectorContainer = document.getElementById('item-selector-container');
     const chartCanvas = document.getElementById('priceChart');
+    const priceStatsDisplay = document.getElementById('priceStatsDisplay');
     const newSMAPeriodInput = document.getElementById('newSMAPeriod');
     const addSMAButton = document.getElementById('addSMAButton');
     const activeSMAListDiv = document.getElementById('activeSMAList');
@@ -282,6 +283,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     } else {
                          initializeChart();
                     }
+                     if (priceStatsDisplay) { priceStatsDisplay.innerHTML = '<p>Price statistics not available.</p>'; }
                 } else {
                     updateChartWithIndicators();
                 }
@@ -300,6 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
                  } else {
                     initializeChart();
                  }
+                 if (priceStatsDisplay) { priceStatsDisplay.innerHTML = '<p>Price statistics not available.</p>'; }
             });
     }
 
@@ -515,6 +518,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
         priceChart.data.datasets = datasets;
         priceChart.update();
+
+        // Calculate and display price statistics
+        if (priceStatsDisplay) {
+            const startPrice = filteredPrices.length > 0 ? filteredPrices[0] : null;
+            const currentPrice = filteredPrices.length > 0 ? filteredPrices[filteredPrices.length - 1] : null;
+            const highestPrice = filteredPrices.length > 0 ? Math.max(...filteredPrices.filter(p => p !== null)) : null;
+            const lowestPrice = filteredPrices.length > 0 ? Math.min(...filteredPrices.filter(p => p !== null)) : null;
+
+            let statsHTML = '<p>No data available for the selected period.</p>';
+
+            if (startPrice !== null && filteredPrices.length > 0) {
+                const currentPricePercentChange = startPrice !== 0 ? ((currentPrice - startPrice) / startPrice) * 100 : null;
+                const highestPricePercentChange = startPrice !== 0 ? ((highestPrice - startPrice) / startPrice) * 100 : null;
+                const lowestPricePercentChange = startPrice !== 0 ? ((lowestPrice - startPrice) / startPrice) * 100 : null;
+
+                function formatPrice(value) { return value !== null ? value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 'N/A'; }
+                function formatPercent(value) {
+                    if (value === null || isNaN(value)) {
+                        return 'N/A';
+                    }
+                    const numValue = parseFloat(value); // Ensure it's a number
+                    let color = 'black'; // Default color
+                    if (numValue > 0) {
+                        color = 'green';
+                    } else if (numValue < 0) {
+                        color = 'red';
+                    }
+                    return `<span style="color: ${color};">${numValue.toFixed(2)}%</span>`;
+                }
+
+                statsHTML = `
+                    <p><strong>Current Price:</strong> ${formatPrice(currentPrice)} (${formatPercent(currentPricePercentChange)})</p>
+                    <p><strong>Highest Price (Period):</strong> ${formatPrice(highestPrice)} (${formatPercent(highestPricePercentChange)})</p>
+                    <p><strong>Lowest Price (Period):</strong> ${formatPrice(lowestPrice)} (${formatPercent(lowestPricePercentChange)})</p>
+                `;
+            }
+            priceStatsDisplay.innerHTML = statsHTML;
+        }
     }
 
     // Initial calls
