@@ -48,7 +48,7 @@
         dataContainer.textContent = csvData;
 
         // Parse CSV data for the chart
-        const lines = csvData.trim().split('\\n');
+        const lines = csvData.trim().split(/\r?\n/);
         const header = lines[0].split(',');
         const dataRows = lines.slice(1);
 
