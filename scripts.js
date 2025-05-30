@@ -534,10 +534,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 const lowestPricePercentChange = startPrice !== 0 ? ((lowestPrice - startPrice) / startPrice) * 100 : null;
 
                 function formatPrice(value) { return value !== null ? value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 'N/A'; }
-                function formatPercent(value) { return value !== null ? value.toFixed(2) + '%' : 'N/A'; }
+                function formatPercent(value) {
+                    if (value === null || isNaN(value)) {
+                        return 'N/A';
+                    }
+                    const numValue = parseFloat(value); // Ensure it's a number
+                    let color = 'black'; // Default color
+                    if (numValue > 0) {
+                        color = 'green';
+                    } else if (numValue < 0) {
+                        color = 'red';
+                    }
+                    return `<span style="color: ${color};">${numValue.toFixed(2)}%</span>`;
+                }
 
                 statsHTML = `
-                    <p><strong>Start Price (Period):</strong> ${formatPrice(startPrice)}</p>
                     <p><strong>Current Price:</strong> ${formatPrice(currentPrice)} (${formatPercent(currentPricePercentChange)})</p>
                     <p><strong>Highest Price (Period):</strong> ${formatPrice(highestPrice)} (${formatPercent(highestPricePercentChange)})</p>
                     <p><strong>Lowest Price (Period):</strong> ${formatPrice(lowestPrice)} (${formatPercent(lowestPricePercentChange)})</p>
