@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Global Variables
     const itemSelectorContainer = document.getElementById('item-selector-container');
-    const dataContainer = document.getElementById('data-container');
     const chartCanvas = document.getElementById('priceChart');
     const newSMAPeriodInput = document.getElementById('newSMAPeriod');
     const addSMAButton = document.getElementById('addSMAButton');
@@ -153,9 +152,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.text();
             })
             .then(csvData => {
-                if (dataContainer) {
-                    dataContainer.textContent = csvData;
-                }
                 const lines = csvData.trim().split(/\r?\n/);
                 if (lines.length <= 1) {
                     console.warn("CSV data has no data rows for", csvPath);
@@ -202,9 +198,6 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error('Failed to load or process item data:', error);
-                if (dataContainer) {
-                    dataContainer.textContent = 'Failed to load item data: ' + error;
-                }
                 if (chartDisplayTitleElement) {
                     chartDisplayTitleElement.textContent = 'Failed to Load Item Data';
                 }
