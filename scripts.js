@@ -347,7 +347,11 @@ function refreshInitialViewLists() {
 
                 const childListContainer = document.createElement('div');
                 childListContainer.className = 'child-list-container';
-                childListContainer.style.display = 'none';
+                childListContainer.style.display = 'none'; // Keep it initially collapsed
+
+                // Build the subtree immediately
+                buildSidebarNavigation(data[key], childListContainer, level + 1);
+
                 listItem.appendChild(childListContainer);
 
                 textElement.addEventListener('click', function(event) {
@@ -355,9 +359,6 @@ function refreshInitialViewLists() {
                     if (isCurrentlyCollapsed) {
                         childListContainer.style.display = 'block';
                         textElement.textContent = '▼ ' + key;
-                        if (childListContainer.innerHTML.trim() === '') {
-                            buildSidebarNavigation(data[key], childListContainer, level + 1);
-                        }
                     } else {
                         childListContainer.style.display = 'none';
                         textElement.textContent = '► ' + key;
