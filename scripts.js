@@ -20,6 +20,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const customEndDateInput = document.getElementById('customEndDate');
     const applyCustomTimeframeButton = document.getElementById('applyCustomTimeframe');
 
+    const MAX_RECENT_ITEMS = 10;
+    let currentItemPath = null;
+    let currentItemName = null;
     let priceChart = null;
     let activeTimeframe = "All"; // "30D", "3M", "6M", "1Y", "All", "Custom"
     let originalPriceData = [];
@@ -227,6 +230,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     function loadItemData(csvPath, itemName) {
+        currentItemPath = csvPath;
+        currentItemName = itemName;
         console.log("Loading data for:", csvPath, "Item Name:", itemName);
 
         // Reset timeframe to "All" when new item is loaded
@@ -285,6 +290,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     updateChartWithIndicators();
                 }
+                // Add to Recently Viewed
+                if (itemName && csvPath) {
+                    let recentlyViewed = localStorage.getItem('recentlyViewedItems');
+                    try {
+                        recentlyViewed = recentlyViewed ? JSON.parse(recentlyViewed) : [];
+                    } catch (e) {
+                        console.error('Error parsing recentlyViewedItems from localStorage:', e);
+                        recentlyViewed = [];
+                    }
+
+                    const newItem = { name: itemName, path: csvPath };
+                    // Remove if already exists to move to top
+                    recentlyViewed = recentlyViewed.filter(item => item.path !== csvPath);
+                    recentlyViewed.unshift(newItem); // Add to the beginning
+                    if (recentlyViewed.length > MAX_RECENT_ITEMS) {
+                        recentlyViewed.length = MAX_RECENT_ITEMS; // Trim to max size
+                    }
+                    localStorage.setItem('recentlyViewedItems', JSON.stringify(recentlyViewed));
+                }
+                updateCurrentItemFavoriteButton();
             })
             .catch(error => {
                 console.error('Failed to load or process item data:', error);
@@ -301,6 +326,26 @@ document.addEventListener('DOMContentLoaded', function() {
                     initializeChart();
                  }
             });
+    }
+
+    function updateCurrentItemFavoriteButton() {
+        const favButton = document.getElementById('currentItemFavoriteToggle');
+        if (!favButton || !currentItemPath || !currentItemName) {
+            if (favButton) favButton.style.display = 'none'; // Hide if no item loaded
+            return;
+        }
+        favButton.style.display = 'inline-block'; // Show if item loaded
+
+        let favorites = localStorage.getItem('favoriteItems');
+        try {
+            favorites = favorites ? JSON.parse(favorites) : [];
+        } catch (e) {
+            favorites = [];
+        }
+
+        const isFav = favorites.some(fav => fav.path === currentItemPath);
+        favButton.textContent = isFav ? 'Remove from Favorites' : 'Add to Favorites';
+        favButton.title = isFav ? `Remove ${currentItemName} from favorites` : `Add ${currentItemName} to favorites`;
     }
 
     function calculateSMA(dates, prices, periodDays) {
@@ -664,4 +709,51 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     console.log("scripts.js loaded and DOMContentLoaded event fired.");
+
+    const currentItemFavoriteToggleBtn = document.getElementById('currentItemFavoriteToggle');
+    if (currentItemFavoriteToggleBtn) {
+        currentItemFavoriteToggleBtn.addEventListener('click', () => {
+            if (!currentItemPath || !currentItemName) {
+                alert('No item is currently loaded.');
+                return;
+            }
+
+            let favorites = localStorage.getItem('favoriteItems');
+            try {
+                favorites = favorites ? JSON.parse(favorites) : [];
+            } catch (e) {
+                console.error('Error parsing favoriteItems from localStorage:', e);
+                favorites = [];
+            }
+
+            const itemIndex = favorites.findIndex(fav => fav.path === currentItemPath);
+            const itemToToggle = { name: currentItemName, path: currentItemPath };
+
+            if (itemIndex > -1) { // Already favorited, so remove
+                favorites.splice(itemIndex, 1);
+            } else { // Not favorited, so add
+                favorites.push(itemToToggle);
+            }
+            localStorage.setItem('favoriteItems', JSON.stringify(favorites));
+            updateCurrentItemFavoriteButton(); // Update button text/state
+        });
+    }
+    // Check for URL parameters to load an item
+    const urlParams = new URLSearchParams(window.location.search);
+    const itemPathFromUrl = urlParams.get('itemPath');
+    const itemNameFromUrl = urlParams.get('itemName');
+
+    if (itemPathFromUrl && itemNameFromUrl) {
+        // Need to ensure sidebar is built or at least data is fetched before trying to select.
+        // For now, just load the data. Highlighting can be a follow-up.
+        console.log(`Loading item from URL: ${itemNameFromUrl} (${itemPathFromUrl})`);
+        loadItemData(itemPathFromUrl, itemNameFromUrl);
+        // Attempt to update title directly, as loadItemData might be async
+        if (chartDisplayTitleElement) {
+             chartDisplayTitleElement.textContent = `${itemNameFromUrl} Price Over Time`;
+        }
+    } else {
+        // Default behavior if no URL params: hide the favorite button until an item is loaded
+        updateCurrentItemFavoriteButton();
+    }
 });

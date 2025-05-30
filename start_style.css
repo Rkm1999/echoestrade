@@ -1,0 +1,121 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+header nav a {
+    color: #fff;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    background-color: #555;
+    transition: background-color 0.3s ease;
+}
+
+header nav a:hover {
+    background-color: #777;
+}
+
+main {
+    padding: 1rem;
+    max-width: 900px;
+    margin: 20px auto;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+section {
+    margin-bottom: 2rem;
+}
+
+section h2 {
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+#favorite-items-list ul,
+#recently-viewed-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+#favorite-items-list li,
+#recently-viewed-list li {
+    padding: 0.75rem;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#favorite-items-list li:last-child,
+#recently-viewed-list li:last-child {
+    border-bottom: none;
+}
+
+#favorite-items-list a,
+#recently-viewed-list a {
+    text-decoration: none;
+    color: #007bff;
+    transition: color 0.3s ease;
+}
+
+#favorite-items-list a:hover,
+#recently-viewed-list a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+.favorite-toggle {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.9rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #f0f0f0;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.favorite-toggle:hover {
+    background-color: #e0e0e0;
+}
+
+/* Example: Style for when an item IS favorited, if button text changes to 'Unfavorite' */
+/* You might need to adjust this if you use icons or different text */
+.favorite-toggle[title="Remove from favorites"] { /* Assuming title changes */
+    background-color: #ffc107; /* A yellow/amber color for favorited */
+    color: #333;
+    border-color: #f0ad4e;
+}
+
+.favorite-toggle[title="Remove from favorites"]:hover {
+    background-color: #e0a800;
+}
+
+
+footer {
+    text-align: center;
+    padding: 1rem 0;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    color: #777;
+}
