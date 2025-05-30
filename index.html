@@ -64,14 +64,12 @@
     <section id="favorites-section" style="margin-bottom: 30px;">
         <h3>Favorite Items</h3>
         <div id="favorite-items-list">
-            <!-- Favorite items will be populated here by JavaScript -->
             <p>Loading favorites...</p>
         </div>
     </section>
     <section id="recent-section">
         <h3>Recently Viewed Items</h3>
         <div id="recently-viewed-list">
-            <!-- Recently viewed items will be populated here by JavaScript -->
             <p>Loading recently viewed...</p>
         </div>
     </section>
@@ -79,6 +77,10 @@
   <div id="chart-view-content" style="display: none;">
     <h1 id="chartDisplayTitle">PLEX Price Over Time</h1>
     <button id="currentItemFavoriteToggle" style="margin-left: 10px; padding: 5px 10px; font-size: 0.9em; cursor: pointer;">Add to Favorites</button>
+    <div id="priceStatsDisplay" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; background-color: #f9f9f9;">
+        <!-- Content for priceStatsDisplay, if any was specified in the conflicting main branch version, should be preserved here.
+             If it was just an empty div, that's fine. Assume it's empty for now if no prior content was specified. -->
+    </div>
     <div id="controls">
       <h2>Indicators</h2>
       <div>
@@ -89,7 +91,6 @@
       <div id="activeSMAList" style="margin-top: 10px;">
         <!-- Active SMAs will be listed here by JavaScript -->
       </div>
-      <!-- Placeholder for future Momentum controls -->
       <div id="timeframeControls" style="margin-top: 10px;">
         <label>Timeframe:</label>
         <button id="btn30D" data-timeframe="30D">30D</button>
