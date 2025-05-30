@@ -8,7 +8,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const sidebarSearchInput = document.getElementById('sidebarSearch');
     const chartDisplayTitleElement = document.getElementById('chartDisplayTitle');
 
+    // Timeframe UI Elements
+    const btn30D = document.getElementById('btn30D');
+    const btn3M = document.getElementById('btn3M');
+    const btn6M = document.getElementById('btn6M');
+    const btn1Y = document.getElementById('btn1Y');
+    const btnAll = document.getElementById('btnAll');
+    const btnCustomTimeframe = document.getElementById('btnCustomTimeframe');
+    const customDateControls = document.getElementById('customDateControls');
+    const customStartDateInput = document.getElementById('customStartDate');
+    const customEndDateInput = document.getElementById('customEndDate');
+    const applyCustomTimeframeButton = document.getElementById('applyCustomTimeframe');
+
     let priceChart = null;
+    let activeTimeframe = "All"; // "30D", "3M", "6M", "1Y", "All", "Custom"
     let originalPriceData = [];
     let originalLabels = [];
     let activeSMAPeriods = [7]; // Initialize with a default array *first*.
@@ -63,6 +76,64 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function saveSMAPeriods() {
         localStorage.setItem('activeSMAPeriods', JSON.stringify(activeSMAPeriods));
+    }
+
+    function filterDataByTimeframe(labels, prices, timeframe, startDateStr, endDateStr) {
+        if (!labels || !prices || labels.length === 0 || prices.length === 0) {
+            return { filteredLabels: [], filteredPrices: [] };
+        }
+
+        if (timeframe === "All") {
+            return { filteredLabels: labels.slice(), filteredPrices: prices.slice() };
+        }
+
+        const filteredLabels = [];
+        const filteredPrices = [];
+
+        // Ensure dates are sorted (originalLabels are assumed to be sorted)
+        // Convert latest date string to Date object for calculation
+        const latestDataDate = new Date(labels[labels.length - 1] + "T00:00:00Z"); // Use Z for UTC to be safe with date-only strings
+
+        let startDate;
+        let endDate = latestDataDate; // Default end date is the latest available date
+
+        if (timeframe === "Custom") {
+            if (!startDateStr || !endDateStr) { // Should be validated before calling
+                return { filteredLabels: labels.slice(), filteredPrices: prices.slice() }; // Or handle error
+            }
+            startDate = new Date(startDateStr + "T00:00:00Z");
+            endDate = new Date(endDateStr + "T23:59:59Z"); // Inclusive end date
+        } else {
+            startDate = new Date(latestDataDate);
+            switch (timeframe) {
+                case "30D":
+                    startDate.setDate(startDate.getDate() - 30);
+                    break;
+                case "3M":
+                    startDate.setMonth(startDate.getMonth() - 3);
+                    break;
+                case "6M":
+                    startDate.setMonth(startDate.getMonth() - 6);
+                    break;
+                case "1Y":
+                    startDate.setFullYear(startDate.getFullYear() - 1);
+                    break;
+                default: // Should not happen if logic is correct
+                    return { filteredLabels: labels.slice(), filteredPrices: prices.slice() };
+            }
+        }
+        // Normalize startDate to the beginning of its day for comparison
+        startDate.setHours(0, 0, 0, 0);
+
+
+        for (let i = 0; i < labels.length; i++) {
+            const currentDate = new Date(labels[i] + "T00:00:00Z"); // Use Z for UTC
+            if (currentDate >= startDate && currentDate <= endDate) {
+                filteredLabels.push(labels[i]);
+                filteredPrices.push(prices[i]);
+            }
+        }
+        return { filteredLabels, filteredPrices };
     }
 
     function fetchItemData() {
@@ -141,9 +212,28 @@ document.addEventListener('DOMContentLoaded', function() {
         parentElement.appendChild(ul);
     }
 
+    function updateActiveTimeframeButton(selectedButton) {
+        const timeframeButtons = [btn30D, btn3M, btn6M, btn1Y, btnAll, btnCustomTimeframe];
+        timeframeButtons.forEach(button => {
+            if (button) { // Ensure button exists
+                if (button === selectedButton) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            }
+        });
+    }
+
 
     function loadItemData(csvPath, itemName) {
         console.log("Loading data for:", csvPath, "Item Name:", itemName);
+
+        // Reset timeframe to "All" when new item is loaded
+        activeTimeframe = "All";
+        if (customDateControls) customDateControls.style.display = 'none';
+        updateActiveTimeframeButton(btnAll);
+
         fetch(csvPath)
             .then(response => {
                 if (!response.ok) {
@@ -220,14 +310,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const smaValues = new Array(prices.length).fill(null);
         for (let i = 0; i < dates.length; i++) {
           const currentDateStr = dates[i];
-          const currentDate = new Date(currentDateStr + "T00:00:00");
+          // Using 'Z' to ensure UTC parsing, consistent with filterDataByTimeframe
+          const currentDate = new Date(currentDateStr + "T00:00:00Z");
           const startDate = new Date(currentDate);
           startDate.setDate(currentDate.getDate() - (periodDays - 1));
           let sum = 0;
           let count = 0;
           for (let j = i; j >= 0; j--) {
             const loopDateStr = dates[j];
-            const loopDate = new Date(loopDateStr + "T00:00:00");
+            // Using 'Z' to ensure UTC parsing
+            const loopDate = new Date(loopDateStr + "T00:00:00Z");
             if (loopDate >= startDate && loopDate <= currentDate) {
               if (prices[j] !== null && !isNaN(prices[j])) {
                 sum += prices[j];
@@ -368,13 +460,25 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!priceChart) return;
         }
 
-        priceChart.data.labels = originalLabels.slice();
+        // Get custom dates if 'Custom' is active, otherwise they can be null/undefined
+        const customStart = (activeTimeframe === 'Custom' && customStartDateInput) ? customStartDateInput.value : null;
+        const customEnd = (activeTimeframe === 'Custom' && customEndDateInput) ? customEndDateInput.value : null;
+
+        const { filteredLabels, filteredPrices } = filterDataByTimeframe(
+            originalLabels,
+            originalPriceData,
+            activeTimeframe,
+            customStart,
+            customEnd
+        );
+
+        priceChart.data.labels = filteredLabels; // Use filteredLabels
         const datasets = [];
 
-        if (originalPriceData.length > 0) {
+        if (filteredPrices.length > 0) {
             datasets.push({
               label: 'Item Price',
-              data: originalPriceData.slice(),
+              data: filteredPrices, // Use filteredPrices
               borderColor: 'rgb(0, 0, 0)',
               backgroundColor: 'rgba(0, 0, 0, 0.1)',
               tension: 0.1,
@@ -385,7 +489,8 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             activeSMAPeriods.forEach((period, index) => {
-                const smaData = calculateSMA(originalLabels, originalPriceData, period);
+                // Pass filteredLabels and filteredPrices to calculateSMA
+                const smaData = calculateSMA(filteredLabels, filteredPrices, period);
                 const color = smaColors[index % smaColors.length];
 
                 datasets.push({
@@ -416,8 +521,61 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchItemData();
     initializeChart();
 
+    // Initialize active button (btnAll should have 'active' class from HTML)
+    // updateActiveTimeframeButton(btnAll); // Already set in HTML, but good for consistency if HTML changes
+
     if (chartDisplayTitleElement) {
         chartDisplayTitleElement.textContent = 'Select an Item to View Data';
+    }
+
+    // --- Timeframe Button Event Listeners ---
+    const predefinedTimeframeButtons = [
+        { el: btn30D, timeframe: "30D" },
+        { el: btn3M, timeframe: "3M" },
+        { el: btn6M, timeframe: "6M" },
+        { el: btn1Y, timeframe: "1Y" },
+        { el: btnAll, timeframe: "All" }
+    ];
+
+    predefinedTimeframeButtons.forEach(item => {
+        if (item.el) {
+            item.el.addEventListener('click', function() {
+                activeTimeframe = item.timeframe;
+                updateActiveTimeframeButton(item.el);
+                if (customDateControls) customDateControls.style.display = 'none';
+                updateChartWithIndicators();
+                console.log("Active timeframe set to: " + activeTimeframe);
+            });
+        }
+    });
+
+    if (btnCustomTimeframe) {
+        btnCustomTimeframe.addEventListener('click', function() {
+            activeTimeframe = "Custom";
+            updateActiveTimeframeButton(btnCustomTimeframe);
+            if (customDateControls) customDateControls.style.display = 'block';
+            // Don't update chart until 'Apply' is clicked for custom dates
+            console.log("Active timeframe set to: Custom. Custom controls shown.");
+        });
+    }
+
+    if (applyCustomTimeframeButton) {
+        applyCustomTimeframeButton.addEventListener('click', function() {
+            const startDate = customStartDateInput ? customStartDateInput.value : null;
+            const endDate = customEndDateInput ? customEndDateInput.value : null;
+
+            if (!startDate || !endDate) {
+                alert("Please select both a start and end date for the custom timeframe.");
+                return;
+            }
+            if (new Date(startDate) > new Date(endDate)) {
+                alert("Start date cannot be after end date.");
+                return;
+            }
+            activeTimeframe = "Custom"; // Should already be set if custom controls are visible
+            updateChartWithIndicators();
+            console.log(`Custom timeframe applied: ${startDate} to ${endDate}`);
+        });
     }
 
     function recursiveFilter(ulElement, term) {
