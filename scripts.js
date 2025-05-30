@@ -86,14 +86,28 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 function showChartView() {
-    if (initialViewContentDiv) initialViewContentDiv.style.display = 'none';
-    if (chartViewContentDiv) chartViewContentDiv.style.display = 'block';
+    const initialView = document.getElementById('initial-view-content'); // Re-selected
+    const chartView = document.getElementById('chart-view-content');   // Re-selected
+    // Optional: Add similar console logs here for chartView if needed for further debugging
+    // console.log('[Debug] showChartView called.');
+    // console.log('[Debug] initialView (re-selected):', initialView);
+    // console.log('[Debug] chartView (re-selected):', chartView);
+    if (initialView) initialView.style.display = 'none';
+    if (chartView) chartView.style.display = 'block';
 }
 
 function showInitialView() {
-    if (chartViewContentDiv) chartViewContentDiv.style.display = 'none';
-    if (initialViewContentDiv) initialViewContentDiv.style.display = 'block';
-    refreshInitialViewLists(); // Refresh lists when showing initial view
+    console.log('[Debug] showInitialView called.');
+    const initialView = document.getElementById('initial-view-content'); // Re-selected
+    const chartView = document.getElementById('chart-view-content');   // Re-selected
+    console.log('[Debug] initialView (re-selected):', initialView);
+    console.log('[Debug] chartView (re-selected):', chartView);
+    if (chartView) chartView.style.display = 'none';
+    if (initialView) {
+        initialView.style.display = 'block';
+        console.log('[Debug] initialView.style.display set to block');
+    }
+    refreshInitialViewLists();
 }
 
 function getFromLocalStorage(key) {
@@ -128,6 +142,7 @@ function isFavorited(itemPath, favorites) { // Changed signature to take itemPat
 }
 
 function displayItemsForInitialView(items, containerDiv, listName) {
+    console.log(`[Debug] displayItemsForInitialView called for ${listName}`, containerDiv, items); // New log
     if (!containerDiv) {
         // console.error(`Container div for "${listName}" not found in initial view.`);
         return;
@@ -135,6 +150,7 @@ function displayItemsForInitialView(items, containerDiv, listName) {
     containerDiv.innerHTML = ''; // Clear previous items
 
     if (!items || items.length === 0) {
+        console.log(`[Debug] Setting 'No items found' for ${listName}`); // New log
         containerDiv.innerHTML = `<p>No ${listName.toLowerCase()} items found.</p>`;
         return;
     }
@@ -206,6 +222,9 @@ function toggleFavoriteOnItem(itemToToggle) {
 }
 
 function refreshInitialViewLists() {
+    console.log('[Debug] refreshInitialViewLists called.'); // New log
+    console.log('[Debug] favoriteItemsListDiv:', favoriteItemsListDiv); // New log
+    console.log('[Debug] recentlyViewedListDiv:', recentlyViewedListDiv); // New log
     const favorites = loadFavorites();
     const recentlyViewed = loadRecentlyViewed();
     // Check if the divs exist before trying to display items - they are part of index.html now
