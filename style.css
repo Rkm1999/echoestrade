@@ -130,6 +130,7 @@
 
 #chart-view-content {
     display: none; /* Hidden by default, JS will manage visibility */
+    position: relative; /* For absolute positioning of chartItemIcon */
 }
 
 /* Styles for Initial View Content (Favorites & Recents) */
@@ -299,4 +300,35 @@ footer a {
 
 footer a:hover {
   text-decoration: underline;
+}
+
+/* Icon Styles */
+.sidebar-item-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    vertical-align: middle;
+    object-fit: contain; /* Fit image within dimensions without distortion */
+}
+
+.home-item-icon {
+    width: 28px; /* Slightly larger than sidebar */
+    height: 28px;
+    margin-right: 10px;
+    vertical-align: middle;
+    object-fit: contain;
+}
+
+.chart-item-icon {
+    width: 48px;
+    height: 48px;
+    position: absolute;
+    top: 10px; /* Adjust based on h1#chartDisplayTitle's line-height and padding */
+    right: 15px; /* Adjust to not overlap with favorite toggle or other elements */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff; /* Optional: if icons can have transparent parts */
+    padding: 2px; /* Space around icon if background is visible */
+    object-fit: contain;
+    display: none; /* Initially hidden, JS controls visibility */
 }

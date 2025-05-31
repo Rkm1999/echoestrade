@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const MAX_RECENT_ITEMS = 10;
     let currentItemPath = null;
     let currentItemName = null;
+    let currentItemIconPath = null; // Added for icon path
     let priceChart = null;
     let activeTimeframe = "All"; // "30D", "3M", "6M", "1Y", "All", "Custom"
     let originalPriceData = [];
@@ -107,6 +108,12 @@ function showInitialView() {
         initialView.style.display = 'block';
         console.log('[Debug] initialView.style.display set to block');
     }
+    // Hide chart item icon when showing initial view
+    const chartItemIconElement = document.getElementById('chartItemIcon');
+    if (chartItemIconElement) {
+        chartItemIconElement.style.display = 'none';
+        chartItemIconElement.src = ''; // Also clear src
+    }
     refreshInitialViewLists();
 }
 
@@ -167,6 +174,15 @@ function displayItemsForInitialView(items, containerDiv, listName) {
 
         const li = document.createElement('li');
 
+        // Add icon if available
+        if (item.icon_path && item.icon_path.trim() !== '') {
+            const img = document.createElement('img');
+            img.src = item.icon_path;
+            img.alt = item.name; // Accessibility
+            img.classList.add('home-item-icon'); // Class for styling home screen icons
+            li.appendChild(img); // Prepend icon
+        }
+
         const itemLinkSpan = document.createElement('span');
         itemLinkSpan.textContent = item.name;
         itemLinkSpan.style.cursor = 'pointer';
@@ -176,7 +192,7 @@ function displayItemsForInitialView(items, containerDiv, listName) {
             loadItemData(item.path, item.name);
             // loadItemData will call showChartView
         });
-        li.appendChild(itemLinkSpan);
+        li.appendChild(itemLinkSpan); // Append text span after icon (if any)
 
         const favButton = document.createElement('button');
         favButton.classList.add('favorite-toggle-initial'); // Distinct class if needed
@@ -208,8 +224,19 @@ function toggleFavoriteOnItem(itemToToggle) {
     if (itemIndex > -1) { // Already favorited, so remove
         favorites.splice(itemIndex, 1);
     } else { // Not favorited, so add
-        // Ensure we are adding an object with name and path
-        favorites.push({ name: itemToToggle.name, path: itemToToggle.path });
+        // Ensure we are adding an object with name, path, and icon_path
+        let iconPath = itemToToggle.icon_path; // Use if provided in itemToToggle
+        if (iconPath === undefined) { // If not provided, try to find it
+            // Check if it's the current item, use its known icon_path
+            if (itemToToggle.path === currentItemPath && itemToToggle.name === currentItemName) {
+                iconPath = currentItemIconPath;
+            } else {
+                // Otherwise, search in globalItemData by name or path
+                const itemDetails = findItemDetailsInGlobalData(itemToToggle.name, true) || findItemDetailsInGlobalData(itemToToggle.path, false);
+                iconPath = itemDetails ? itemDetails.icon_path : '';
+            }
+        }
+        favorites.push({ name: itemToToggle.name, path: itemToToggle.path, icon_path: iconPath || '' });
     }
     saveToLocalStorage('favoriteItems', favorites);
 
@@ -303,14 +330,49 @@ function refreshInitialViewLists() {
                 return response.json();
             })
             .then(jsonData => {
+                window.globalItemData = jsonData; // Make jsonData globally accessible
                 itemSelectorContainer.innerHTML = '';
-                buildSidebarNavigation(jsonData, itemSelectorContainer, 0);
+                buildSidebarNavigation(window.globalItemData, itemSelectorContainer, 0);
             })
             .catch(error => {
                 console.error('Error fetching item_data.json:', error);
                 itemSelectorContainer.innerHTML = '<p>Error loading item data.</p>';
             });
     }
+
+// Helper function to find item details (including icon_path) in the globalItemData
+// Recursively searches through the nested structure.
+function findItemDetailsInGlobalData(identifier, searchByName = true, dataNode = window.globalItemData) {
+    if (!dataNode) return null;
+
+    for (const key in dataNode) {
+        const currentNode = dataNode[key];
+
+        if (typeof currentNode === 'string') { // Leaf node (old format, path only)
+            if (searchByName && key === identifier) {
+                return { name: key, path: currentNode, icon_path: '' }; // No icon_path in this format
+            } else if (!searchByName && currentNode === identifier) {
+                return { name: key, path: currentNode, icon_path: '' }; // No icon_path
+            }
+        } else if (typeof currentNode === 'object' && currentNode !== null) {
+            // Check if currentNode itself is a leaf item (new format with history_path)
+            if (currentNode.history_path) {
+                if (searchByName && key === identifier) {
+                    return { name: key, path: currentNode.history_path, icon_path: currentNode.icon_path || '' };
+                } else if (!searchByName && currentNode.history_path === identifier) {
+                    return { name: key, path: currentNode.history_path, icon_path: currentNode.icon_path || '' };
+                }
+            } else {
+                // It's a category, so recurse
+                const foundInChildren = findItemDetailsInGlobalData(identifier, searchByName, currentNode);
+                if (foundInChildren) {
+                    return foundInChildren;
+                }
+            }
+        }
+    }
+    return null; // Not found
+}
 
     function buildSidebarNavigation(data, parentElement, level = 0) {
         parentElement.innerHTML = '';
@@ -326,24 +388,49 @@ function refreshInitialViewLists() {
 
             const textElement = document.createElement('span');
             textElement.style.cursor = 'pointer';
-            listItem.appendChild(textElement);
+            // Icon will be prepended to listItem, then textElement will be appended to listItem.
 
-            if (typeof data[key] === 'string') {
+            // Check if it's a new format leaf node (object with history_path)
+            if (typeof data[key] === 'object' && data[key] !== null && data[key].history_path) {
                 listItem.classList.add('item-leaf');
-                textElement.textContent = key;
-                listItem.dataset.csvPath = data[key];
-                textElement.addEventListener('click', function() {
-                    loadItemData(data[key], key);
+                textElement.textContent = key; // Item name is the key
 
+                // Add icon if available
+                if (data[key].icon_path && data[key].icon_path.trim() !== '') {
+                    const img = document.createElement('img');
+                    img.src = data[key].icon_path;
+                    img.alt = key;
+                    img.classList.add('sidebar-item-icon'); // Add class for styling
+                    listItem.appendChild(img); // Prepend icon
+                }
+                listItem.appendChild(textElement); // Append text span after icon
+
+                listItem.dataset.csvPath = data[key].history_path;
+                textElement.addEventListener('click', function() {
+                    loadItemData(data[key].history_path, key);
                     const currentlySelected = document.querySelector('.nav-item.selected-leaf');
                     if (currentlySelected) {
                         currentlySelected.classList.remove('selected-leaf');
                     }
                     listItem.classList.add('selected-leaf');
                 });
-            } else if (typeof data[key] === 'object') {
+            } else if (typeof data[key] === 'string') { // Old format leaf node (string path)
+                listItem.classList.add('item-leaf');
+                textElement.textContent = key;
+                listItem.appendChild(textElement); // Append text span
+                listItem.dataset.csvPath = data[key];
+                textElement.addEventListener('click', function() {
+                    loadItemData(data[key], key);
+                    const currentlySelected = document.querySelector('.nav-item.selected-leaf');
+                    if (currentlySelected) {
+                        currentlySelected.classList.remove('selected-leaf');
+                    }
+                    listItem.classList.add('selected-leaf');
+                });
+            } else if (typeof data[key] === 'object' && data[key] !== null) { // Category node
                 listItem.classList.add('item-category');
                 textElement.textContent = '► ' + key;
+                listItem.appendChild(textElement); // Append text span for category
 
                 const childListContainer = document.createElement('div');
                 childListContainer.className = 'child-list-container';
@@ -388,7 +475,29 @@ function refreshInitialViewLists() {
     function loadItemData(csvPath, itemName) {
         currentItemPath = csvPath;
         currentItemName = itemName;
-        console.log("Loading data for:", csvPath, "Item Name:", itemName);
+
+        // Find item details including icon_path from globalItemData
+        const itemDetails = findItemDetailsInGlobalData(itemName, true) || findItemDetailsInGlobalData(csvPath, false);
+        if (itemDetails) {
+            currentItemIconPath = itemDetails.icon_path;
+        } else {
+            currentItemIconPath = ''; // Default if not found
+            // console.warn(`Icon path not found for ${itemName} or ${csvPath} in globalItemData.`);
+        }
+        console.log("Loading data for:", csvPath, "Item Name:", itemName, "Icon Path:", currentItemIconPath);
+
+        // Update chart item icon
+        const chartItemIconElement = document.getElementById('chartItemIcon');
+        if (chartItemIconElement) {
+            if (currentItemIconPath && currentItemIconPath.trim() !== '') {
+                chartItemIconElement.src = currentItemIconPath;
+                chartItemIconElement.alt = currentItemName;
+                chartItemIconElement.style.display = 'inline-block'; // Or 'block' depending on desired layout
+            } else {
+                chartItemIconElement.style.display = 'none';
+                chartItemIconElement.src = '';
+            }
+        }
 
         // Reset timeframe to "All" when new item is loaded
         activeTimeframe = "All";
@@ -456,14 +565,17 @@ function refreshInitialViewLists() {
                         recentlyViewed = [];
                     }
 
-                    const newItem = { name: itemName, path: csvPath };
+                    // Add new item with icon_path to the beginning
+                    const newItem = { name: itemName, path: csvPath, icon_path: currentItemIconPath };
                     // Remove if already exists to move to top
                     recentlyViewed = recentlyViewed.filter(item => item.path !== csvPath);
-                    recentlyViewed.unshift(newItem); // Add to the beginning
+                    recentlyViewed.unshift(newItem);
                     if (recentlyViewed.length > MAX_RECENT_ITEMS) {
-                        recentlyViewed.length = MAX_RECENT_ITEMS; // Trim to max size
+                        recentlyViewed.length = MAX_RECENT_ITEMS;
                     }
                     localStorage.setItem('recentlyViewedItems', JSON.stringify(recentlyViewed));
+                    // Refresh initial view lists as recently viewed items (which now include icons) have changed.
+                    refreshInitialViewLists();
                 }
                 updateCurrentItemFavoriteButton();
             })
@@ -482,6 +594,11 @@ function refreshInitialViewLists() {
                  } else {
                     initializeChart(); // This already calls calculateAndDisplayPriceStatistics([], [])
                  }
+                // Also hide icon on error
+                if (chartItemIconElement) {
+                    chartItemIconElement.style.display = 'none';
+                    chartItemIconElement.src = '';
+                }
             });
         showChartView();
     }
