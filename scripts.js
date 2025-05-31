@@ -429,9 +429,9 @@ function refreshInitialViewLists() {
                 }
 
                 if (chartDisplayTitleElement && itemName) {
-                    chartDisplayTitleElement.textContent = `${itemName} Price Over Time`;
+                    chartDisplayTitleElement.textContent = itemName;
                 } else if (chartDisplayTitleElement) {
-                    chartDisplayTitleElement.textContent = 'Price Over Time';
+                    chartDisplayTitleElement.textContent = 'Item Analysis'; // Or a more generic title if itemName is missing
                 }
                 console.log('Loading item data. Current activeSMAPeriods before updateChartWithIndicators:', JSON.stringify(activeSMAPeriods));
                 if (originalLabels.length === 0 && originalPriceData.length === 0) {
@@ -799,7 +799,7 @@ function formatPriceStat(value, percentChange) {
         console.log(`Loading item from URL: ${itemNameFromUrl} (${itemPathFromUrl})`);
         loadItemData(itemPathFromUrl, itemNameFromUrl); // This will also call showChartView
         if (chartDisplayTitleElement && itemNameFromUrl) { // Redundant if loadItemData sets it, but safe
-             chartDisplayTitleElement.textContent = `${itemNameFromUrl} Price Over Time`;
+             chartDisplayTitleElement.textContent = itemNameFromUrl;
         }
     } else {
         showInitialView();
