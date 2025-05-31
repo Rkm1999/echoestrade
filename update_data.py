@@ -168,69 +168,81 @@ def download_item_icons(all_items_data: list[dict]) -> list[dict]:
     Downloads icons for items in the all_items_data list.
     Updates the 'icon_downloaded' status in each item's dictionary.
     """
-    print(f"\nStarting to download icons for {len(all_items_data)} items...")
-    downloaded_count = 0
-    skipped_url_id_missing_count = 0
-    skipped_already_exists_count = 0
-    failed_count = 0
+    print(f"\nStarting to process icons for {len(all_items_data)} items...")
+    icons_found_locally = 0
+    icons_downloaded_successfully = 0
+    icons_skipped_no_info = 0
+    icons_failed_download = 0
 
     for item_data in all_items_data:
-        item_id = item_data.get('id')
+        item_id_str = item_data.get('id', 'Unknown ID') # For logging
+        item_name_str = item_data.get('name', 'Unknown Name') # For logging
+
         icon_url = item_data.get('icon_url')
-        icon_id_val = item_data.get('icon_id') # Renamed to avoid clash with outer scope id
+        icon_id_val = item_data.get('icon_id')
         category_name = item_data.get('category_name', 'UnknownCategory')
         group_name = item_data.get('group_name', 'UnknownGroup')
-        name = item_data.get('name', f'UnknownItem_{item_id}')
-        icon_downloaded_status = item_data.get('icon_downloaded', 'False')
+        name = item_data.get('name', f'UnknownItem_{item_id_str}') # For path
 
-        if not icon_url or not icon_id_val:
-            # print(f"Skipping icon for item {item_id} ('{name}') due to missing icon_url or icon_id.")
-            skipped_url_id_missing_count += 1
-            item_data['icon_downloaded'] = 'False' # Ensure it's marked false
-            continue
-
+        # Construct paths first
         item_dir = os.path.join(HISTORIES_BASE_DIR, sanitize_for_path(category_name), sanitize_for_path(group_name), sanitize_for_path(name))
-        os.makedirs(item_dir, exist_ok=True)
+        # Icon ID must be valid for filename
+        local_icon_path = ""
+        if icon_id_val: # Ensure icon_id_val is not empty before sanitizing for path
+            sanitized_icon_id = sanitize_for_path(str(icon_id_val))
+            if sanitized_icon_id: # Ensure sanitized_icon_id is not empty
+                 local_icon_path = os.path.join(item_dir, f"{sanitized_icon_id}.png")
 
-        sanitized_icon_id = sanitize_for_path(icon_id_val)
-        icon_filename = f"{sanitized_icon_id}.png"
-        icon_path = os.path.join(item_dir, icon_filename)
-
-        if icon_downloaded_status == 'True' and os.path.exists(icon_path):
-            # print(f"Icon for item {item_id} ('{name}') already downloaded and exists. Skipping.")
-            skipped_already_exists_count += 1
+        # Primary Check: If local icon path is valid and file exists
+        if local_icon_path and os.path.exists(local_icon_path):
+            if item_data.get('icon_downloaded') != 'True':
+                print(f"Icon for {item_id_str} ('{item_name_str}') found locally at {local_icon_path}. Updating flag.")
+            item_data['icon_downloaded'] = 'True'
+            icons_found_locally += 1
             continue
 
-        print(f"Downloading icon for item {item_id} ('{name}') from {icon_url} to {icon_path}")
+        # If local icon does not exist, proceed to download attempt
+        os.makedirs(item_dir, exist_ok=True) # Ensure directory exists before download attempt if icon wasn't local
+
+        if not icon_url or not icon_id_val or not local_icon_path: # Check all necessary components for download
+            # print(f"Skipping icon download for item {item_id_str} ('{item_name_str}') due to missing icon_url, icon_id, or invalid path.")
+            item_data['icon_downloaded'] = 'False'
+            icons_skipped_no_info += 1
+            continue
+
+        print(f"Downloading icon for item {item_id_str} ('{item_name_str}') from {icon_url} to {local_icon_path}")
+        download_attempted = False
         try:
+            download_attempted = True
             response = requests.get(icon_url, stream=True, timeout=30)
-            if response.status_code == 200:
-                with open(icon_path, 'wb') as f:
+            if response.status_code == 200 and response.content: # Ensure content is not empty
+                with open(local_icon_path, 'wb') as f:
                     f.write(response.content)
-                # print(f"Successfully downloaded icon for item {item_id} ('{name}').")
                 item_data['icon_downloaded'] = 'True'
-                downloaded_count += 1
+                icons_downloaded_successfully += 1
+                # print(f"Successfully downloaded icon for item {item_id_str} ('{item_name_str}').")
             else:
-                print(f"Error downloading icon for item {item_id} ('{name}'): Status code {response.status_code}")
+                print(f"Error downloading icon for {item_id_str} ('{item_name_str}'): Status {response.status_code}, Content-Length {response.headers.get('Content-Length', 'N/A')}")
                 item_data['icon_downloaded'] = 'False'
-                failed_count += 1
+                icons_failed_download += 1
 
         except requests.exceptions.RequestException as e:
-            print(f"Request failed for icon download {item_id} ('{name}'): {e}")
+            print(f"Request failed for icon download {item_id_str} ('{item_name_str}'): {e}")
             item_data['icon_downloaded'] = 'False'
-            failed_count += 1
+            icons_failed_download += 1
         except IOError as e:
-            print(f"IOError saving icon for item {item_id} ('{name}'): {e}")
+            print(f"IOError saving icon for item {item_id_str} ('{item_name_str}'): {e}")
             item_data['icon_downloaded'] = 'False'
-            failed_count += 1
+            icons_failed_download += 1
 
-        time.sleep(REQUEST_DELAY_SECONDS)
+        if download_attempted: # Only sleep if an actual download attempt was made
+            time.sleep(REQUEST_DELAY_SECONDS)
 
     print("\n--- Icon Download Summary ---")
-    print(f"Successfully downloaded: {downloaded_count}")
-    print(f"Skipped (missing URL/ID): {skipped_url_id_missing_count}")
-    print(f"Skipped (already exists and marked True): {skipped_already_exists_count}")
-    print(f"Failed to download/save: {failed_count}")
+    print(f"Icons found locally (flag updated if needed): {icons_found_locally}")
+    print(f"Icons downloaded successfully: {icons_downloaded_successfully}")
+    print(f"Skipped (missing URL/ID or invalid path): {icons_skipped_no_info}")
+    print(f"Failed to download/save: {icons_failed_download}")
     print("-----------------------------")
     return all_items_data
 
