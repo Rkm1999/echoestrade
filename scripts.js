@@ -537,10 +537,11 @@ function findItemDetailsInGlobalData(identifier, searchByName = true, dataNode =
                     originalPriceData = tempPriceData;
                 }
 
-                if (chartDisplayTitleElement && itemName) {
-                    chartDisplayTitleElement.textContent = itemName;
-                } else if (chartDisplayTitleElement) {
-                    chartDisplayTitleElement.textContent = 'Item Analysis'; // Or a more generic title if itemName is missing
+                const chartDisplayTitleTextElement = document.getElementById('chartDisplayTitleText');
+                if (chartDisplayTitleTextElement && itemName) {
+                    chartDisplayTitleTextElement.textContent = itemName;
+                } else if (chartDisplayTitleTextElement) {
+                    chartDisplayTitleTextElement.textContent = 'Item Analysis'; // Or a more generic title if itemName is missing
                 }
                 console.log('Loading item data. Current activeSMAPeriods before updateChartWithIndicators:', JSON.stringify(activeSMAPeriods));
                 if (originalLabels.length === 0 && originalPriceData.length === 0) {
@@ -581,8 +582,9 @@ function findItemDetailsInGlobalData(identifier, searchByName = true, dataNode =
             })
             .catch(error => {
                 console.error('Failed to load or process item data:', error);
-                if (chartDisplayTitleElement) {
-                    chartDisplayTitleElement.textContent = 'Failed to Load Item Data';
+                const chartDisplayTitleTextElement = document.getElementById('chartDisplayTitleText');
+                if (chartDisplayTitleTextElement) {
+                    chartDisplayTitleTextElement.textContent = 'Failed to Load Item Data';
                 }
                  originalLabels = [];
                  originalPriceData = [];
@@ -915,10 +917,19 @@ function formatPriceStat(value, percentChange) {
     if (itemPathFromUrl && itemNameFromUrl) {
         console.log(`Loading item from URL: ${itemNameFromUrl} (${itemPathFromUrl})`);
         loadItemData(itemPathFromUrl, itemNameFromUrl); // This will also call showChartView
-        if (chartDisplayTitleElement && itemNameFromUrl) { // Redundant if loadItemData sets it, but safe
-             chartDisplayTitleElement.textContent = itemNameFromUrl;
+        // The loadItemData function now handles setting the title text,
+        // so this redundant check/set might not be strictly necessary here,
+        // but keeping it for safety or if loadItemData's title setting is conditional.
+        const chartDisplayTitleTextElement = document.getElementById('chartDisplayTitleText');
+        if (chartDisplayTitleTextElement && itemNameFromUrl) {
+             chartDisplayTitleTextElement.textContent = itemNameFromUrl;
         }
     } else {
+        // When showing initial view, ensure the title text is reset or appropriate.
+        const chartDisplayTitleTextElement = document.getElementById('chartDisplayTitleText');
+        if (chartDisplayTitleTextElement) {
+            chartDisplayTitleTextElement.textContent = 'Item Analysis'; // Default title for home/initial
+        }
         showInitialView();
         const favToggleBtn = document.getElementById('currentItemFavoriteToggle');
         if (favToggleBtn) favToggleBtn.style.display = 'none'; // Hide chart's fav button

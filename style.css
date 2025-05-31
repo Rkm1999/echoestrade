@@ -96,11 +96,24 @@
 }
 
 /* Leaf Item Styling (.item-leaf) */
-#item-selector-container .item-leaf > span {
-    color: #2266AA;
+#item-selector-container .nav-item.item-leaf { /* Target the LI element */
+    display: flex;       /* Arrange children (icon and text span) in a row */
+    align-items: center; /* Vertically align children in the middle */
+    /* Padding on the child span provides clickable area, so LI might not need direct padding */
 }
 
-#item-selector-container .item-leaf.selected-leaf > span { /* Style for the selected item */
+#item-selector-container .item-leaf > span { /* Style for the text span within the leaf item */
+    color: #2266AA;
+    /* The span will naturally take up remaining space in flex container.
+       If text overflow is needed:
+       flex-grow: 1;
+       overflow: hidden;
+       text-overflow: ellipsis;
+       white-space: nowrap;
+    */
+}
+
+#item-selector-container .item-leaf.selected-leaf > span { /* Style for the selected item's text span */
     background-color: #cce7ff;
     font-weight: bold;
 }
@@ -307,8 +320,9 @@ footer a:hover {
     width: 20px;
     height: 20px;
     margin-right: 8px;
-    vertical-align: middle;
+    vertical-align: middle; /* Good fallback, but flexbox's align-items will manage this */
     object-fit: contain; /* Fit image within dimensions without distortion */
+    flex-shrink: 0; /* Prevent icon from shrinking if item name is very long */
 }
 
 .home-item-icon {
@@ -320,15 +334,12 @@ footer a:hover {
 }
 
 .chart-item-icon {
-    width: 48px;
-    height: 48px;
-    position: absolute;
-    top: 10px; /* Adjust based on h1#chartDisplayTitle's line-height and padding */
-    right: 15px; /* Adjust to not overlap with favorite toggle or other elements */
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #fff; /* Optional: if icons can have transparent parts */
-    padding: 2px; /* Space around icon if background is visible */
+    width: 32px;  /* Adjusted size for inline display with H1 */
+    height: 32px; /* Matching width */
+    margin-right: 10px; /* Spacing between icon and title text */
+    vertical-align: middle; /* Align icon with the text in H1 */
     object-fit: contain;
-    display: none; /* Initially hidden, JS controls visibility */
+    display: none; /* Initially hidden, JS controls visibility. Base visible state could be inline-block. */
+    /* Removed: position, top, right, border, border-radius, background-color, padding */
+    /* display: inline-block; /* Base visible state, JS will override display:none when src is set */
 }
