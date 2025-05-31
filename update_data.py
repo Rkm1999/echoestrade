@@ -3,6 +3,7 @@ import time
 import os
 import csv
 import re
+from datetime import datetime, timezone # Ensure timezone is imported
 
 # Configuration
 API_BASE_URL_ITEMS = "https://echoes.mobi/api/items"
@@ -233,60 +234,130 @@ def download_item_icons(all_items_data: list[dict]) -> list[dict]:
     print("-----------------------------")
     return all_items_data
 
+API_V2_ITEM_PRICES_URL = "https://echoes.mobi/api/v2/item_prices"
 
-def fetch_and_save_histories(item_ids_to_update: list[str]):
+def load_all_current_prices() -> dict:
     """
-    Fetches item history for specified item IDs and saves it.
+    Fetches all current item prices from the v2 API endpoint.
+    Returns a dictionary mapping item_id to its price data.
     """
-    print(f"\nStarting to fetch item histories for {len(item_ids_to_update)} items.")
+    print(f"\nFetching all current item prices from {API_V2_ITEM_PRICES_URL}...")
+    current_prices_map = {}
+    headers = {'accept': 'text/csv'}
+
+    try:
+        response = requests.get(API_V2_ITEM_PRICES_URL, headers=headers, timeout=30)
+        if response.status_code == 200:
+            response_text_stripped = response.text.strip()
+            if not response_text_stripped:
+                print("API response for current prices was empty.")
+                return current_prices_map
+
+            reader = csv.DictReader(response_text_stripped.splitlines())
+            # Expected headers: id,name,estimated_price,date_updated,category_name,group_name,icon_id
+            for row in reader:
+                item_id = row.get('id')
+                if item_id:
+                    current_prices_map[item_id] = {
+                        'estimated_price': row.get('estimated_price'),
+                        'date_updated': row.get('date_updated')
+                    }
+            print(f"Successfully loaded {len(current_prices_map)} current item prices.")
+        else:
+            print(f"Error fetching current prices: Status code {response.status_code}")
+            print(f"Response content: {response.text[:200]}")
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed for current prices: {e}")
+    except csv.Error as e:
+        print(f"CSV parsing error for current prices: {e}. Response text: {response.text[:500]}")
+    except Exception as e:
+        print(f"An unexpected error occurred while loading current prices: {e}")
+
+    return current_prices_map
+
+def get_week_year_from_isodate(iso_date_string: str) -> tuple[str, str]:
+    """
+    Parses an ISO 8601 date string and returns its ISO week number and ISO year.
+    Handles timezone information like +00:00.
+    """
+    try:
+        if not isinstance(iso_date_string, str):
+            # Handle cases where date might be None or not a string
+            if iso_date_string is None:
+                raise ValueError("Input date string is None")
+            raise ValueError(f"Input must be a string, got {type(iso_date_string)}")
+
+        # datetime.fromisoformat handles "YYYY-MM-DDTHH:MM:SS+00:00" directly
+        # and correctly interprets the +00:00 as UTC.
+        dt_object = datetime.fromisoformat(iso_date_string)
+
+        # isocalendar() returns (ISO year, ISO week number, ISO weekday)
+        iso_year, iso_week, _ = dt_object.isocalendar()
+
+        # Format week number with leading zero if needed (e.g., "01", "02", ..., "52")
+        return (f"{iso_week:02d}", str(iso_year))
+    except ValueError as e:
+        print(f"Error parsing date string '{iso_date_string}': {e}. Returning default week/year ('00', '0000').")
+        return ("00", "0000") # Fallback values
+    except Exception as e: # Catch any other unexpected errors
+        print(f"An unexpected error occurred while parsing date '{iso_date_string}': {e}. Returning default week/year ('00', '0000').")
+        return ("00", "0000")
+
+HISTORY_CSV_HEADERS = ['id', 'item_id', 'price', 'week', 'year', 'date_created', 'date_updated']
+
+def fetch_and_save_histories(item_ids_to_update: list[str], all_current_prices_map: dict):
+    """
+    Fetches full item history or appends latest price for specified item IDs.
+    - item_ids_to_update: List of item IDs whose history needs to be processed.
+    - all_current_prices_map: Dictionary with current price data from /v2/item_prices.
+    """
+    print(f"\nStarting to process histories for {len(item_ids_to_update)} items...")
     if not item_ids_to_update:
         print("No items require history updates.")
         return
 
-    all_items_details = {}
+    all_items_details_for_paths = {} # To store category/group/name for path creation
     if os.path.exists(ITEMS_OUTPUT_CSV_FILE):
         try:
             with open(ITEMS_OUTPUT_CSV_FILE, mode='r', encoding='utf-8', newline='') as csvfile:
                 reader = csv.DictReader(csvfile)
-                # Ensure all required columns for path creation are present in the CSV header
                 required_path_cols = ['id', 'category_name', 'group_name', 'name']
                 if not all(col in reader.fieldnames for col in required_path_cols):
                     missing_cols = [col for col in required_path_cols if col not in reader.fieldnames]
                     print(f"Error: {ITEMS_OUTPUT_CSV_FILE} is missing required columns for path creation: {', '.join(missing_cols)}.")
                     return
-
                 for row in reader:
-                    # Only load details for items that are actually in the item_ids_to_update list
                     if row.get('id') in item_ids_to_update:
-                        all_items_details[row['id']] = row
-            if not all_items_details and item_ids_to_update: # Check if any relevant details were loaded
-                print(f"Warning: No details found in {ITEMS_OUTPUT_CSV_FILE} for the provided item IDs to update.")
-                # This might happen if ITEMS_OUTPUT_CSV_FILE is somehow empty or IDs don't match.
-                # Depending on strictness, could return here.
+                        all_items_details_for_paths[row['id']] = row
+            if not all_items_details_for_paths and item_ids_to_update:
+                print(f"Warning: No details found in {ITEMS_OUTPUT_CSV_FILE} for the item IDs to update.")
         except Exception as e:
-            print(f"Error reading {ITEMS_OUTPUT_CSV_FILE} for history details: {e}")
-            return
+            print(f"Error reading {ITEMS_OUTPUT_CSV_FILE} for path details: {e}")
+            return # Cannot proceed without path details
 
     os.makedirs(HISTORIES_BASE_DIR, exist_ok=True)
     headers = {'accept': 'text/csv'}
-    histories_fetched_count = 0
-    histories_skipped_no_detail_count = 0 # Items in list but details not found in CSV
-    histories_skipped_no_data_from_api = 0 # API returned no actual history data
-    histories_failed_count = 0 # API request failed
+
+    new_histories_fetched_count = 0
+    histories_appended_count = 0
+    histories_failed_append_count = 0
+    histories_skipped_no_data_from_api = 0 # For full fetch
+    histories_failed_fetch_count = 0 # For full fetch
+    histories_skipped_no_detail_for_path = 0
+    histories_skipped_already_latest = 0
 
     for item_id in item_ids_to_update:
-        item_detail = all_items_details.get(item_id)
+        item_detail_for_path = all_items_details_for_paths.get(item_id)
 
-        if not item_detail:
-            print(f"Skipping history for item ID {item_id}: Details not found in {ITEMS_OUTPUT_CSV_FILE}.")
-            histories_skipped_no_detail_count += 1
+        if not item_detail_for_path:
+            print(f"Skipping history for item ID {item_id}: Path details not found in {ITEMS_OUTPUT_CSV_FILE}.")
+            histories_skipped_no_detail_for_path += 1
             continue
 
-        category = item_detail.get('category_name', 'UnknownCategory')
-        group = item_detail.get('group_name', 'UnknownGroup')
-        name = item_detail.get('name', f'UnknownItem_{item_id}')
+        category = item_detail_for_path.get('category_name', 'UnknownCategory')
+        group = item_detail_for_path.get('group_name', 'UnknownGroup')
+        name = item_detail_for_path.get('name', f'UnknownItem_{item_id}')
 
-        # Sanitize components for path creation
         sanitized_item_id_for_filename = sanitize_for_path(item_id)
         sanitized_category = sanitize_for_path(category)
         sanitized_group = sanitize_for_path(group)
@@ -294,47 +365,112 @@ def fetch_and_save_histories(item_ids_to_update: list[str]):
 
         item_dir = os.path.join(HISTORIES_BASE_DIR, sanitized_category, sanitized_group, sanitized_name)
         os.makedirs(item_dir, exist_ok=True)
-
         history_file_path = os.path.join(item_dir, f"{sanitized_item_id_for_filename}_history.csv")
 
-        history_api_url = f"{API_BASE_URL_HISTORY}{item_id}" # Use original item_id for API call
-        print(f"Fetching history for item ID {item_id} ('{name}')...")
+        if os.path.exists(history_file_path):
+            current_price_data = all_current_prices_map.get(item_id)
+            if current_price_data and current_price_data.get('estimated_price') is not None and current_price_data.get('estimated_price') != '':
+                estimated_price = current_price_data['estimated_price']
+                api_date_updated = current_price_data['date_updated']
 
-        try:
-            response = requests.get(history_api_url, headers=headers, timeout=30)
-            if response.status_code == 200:
-                response_text_stripped = response.text.strip()
-                history_lines = response_text_stripped.splitlines()
-                if response_text_stripped and len(history_lines) > 1: # Check if there's more than just a header
-                    with open(history_file_path, 'w', encoding='utf-8', newline='') as hf:
-                        hf.write(response_text_stripped + '\n')
-                    print(f"Successfully saved history for item {item_id} to '{history_file_path}'")
-                    histories_fetched_count += 1
-                else:
-                    print(f"No actual history data (or only header) returned for item {item_id} ('{name}'). Skipping file write.")
-                    histories_skipped_no_data_from_api += 1
-            else:
-                print(f"Error fetching history for item {item_id} ('{name}'): Status {response.status_code}")
-                histories_failed_count += 1
+                last_row_id_int = 0
+                last_date_updated_in_file = None
+                try:
+                    with open(history_file_path, mode='r', encoding='utf-8', newline='') as hf_read:
+                        reader = csv.DictReader(hf_read)
+                        history_rows = list(reader)
+                        if history_rows:
+                            last_row = history_rows[-1]
+                            last_date_updated_in_file = last_row.get('date_updated')
+                            try:
+                                last_row_id_int = int(last_row.get('id', 0))
+                            except ValueError:
+                                print(f"Warning: Could not parse last row ID for {item_id} in {history_file_path}. Defaulting to 0.")
+                                last_row_id_int = 0 # Or len(history_rows) if IDs are sequential and 1-based
+                except Exception as e:
+                    print(f"Error reading existing history for {item_id} from {history_file_path}: {e}. Attempting full fetch as fallback.")
+                    # Fallback to full fetch logic below this if-block by clearing history_file_path or similar
+                    # For now, we'll let it try to fetch full history if append preparation fails badly.
+                    # This path makes it try a full fetch:
+                    history_file_path = None # Mark as non-existent to trigger full fetch logic
+
+                if history_file_path and api_date_updated == last_date_updated_in_file:
+                    print(f"Latest price for item {item_id} (date: {api_date_updated}) already in history. Skipping append.")
+                    histories_skipped_already_latest +=1
+                    continue
+
+                if history_file_path: # Proceed with append if not skipped
+                    new_unique_row_id = last_row_id_int + 1
+                    derived_week, derived_year = get_week_year_from_isodate(api_date_updated)
+                    new_row_dict = {
+                        'id': str(new_unique_row_id),
+                        'item_id': str(item_id),
+                        'price': str(estimated_price),
+                        'week': str(derived_week),
+                        'year': str(derived_year),
+                        'date_created': api_date_updated,
+                        'date_updated': api_date_updated
+                    }
+                    try:
+                        with open(history_file_path, mode='a', encoding='utf-8', newline='') as hf_append:
+                            writer = csv.DictWriter(hf_append, fieldnames=HISTORY_CSV_HEADERS)
+                            # Header is not written when appending
+                            writer.writerow(new_row_dict)
+                        print(f"Appended latest price for item {item_id} to {history_file_path}")
+                        histories_appended_count += 1
+                    except Exception as e:
+                        print(f"Error appending to history for {item_id} at {history_file_path}: {e}")
+                        histories_failed_append_count += 1
+                    continue # Move to next item_id after append attempt
+            else: # Item not in v2 prices or price is empty
+                print(f"Could not find current price in v2 API for item {item_id} to append. Skipping append for this item.")
+                histories_failed_append_count += 1
+                continue # Skip to next item_id
         
-        except requests.exceptions.RequestException as e:
-            print(f"Request failed for item history {item_id} ('{name}'): {e}")
-            histories_failed_count += 1
+        # This block executes if history_file_path does not exist OR was set to None due to read error
+        if not os.path.exists(history_file_path) or history_file_path is None :
+            history_api_url = f"{API_BASE_URL_HISTORY}{item_id}"
+            print(f"Fetching full history for new item ID {item_id} ('{name}')...")
+            try:
+                response = requests.get(history_api_url, headers=headers, timeout=30)
+                if response.status_code == 200:
+                    response_text_stripped = response.text.strip()
+                    history_lines = response_text_stripped.splitlines()
+                    if response_text_stripped and len(history_lines) > 1:
+                        # Reconstruct full path if it was None-d due to read error
+                        current_history_file_path = os.path.join(item_dir, f"{sanitized_item_id_for_filename}_history.csv")
+                        with open(current_history_file_path, 'w', encoding='utf-8', newline='') as hf:
+                            hf.write(response_text_stripped + '\n')
+                        print(f"Successfully saved new history for item {item_id} to {current_history_file_path}")
+                        new_histories_fetched_count += 1
+                    else:
+                        print(f"No actual history data (or only header) for new item {item_id} ('{name}'). Skipping file write.")
+                        histories_skipped_no_data_from_api += 1
+                else:
+                    print(f"Error fetching full history for {item_id} ('{name}'): Status {response.status_code}")
+                    histories_failed_fetch_count += 1
+            except requests.exceptions.RequestException as e:
+                print(f"Request failed for full history {item_id} ('{name}'): {e}")
+                histories_failed_fetch_count += 1
+            time.sleep(REQUEST_DELAY_SECONDS) # Delay only for full fetches
 
-        time.sleep(REQUEST_DELAY_SECONDS)
-
-    print("\n--- Item History Fetch Summary ---")
-    print(f"Successfully fetched and saved: {histories_fetched_count}")
-    print(f"Skipped (details not found in CSV for ID): {histories_skipped_no_detail_count}")
-    print(f"Skipped (no actual data from API): {histories_skipped_no_data_from_api}")
-    print(f"Failed to fetch (API error or request exception): {histories_failed_count}")
-    print("---------------------------------")
+    print("\n--- Item History Processing Summary ---")
+    print(f"New full histories fetched: {new_histories_fetched_count}")
+    print(f"Appended latest price to existing histories: {histories_appended_count}")
+    print(f"Skipped (already latest price in history): {histories_skipped_already_latest}")
+    print(f"Skipped (path details not found): {histories_skipped_no_detail_for_path}")
+    print(f"Skipped (no actual data from API for full fetch): {histories_skipped_no_data_from_api}")
+    print(f"Failed (full fetch API error or request exception): {histories_failed_fetch_count}")
+    print(f"Failed (append operation due to missing v2 price or file write error): {histories_failed_append_count}")
+    print("---------------------------------------")
 
 if __name__ == "__main__":
     items_to_update_history_for, all_items_data_list = fetch_and_save_items()
 
     if all_items_data_list: # Check if there's any data to process
         all_items_data_list = download_item_icons(all_items_data_list) # Update icon_downloaded flags
+
+        current_prices = load_all_current_prices()
 
         # Write the potentially updated all_items_data (with new icon_downloaded flags) to CSV
         # FINAL_CSV_HEADERS is defined globally
@@ -352,9 +488,8 @@ if __name__ == "__main__":
         except Exception as e: # Catch any other unexpected error during write
              print(f"An unexpected error occurred while writing final CSV: {e}")
 
-
         if items_to_update_history_for:
-            fetch_and_save_histories(items_to_update_history_for)
+            fetch_and_save_histories(items_to_update_history_for, current_prices)
         else:
             print("No items require history updates based on initial fetch.")
     else:
