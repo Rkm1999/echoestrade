@@ -337,8 +337,8 @@ footer a:hover {
     position: absolute;
     top: 15px;
     right: 15px;
-    width: 120px;
-    max-height: 180px;
+    width: 180px; /* Increased from 120px */
+    max-height: 270px; /* Increased from 180px */
     height: auto;
     object-fit: contain;
     display: none; /* Visibility controlled by JavaScript */
@@ -354,7 +354,7 @@ footer a:hover {
 #chart-view-content #chartDisplayTitle,
 #chart-view-content #priceStatsDisplay,
 #chart-view-content #controls {
-    margin-right: 150px; /* 120px (icon width) + 15px (icon right offset) + 15px (gap) */
+    margin-right: 210px; /* 180px (icon width) + 15px (icon right offset) + 15px (gap) */
 }
 
 
