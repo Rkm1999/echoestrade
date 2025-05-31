@@ -271,3 +271,32 @@
     color: #dc3545; /* Red, same as price-change-negative */
     /* font-weight: bold; /* Optional: if price itself should be bold too */
 }
+
+/* Footer Styles */
+footer {
+  text-align: center;
+  padding: 20px 0;
+  margin-top: 30px; /* Add some space above the footer */
+  border-top: 1px solid #ccc; /* Optional: a line to separate footer from content */
+  background-color: #f9f9f9; /* Optional: a light background for the footer */
+  width: 100%; /* Ensure it spans the full width */
+  /* The following styles help to keep the footer at the bottom if content is short,
+     but might need adjustment depending on overall page layout (e.g., if using flexbox for main layout) */
+  /* position: relative; */ /* Use relative if it's part of the normal flow */
+  /* bottom: 0; */ /* Only works effectively with position:absolute or fixed, or if parent is flex container */
+}
+
+footer p {
+  margin: 0;
+  font-size: 0.9em;
+  color: #555;
+}
+
+footer a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
