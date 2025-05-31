@@ -101,4 +101,8 @@ if __name__ == "__main__":
     # If generate_item_json.py is at project root with item_lists.csv, then "item_lists.csv" is fine.
     csv_path = "item_lists.csv"
     generate_json_from_directory(root_directory, output_json_file, item_lists_csv_path=csv_path)
+<<<<<<< HEAD
     print(f"'{output_json_file}' generated successfully.")
+=======
+    print(f"'{output_json_file}' generated successfully.")
+>>>>>>> 2cffec4941aa9c908b826424919f181950243de0
