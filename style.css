@@ -342,7 +342,7 @@ footer a:hover {
     height: auto;
     object-fit: contain;
     display: none; /* Visibility controlled by JavaScript */
-    z-index: 5;
+    z-index: 100;  /* Increased z-index */
     border: 1px solid #eee;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
     background-color: #fff;
