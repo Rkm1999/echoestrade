@@ -334,12 +334,41 @@ footer a:hover {
 }
 
 .chart-item-icon {
-    width: 32px;  /* Adjusted size for inline display with H1 */
-    height: 32px; /* Matching width */
-    margin-right: 10px; /* Spacing between icon and title text */
-    vertical-align: middle; /* Align icon with the text in H1 */
+    width: 160px; /* Large appearance */
+    height: auto; /* Maintain aspect ratio - this correctly overrides the 32px if it was there */
     object-fit: contain;
-    display: none; /* Initially hidden, JS controls visibility. Base visible state could be inline-block. */
-    /* Removed: position, top, right, border, border-radius, background-color, padding */
-    /* display: inline-block; /* Base visible state, JS will override display:none when src is set */
+    display: none; /* JS controls visibility */
+    flex-shrink: 0; /* Prevent icon from shrinking */
+    /* Ensure properties for previous inline-with-title layout are removed or not present:
+       - vertical-align: middle; (no longer needed)
+       - margin-right: 10px; (gap is handled by parent flex container)
+       - position, top, right, border, border-radius, background-color, padding (already removed)
+    */
+}
+
+/* Chart View Layout Styles */
+#chart-main-area-wrapper {
+    display: flex;
+    align-items: flex-start; /* Aligns items to the top */
+    gap: 20px; /* Space between icon and info column */
+    margin-bottom: 20px; /* Space before the canvas chart */
+}
+
+#chart-info-column {
+    flex-grow: 1; /* Takes up available space */
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Optional spacing between elements in this column */
+}
+
+/* Adjustments for elements within the info column */
+#chart-info-column #chartDisplayTitle { /* Targeting H1 specifically within chart-info-column */
+    margin-top: 0; /* Remove default top margin of H1 if it causes misalignment */
+    font-size: 1.8em; /* Example: ensure it's appropriately sized */
+}
+
+#chart-info-column #currentItemFavoriteToggle {
+    align-self: flex-start; /* Prevent button from stretching full width of the column */
+    margin-left: 0; /* Reset margin if previously set for inline layout */
+    /* margin-top: 5px; /* Optional: add some top margin if needed */
 }
