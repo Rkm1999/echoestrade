@@ -334,19 +334,31 @@ footer a:hover {
 }
 
 .chart-item-icon {
-    width: 160px; /* Large appearance */
-    height: auto; /* Maintain aspect ratio - this correctly overrides the 32px if it was there */
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 120px;
+    max-height: 180px;
+    height: auto;
     object-fit: contain;
-    display: none; /* JS controls visibility */
-    flex-shrink: 0; /* Prevent icon from shrinking */
-    /* Ensure properties for previous inline-with-title layout are removed or not present:
-       - vertical-align: middle; (no longer needed)
-       - margin-right: 10px; (gap is handled by parent flex container)
-       - position, top, right, border, border-radius, background-color, padding (already removed)
-    */
+    display: none; /* Visibility controlled by JavaScript */
+    z-index: 5;
+    border: 1px solid #eee;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    background-color: #fff;
+    padding: 3px;
+    /* Removed flex-shrink and other properties from previous layout */
 }
 
-/* Chart View Layout Styles */
+/* Adjustments for content to avoid overlap with the absolutely positioned icon */
+#chart-view-content #chartDisplayTitle,
+#chart-view-content #priceStatsDisplay,
+#chart-view-content #controls {
+    margin-right: 150px; /* 120px (icon width) + 15px (icon right offset) + 15px (gap) */
+}
+
+
+/* Chart View Layout Styles (Previous two-column, largely unused now but kept for reference or cleanup) */
 #chart-main-area-wrapper {
     display: flex;
     align-items: flex-start; /* Aligns items to the top */
