@@ -335,7 +335,7 @@ footer a:hover {
 
 .chart-item-icon {
     position: absolute;
-    top: 15px;
+    top: 65px; /* Adjusted from 15px */
     right: 15px;
     width: 180px; /* Increased from 120px */
     max-height: 270px; /* Increased from 180px */
@@ -351,7 +351,11 @@ footer a:hover {
 }
 
 /* Adjustments for content to avoid overlap with the absolutely positioned icon */
-#chart-view-content #chartDisplayTitle,
+#chart-view-content #chartDisplayTitle {
+    margin-right: 210px; /* 180px (icon width) + 15px (icon right offset) + 15px (gap) */
+    margin-bottom: 10px; /* Added bottom margin */
+}
+
 #chart-view-content #priceStatsDisplay,
 #chart-view-content #controls {
     margin-right: 210px; /* 180px (icon width) + 15px (icon right offset) + 15px (gap) */

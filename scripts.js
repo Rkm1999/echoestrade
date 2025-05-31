@@ -488,14 +488,33 @@ function findItemDetailsInGlobalData(identifier, searchByName = true, dataNode =
 
         // Update chart item icon
         const chartItemIconElement = document.getElementById('chartItemIcon');
-        if (chartItemIconElement) {
+        // chartDisplayTitleElement is the H1, globally defined
+        // chartViewContentDiv is also globally defined
+
+        if (chartItemIconElement && chartDisplayTitleElement && chartViewContentDiv) {
             if (currentItemIconPath && currentItemIconPath.trim() !== '') {
                 chartItemIconElement.src = currentItemIconPath;
-                chartItemIconElement.alt = currentItemName;
-                chartItemIconElement.style.display = 'inline-block'; // Or 'block' depending on desired layout
+                chartItemIconElement.alt = currentItemName || 'Item Icon'; // Use default alt if name missing
+
+                // Defer position calculation to allow DOM to update with new title text
+                setTimeout(() => {
+                    const titleRect = chartDisplayTitleElement.getBoundingClientRect();
+                    const chartViewRect = chartViewContentDiv.getBoundingClientRect();
+
+                    // Calculate title's bottom relative to chartViewContentDiv's top edge
+                    const titleBottomRelativeToParent = titleRect.bottom - chartViewRect.top;
+
+                    // Ensure we have a positive, valid number before setting.
+                    // titleBottomRelativeToParent could be 0 or negative if titleElement is hidden or chartViewRect.top is unexpectedly large.
+                    // Default to a small top value if calculation is off, to prevent icon from disappearing.
+                    let iconTopPosition = titleBottomRelativeToParent > 0 ? titleBottomRelativeToParent + 5 : 15; // 5px gap or fallback 15px
+
+                    chartItemIconElement.style.top = iconTopPosition + 'px';
+                    chartItemIconElement.style.display = 'block'; // Use 'block' for absolutely positioned item
+                }, 0);
             } else {
                 chartItemIconElement.style.display = 'none';
-                chartItemIconElement.src = '';
+                chartItemIconElement.src = ''; // Clear src if no icon
             }
         }
 
