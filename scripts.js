@@ -168,29 +168,40 @@ function displayItemsForInitialView(items, containerDiv, listName) {
     const currentFavorites = loadFavorites();
 
     items.forEach(item => {
+        // Specific logging for Favorites as requested
         if (listName === 'Favorite') {
-            console.log('[Favorites List] Processing item:', JSON.stringify(item), 'Icon path:', item.icon_path);
+            console.log('[Favorites Display Loop] Item:', JSON.stringify(item), 'Icon Path:', item.icon_path);
         }
+
         if (!item || !item.name || !item.path) {
             console.warn('Skipping invalid item for initial view display:', item);
             return;
         }
 
         const li = document.createElement('li');
+        const itemLinkSpan = document.createElement('span'); // Create span early to ensure it exists for insertBefore
 
-        // Add icon if available
-        if (item.icon_path && item.icon_path.trim() !== '') {
+        // Icon creation and prepending logic (forcefully corrected)
+        if (item.icon_path && typeof item.icon_path === 'string' && item.icon_path.trim() !== '') {
             if (listName === 'Favorite') {
-                console.log('[Favorites List] Attempting to create image for:', item.name, 'with icon_path:', item.icon_path);
+                console.log('[Favorites Display Loop] Creating image for item:', item.name);
             }
             const img = document.createElement('img');
             img.src = item.icon_path;
-            img.alt = item.name; // Accessibility
-            img.classList.add('home-item-icon'); // Class for styling home screen icons
-            li.appendChild(img); // Prepend icon
+            img.alt = item.name || 'Item icon'; // Ensure alt text
+            img.classList.add('home-item-icon');
+
+            // Prepend the image to the list item.
+            // Since itemLinkSpan will be appended later, we can safely prepend to li.
+            li.prepend(img);
+
+        } else {
+            if (listName === 'Favorite') { // More specific log for favorites if icon path is invalid
+                console.log('[Favorites Display Loop] No valid icon_path for item:', item.name, 'Value:', item.icon_path);
+            }
         }
 
-        const itemLinkSpan = document.createElement('span');
+        // Setup and append itemLinkSpan (text part)
         itemLinkSpan.textContent = item.name;
         itemLinkSpan.style.cursor = 'pointer';
         itemLinkSpan.style.textDecoration = 'underline';
@@ -386,23 +397,34 @@ function findItemDetailsInGlobalData(identifier, searchByName = true, dataNode =
         const currentNode = dataNode[key];
 
         if (typeof currentNode === 'string') { // Leaf node (old format, path only)
+            let foundItemDetails = null;
             if (searchByName && key === identifier) {
-                return { name: key, path: currentNode, icon_path: '' }; // No icon_path in this format
+                foundItemDetails = { name: key, path: currentNode, icon_path: '' };
             } else if (!searchByName && currentNode === identifier) {
-                return { name: key, path: currentNode, icon_path: '' }; // No icon_path
+                foundItemDetails = { name: key, path: currentNode, icon_path: '' };
+            }
+            if (foundItemDetails) {
+                // console.log('[findItemDetailsInGlobalData] Found item (old format):', JSON.stringify(foundItemDetails));
+                return foundItemDetails;
             }
         } else if (typeof currentNode === 'object' && currentNode !== null) {
             // Check if currentNode itself is a leaf item (new format with history_path)
             if (currentNode.history_path) {
+                let foundItemDetails = null;
                 if (searchByName && key === identifier) {
-                    return { name: key, path: currentNode.history_path, icon_path: currentNode.icon_path || '' };
+                    foundItemDetails = { name: key, path: currentNode.history_path, icon_path: currentNode.icon_path || '' };
                 } else if (!searchByName && currentNode.history_path === identifier) {
-                    return { name: key, path: currentNode.history_path, icon_path: currentNode.icon_path || '' };
+                    foundItemDetails = { name: key, path: currentNode.history_path, icon_path: currentNode.icon_path || '' };
+                }
+                if (foundItemDetails) {
+                    console.log('[findItemDetailsInGlobalData] Found item (new format):', JSON.stringify(foundItemDetails));
+                    return foundItemDetails;
                 }
             } else {
                 // It's a category, so recurse
                 const foundInChildren = findItemDetailsInGlobalData(identifier, searchByName, currentNode);
                 if (foundInChildren) {
+                    // console.log('[findItemDetailsInGlobalData] Found item in children:', JSON.stringify(foundInChildren));
                     return foundInChildren;
                 }
             }
