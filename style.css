@@ -214,8 +214,8 @@
 
 #initial-view-content #favorite-items-list li > .favorite-toggle-initial,
 #initial-view-content #recently-viewed-list li > .favorite-toggle-initial {
-    margin-left: 0; /* Remove previous margin-left from general .favorite-toggle-initial style */
-    margin-right: 10px; /* Space between favorite button and stats placeholder */
+    margin-left: 0; /* Spacing is now handled by .item-stats-placeholder's margin-right */
+    margin-right: 0; /* Button is the last element in this visual group */
     flex-shrink: 0; /* Prevent button from shrinking */
 }
 
@@ -223,7 +223,7 @@
 #initial-view-content .item-stats-placeholder {
     font-size: 0.85em;
     color: #777;
-    /* margin-left is effectively handled by favorite button's margin-right */
+    margin-right: 10px; /* Space before the Favorite Button */
     white-space: normal; /* Allow wrapping for <br> tags */
     line-height: 1.3; /* Improve readability of multi-line stats */
     flex-shrink: 0; /* Prevent stats from shrinking */

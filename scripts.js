@@ -223,17 +223,19 @@ function displayItemsForInitialView(items, containerDiv, listName) {
         favButton.addEventListener('click', () => {
             toggleFavoriteOnItem(item); // Pass the full item object
         });
-        li.appendChild(favButton);
+        // li.appendChild(favButton); // Appending favButton later
 
         // Create and append stats placeholder
         const statsPlaceholder = document.createElement('span');
         statsPlaceholder.className = 'item-stats-placeholder';
-        // statsPlaceholder.textContent = 'Loading stats...'; // Initial text, will be set by the function
-        li.appendChild(statsPlaceholder);
+        // statsPlaceholder.textContent = 'Loading stats...'; // Initial text set by fetchAndDisplayItemStatsForInitialView
 
-        // Call the new function to fetch and display stats
+        // Call the new function to fetch and display stats (before appending placeholder, so it can be populated)
         console.log('[DisplayViewDebug] About to call fetchAndDisplayItemStatsForInitialView for item:', item.name, 'Path:', item.path, 'Placeholder:', statsPlaceholder);
         fetchAndDisplayItemStatsForInitialView(item.path, statsPlaceholder);
+
+        li.appendChild(statsPlaceholder); // Append stats placeholder first
+        li.appendChild(favButton);         // Then append the favorite button
 
         ul.appendChild(li);
     });
