@@ -149,7 +149,8 @@ function isFavorited(itemPath, favorites) { // Changed signature to take itemPat
 }
 
 function displayItemsForInitialView(items, containerDiv, listName) {
-    console.log(`[Debug] displayItemsForInitialView called for ${listName}`, containerDiv, items); // New log
+    console.log(`[Initial View] Displaying for: ${listName}`, items); // Added per subtask
+    // console.log(`[Debug] displayItemsForInitialView called for ${listName}`, containerDiv, items); // Existing debug log, commented to avoid redundancy
     if (!containerDiv) {
         // console.error(`Container div for "${listName}" not found in initial view.`);
         return;
@@ -167,6 +168,9 @@ function displayItemsForInitialView(items, containerDiv, listName) {
     const currentFavorites = loadFavorites();
 
     items.forEach(item => {
+        if (listName === 'Favorite') {
+            console.log('[Favorites List] Processing item:', JSON.stringify(item), 'Icon path:', item.icon_path);
+        }
         if (!item || !item.name || !item.path) {
             console.warn('Skipping invalid item for initial view display:', item);
             return;
@@ -176,6 +180,9 @@ function displayItemsForInitialView(items, containerDiv, listName) {
 
         // Add icon if available
         if (item.icon_path && item.icon_path.trim() !== '') {
+            if (listName === 'Favorite') {
+                console.log('[Favorites List] Attempting to create image for:', item.name, 'with icon_path:', item.icon_path);
+            }
             const img = document.createElement('img');
             img.src = item.icon_path;
             img.alt = item.name; // Accessibility
@@ -223,20 +230,50 @@ function toggleFavoriteOnItem(itemToToggle) {
 
     if (itemIndex > -1) { // Already favorited, so remove
         favorites.splice(itemIndex, 1);
-    } else { // Not favorited, so add
-        // Ensure we are adding an object with name, path, and icon_path
-        let iconPath = itemToToggle.icon_path; // Use if provided in itemToToggle
-        if (iconPath === undefined) { // If not provided, try to find it
-            // Check if it's the current item, use its known icon_path
-            if (itemToToggle.path === currentItemPath && itemToToggle.name === currentItemName) {
-                iconPath = currentItemIconPath;
+    } else { // Not favorited, so add a new favorite
+        let nameToStore = itemToToggle.name;
+        let pathToStore = itemToToggle.path;
+        let iconPathToStore = null; // Default to null
+
+        // Always try to fetch the most up-to-date details from globalItemData
+        // Prioritize search by path if available, as it's more unique.
+        const detailsByPath = pathToStore ? findItemDetailsInGlobalData(pathToStore, false) : null;
+
+        if (detailsByPath) {
+            nameToStore = detailsByPath.name || nameToStore; // Prefer details from global data, fallback to itemToToggle
+            pathToStore = detailsByPath.path; // Should be the definitive history_path
+            iconPathToStore = detailsByPath.icon_path || null;
+        } else {
+            // Fallback: If not found by path, or path wasn't initially available, try by name.
+            // This is less reliable if names are not unique identifiers for history_path.
+            const detailsByName = findItemDetailsInGlobalData(nameToStore, true);
+            if (detailsByName) {
+                nameToStore = detailsByName.name || nameToStore;
+                // IMPORTANT: If itemToToggle.path was missing, detailsByName.path (the history_path) is crucial.
+                pathToStore = detailsByName.path || pathToStore;
+                iconPathToStore = detailsByName.icon_path || null;
             } else {
-                // Otherwise, search in globalItemData by name or path
-                const itemDetails = findItemDetailsInGlobalData(itemToToggle.name, true) || findItemDetailsInGlobalData(itemToToggle.path, false);
-                iconPath = itemDetails ? itemDetails.icon_path : '';
+                // If still not found after both attempts, log a warning.
+                // The item might be from an outdated source or not in globalItemData.
+                console.warn(`Could not find full details for "${nameToStore}" in globalItemData. Icon path might be missing for favorites.`);
+                // Use icon_path from itemToToggle if it exists and no better source was found.
+                iconPathToStore = itemToToggle.icon_path || null;
             }
         }
-        favorites.push({ name: itemToToggle.name, path: itemToToggle.path, icon_path: iconPath || '' });
+
+        // Critical: Ensure pathToStore is valid before pushing.
+        // loadItemData relies on this path to fetch CSV data.
+        if (!pathToStore) {
+            console.error(`Cannot add favorite for "${nameToStore}", item path (history_path) is missing or could not be determined.`);
+            // Optionally, alert the user or simply don't add to favorites to prevent issues.
+            return;
+        }
+
+        favorites.push({
+            name: nameToStore,
+            path: pathToStore, // This should be the actual history_path
+            icon_path: iconPathToStore
+        });
     }
     saveToLocalStorage('favoriteItems', favorites);
 
