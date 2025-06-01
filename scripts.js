@@ -232,6 +232,7 @@ function displayItemsForInitialView(items, containerDiv, listName) {
         li.appendChild(statsPlaceholder);
 
         // Call the new function to fetch and display stats
+        console.log('[DisplayViewDebug] About to call fetchAndDisplayItemStatsForInitialView for item:', item.name, 'Path:', item.path, 'Placeholder:', statsPlaceholder);
         fetchAndDisplayItemStatsForInitialView(item.path, statsPlaceholder);
 
         ul.appendChild(li);
@@ -239,24 +240,37 @@ function displayItemsForInitialView(items, containerDiv, listName) {
     containerDiv.appendChild(ul);
 }
 
+// Helper function to format prices safely
+function formatPrice(price) {
+    if (price === null || typeof price === 'undefined' || isNaN(price)) {
+        return 'N/A';
+    }
+    return price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 // New function to fetch and display item stats for the initial view
 function fetchAndDisplayItemStatsForInitialView(itemPath, placeholderElement) {
-    // console.log('[Initial View Stats] Requesting stats for item path:', itemPath);
+    console.log('[StatsDebug] fetchAndDisplayItemStatsForInitialView called with path:', itemPath, 'and placeholder:', placeholderElement);
+
     if (!placeholderElement) {
-        console.error('[Initial View Stats] Placeholder element not provided for path:', itemPath);
-        return;
+        // This error is critical and indicates a programming mistake in the caller.
+        console.error('[StatsDebug] CRITICAL: Placeholder element not provided for path:', itemPath);
+        return; // Early exit if no placeholder to update
     }
-    placeholderElement.textContent = 'Loading stats...';
+    placeholderElement.textContent = 'Loading stats...'; // Set initial loading message
 
     if (!itemPath || typeof itemPath !== 'string') {
-        console.warn('[Initial View Stats] Invalid itemPath provided:', itemPath);
+        console.warn('[StatsDebug] Invalid itemPath provided:', itemPath);
         placeholderElement.textContent = '(Stats N/A)';
+        console.log('[StatsDebug] Setting placeholder to (Stats N/A) for', itemPath, 'due to invalid path.');
         return;
     }
 
     fetch(itemPath)
         .then(response => {
+            console.log('[StatsDebug] Fetched response for', itemPath, 'Status:', response.status);
             if (!response.ok) {
+                // This error will be caught by the .catch block
                 throw new Error(`HTTP error! status: ${response.status} for ${itemPath}`);
             }
             return response.text();
@@ -265,45 +279,50 @@ function fetchAndDisplayItemStatsForInitialView(itemPath, placeholderElement) {
             const lines = csvData.trim().split(/\r?\n/);
             if (lines.length <= 1) { // Only header or empty
                 placeholderElement.textContent = '(Stats N/A)';
-                console.warn('[Initial View Stats] CSV data has no data rows for:', itemPath);
+                console.log('[StatsDebug] Setting placeholder to (Stats N/A) for', itemPath, 'due to no data rows in CSV.');
+                // console.warn('[Initial View Stats] CSV data has no data rows for:', itemPath); // Original log, can be kept or removed
                 return;
             }
 
-            const prices = [];
-            const priceIndex = 2; // Adjusted Price column
-            // const dateCreatedIndex = 5; // Date Created column, not directly used for stats here but good to note
+            const pricesArray = []; // Renamed from 'prices' to 'pricesArray' for clarity in logging
+            const priceIndex = 2;
 
-            lines.slice(1).forEach(row => { // Skip header
+            lines.slice(1).forEach(row => {
                 const columns = row.split(',');
-                // Ensure column exists and price is valid
                 if (columns.length > priceIndex) {
                     const price = parseFloat(columns[priceIndex]);
                     if (!isNaN(price)) {
-                        prices.push(price);
+                        pricesArray.push(price);
                     }
                 }
             });
+            console.log('[StatsDebug] Parsed prices for', itemPath, ':', pricesArray);
 
-            if (prices.length === 0) {
+            if (pricesArray.length === 0) {
                 placeholderElement.textContent = '(Stats N/A)';
-                console.warn('[Initial View Stats] No valid prices found in CSV for:', itemPath);
+                console.log('[StatsDebug] Setting placeholder to (Stats N/A) for', itemPath, 'due to no valid prices found in CSV.');
+                // console.warn('[Initial View Stats] No valid prices found in CSV for:', itemPath); // Original log
                 return;
             }
 
-            const recentPrice = prices[prices.length - 1];
-            const highestPrice = Math.max(...prices);
-            const lowestPrice = Math.min(...prices);
+            const recentPrice = pricesArray[pricesArray.length - 1];
+            const highestPrice = Math.max(...pricesArray);
+            const lowestPrice = Math.min(...pricesArray);
+            console.log('[StatsDebug] Calculated stats for', itemPath, 'Recent:', recentPrice, 'High:', highestPrice, 'Low:', lowestPrice);
 
-            const formatOptions = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
+            const statsString = `(Recent: ${formatPrice(recentPrice)}, High: ${formatPrice(highestPrice)}, Low: ${formatPrice(lowestPrice)}) ISK`;
 
-            const statsString = `(Recent: ${recentPrice.toLocaleString(undefined, formatOptions)}, High: ${highestPrice.toLocaleString(undefined, formatOptions)}, Low: ${lowestPrice.toLocaleString(undefined, formatOptions)}) ISK`;
-            placeholderElement.innerHTML = statsString; // Using innerHTML for potential styling later if needed, though textContent is fine for now.
+            console.log('[StatsDebug] Attempting to set innerHTML for', itemPath, 'with statsString:', statsString);
+            placeholderElement.innerHTML = statsString;
+            console.log('[StatsDebug] Successfully set innerHTML for', itemPath);
             // Add a class for styling if needed, e.g., placeholderElement.classList.add('item-stats-loaded');
 
         })
         .catch(error => {
-            console.error('[Initial View Stats] Failed to load or process item data for stats:', itemPath, error);
+            console.error('[StatsDebug] Fetch error for', itemPath, ':', error);
+            // console.error('[Initial View Stats] Failed to load or process item data for stats:', itemPath, error); // Original log
             placeholderElement.textContent = '(Stats N/A)';
+            console.log('[StatsDebug] Setting placeholder to (Stats N/A) for', itemPath, 'due to fetch/processing error.');
         });
 }
 
