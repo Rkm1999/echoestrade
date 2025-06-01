@@ -193,8 +193,44 @@
     padding: 0.75rem;
     border-bottom: 1px solid #eee;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: flex-start; /* Changed from space-between */
+    align-items: flex-start; /* Changed from center to flex-start */
+}
+
+/* Ensure child elements are spaced correctly within the flex container */
+#initial-view-content #favorite-items-list li > .home-item-icon,
+#initial-view-content #recently-viewed-list li > .home-item-icon {
+    /* .home-item-icon already has margin-right: 10px; which is good for spacing from name */
+    flex-shrink: 0; /* Prevent icon from shrinking */
+}
+
+#initial-view-content #favorite-items-list li > span[style*="cursor: pointer"],
+#initial-view-content #recently-viewed-list li > span[style*="cursor: pointer"] {
+    flex-grow: 1; /* Allow item name to take available space */
+    margin-left: 0; /* Icon provides left margin */
+    margin-right: 10px; /* Space between name and Price Stats block */
+    /* color and text-decoration are handled by more specific rules below */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0; /* Important for flex items to allow shrinking and ellipsis */
+}
+
+#initial-view-content #favorite-items-list li > .favorite-toggle-initial,
+#initial-view-content #recently-viewed-list li > .favorite-toggle-initial {
+    margin-left: 0; /* Spacing is now handled by .item-stats-placeholder's margin-right */
+    margin-right: 0; /* Button is the last element in this visual group */
+    flex-shrink: 0; /* Prevent button from shrinking */
+}
+
+/* Style for the new stats placeholder */
+#initial-view-content .item-stats-placeholder {
+    font-size: 0.85em;
+    color: #777;
+    margin-right: 10px; /* Space before the Favorite Button */
+    white-space: normal; /* Allow wrapping for <br> tags */
+    line-height: 1.3; /* Improve readability of multi-line stats */
+    flex-shrink: 0; /* Prevent stats from shrinking */
 }
 
 #initial-view-content #favorite-items-list li:last-child,
@@ -203,8 +239,10 @@
 }
 
 /* Styling for the clickable item names in initial view lists */
+/* These rules will apply ON TOP of the generic flex item styling above */
 #initial-view-content #favorite-items-list span[style*="cursor: pointer"],
 #initial-view-content #recently-viewed-list span[style*="cursor: pointer"] {
+    /* flex-grow and margin-right are already set above */
     text-decoration: none; /* JS adds underline, this ensures base is none if preferred */
     color: #007bff;
     transition: color 0.3s ease;
@@ -225,7 +263,7 @@
     cursor: pointer;
     background-color: #f0f0f0;
     transition: background-color 0.3s ease, color 0.3s ease;
-    margin-left: 10px; /* Ensure spacing */
+    /* margin-left: 10px; */ /* Removed: Now handled by li > .favorite-toggle-initial or span's margin-right */
 }
 
 .favorite-toggle-initial:hover {
@@ -265,23 +303,24 @@
     color: #333; /* Dark grey text */
 }
 
-#priceStatsDisplay .price-change-positive {
+/* Global price/percentage change color classes */
+.price-change-positive {
     color: #28a745; /* Green */
     font-weight: bold;
 }
 
-#priceStatsDisplay .price-change-negative {
+.price-change-negative {
     color: #dc3545; /* Red */
     font-weight: bold;
 }
 
 /* Styles for coloring the actual price values */
-#priceStatsDisplay .price-value-positive {
+.price-value-positive {
     color: #28a745; /* Green, same as price-change-positive */
     /* font-weight: bold; /* Optional: if price itself should be bold too */
 }
 
-#priceStatsDisplay .price-value-negative {
+.price-value-negative {
     color: #dc3545; /* Red, same as price-change-negative */
     /* font-weight: bold; /* Optional: if price itself should be bold too */
 }

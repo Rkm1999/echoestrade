@@ -223,10 +223,183 @@ function displayItemsForInitialView(items, containerDiv, listName) {
         favButton.addEventListener('click', () => {
             toggleFavoriteOnItem(item); // Pass the full item object
         });
-        li.appendChild(favButton);
+        // li.appendChild(favButton); // Appending favButton later
+
+        // Create and append stats placeholder
+        const statsPlaceholder = document.createElement('span');
+        statsPlaceholder.className = 'item-stats-placeholder';
+        // statsPlaceholder.textContent = 'Loading stats...'; // Initial text set by fetchAndDisplayItemStatsForInitialView
+
+        // Call the new function to fetch and display stats (before appending placeholder, so it can be populated)
+        console.log('[DisplayViewDebug] About to call fetchAndDisplayItemStatsForInitialView for item:', item.name, 'Path:', item.path, 'Placeholder:', statsPlaceholder);
+        fetchAndDisplayItemStatsForInitialView(item.path, statsPlaceholder);
+
+        li.appendChild(statsPlaceholder); // Append stats placeholder first
+        li.appendChild(favButton);         // Then append the favorite button
+
         ul.appendChild(li);
     });
     containerDiv.appendChild(ul);
+}
+
+// Helper function to format prices safely
+function formatPrice(price) {
+  console.log('[FormatPriceDebug] Input to formatPrice:', price); // Added log
+  if (price === null || typeof price === 'undefined' || isNaN(price)) {
+    console.log('[FormatPriceDebug] Returning: N/A'); // Added log
+    return 'N/A';
+  }
+
+  let formattedString;
+  if (price >= 1000000) {
+    formattedString = (price / 1000000).toFixed(1) + ' mil ISK';
+  } else if (price >= 1000) {
+    formattedString = (price / 1000).toFixed(0) + ' K ISK';
+  } else {
+    formattedString = price.toFixed(2) + ' ISK';
+  }
+  console.log('[FormatPriceDebug] Returning:', formattedString); // Added log
+  return formattedString;
+}
+
+// Part 1: New global helper function to create formatted HTML for a single stat line
+function createFormattedStatHTML(label, value, percentChange, baseValueForColoring) {
+    const formattedPriceText = formatPrice(value); // Uses global formatPrice
+
+    if (formattedPriceText === 'N/A') {
+        // If the main value is N/A, probably don't show the line or show label + N/A
+        return `<strong>${label}:</strong> N/A`;
+    }
+
+    let valueColorClass = '';
+    if (typeof baseValueForColoring !== 'undefined' && value !== null && baseValueForColoring !== null && !isNaN(value) && !isNaN(baseValueForColoring)) {
+        if (value > baseValueForColoring) {
+            valueColorClass = 'price-value-positive';
+        } else if (value < baseValueForColoring) {
+            valueColorClass = 'price-value-negative';
+        }
+        // If equal, no specific color class, or add a 'neutral' if desired
+    }
+    const valueHtml = valueColorClass ? `<span class="${valueColorClass}">${formattedPriceText}</span>` : formattedPriceText;
+
+    let percentageHtml = '';
+    if (percentChange !== 'N/A' && typeof percentChange !== 'undefined' && isFinite(parseFloat(percentChange))) {
+        const pc = parseFloat(percentChange);
+        const percentColorClass = pc >= 0 ? 'price-change-positive' : 'price-change-negative';
+        const percentPrefix = pc >= 0 ? '+' : '';
+        percentageHtml = ` (<span class="${percentColorClass}">${percentPrefix}${pc.toFixed(1)}%</span>)`;
+    }
+
+    return `<strong>${label}:</strong> ${valueHtml}${percentageHtml}`;
+}
+
+// New function to fetch and display item stats for the initial view
+function fetchAndDisplayItemStatsForInitialView(itemPath, placeholderElement) {
+    console.log('[StatsDebug] fetchAndDisplayItemStatsForInitialView called with path:', itemPath, 'and placeholder:', placeholderElement);
+
+    if (!placeholderElement) {
+        // This error is critical and indicates a programming mistake in the caller.
+        console.error('[StatsDebug] CRITICAL: Placeholder element not provided for path:', itemPath);
+        return; // Early exit if no placeholder to update
+    }
+    placeholderElement.textContent = 'Loading stats...'; // Set initial loading message
+
+    if (!itemPath || typeof itemPath !== 'string') {
+        console.warn('[StatsDebug] Invalid itemPath provided:', itemPath);
+        placeholderElement.textContent = '(Stats N/A)';
+        console.log('[StatsDebug] Setting placeholder to (Stats N/A) for', itemPath, 'due to invalid path.');
+        return;
+    }
+
+    fetch(itemPath)
+        .then(response => {
+            console.log('[StatsDebug] Fetched response for', itemPath, 'Status:', response.status);
+            if (!response.ok) {
+                // This error will be caught by the .catch block
+                throw new Error(`HTTP error! status: ${response.status} for ${itemPath}`);
+            }
+            return response.text();
+        })
+        .then(csvData => {
+            const lines = csvData.trim().split(/\r?\n/);
+            if (lines.length <= 1) { // Only header or empty
+                placeholderElement.textContent = '(Stats N/A)';
+                console.log('[StatsDebug] Setting placeholder to (Stats N/A) for', itemPath, 'due to no data rows in CSV.');
+                // console.warn('[Initial View Stats] CSV data has no data rows for:', itemPath); // Original log, can be kept or removed
+                return;
+            }
+
+            const pricesArray = []; // Renamed from 'prices' to 'pricesArray' for clarity in logging
+            const priceIndex = 2;
+
+            lines.slice(1).forEach(row => {
+                const columns = row.split(',');
+                if (columns.length > priceIndex) {
+                    const price = parseFloat(columns[priceIndex]);
+                    if (!isNaN(price)) {
+                        pricesArray.push(price);
+                    }
+                }
+            });
+            console.log('[StatsDebug] Parsed prices for', itemPath, ':', pricesArray);
+
+            if (pricesArray.length === 0) {
+                placeholderElement.textContent = '(Stats N/A)';
+                console.log('[StatsDebug] Setting placeholder to (Stats N/A) for', itemPath, 'due to no valid prices found in CSV.');
+                // console.warn('[Initial View Stats] No valid prices found in CSV for:', itemPath); // Original log
+                return;
+            }
+
+            const recentPrice = pricesArray[pricesArray.length - 1];
+            const highestPrice = Math.max(...pricesArray);
+            const lowestPrice = Math.min(...pricesArray);
+
+            console.log('[StatsFormatDebug] Raw values for item', itemPath, '- Recent:', recentPrice, 'High:', highestPrice, 'Low:', lowestPrice);
+
+            const firstPrice = pricesArray.length > 0 ? pricesArray[0] : null;
+            let recentPricePercentChange = 'N/A';
+            let highestPricePercentChange = 'N/A';
+            let lowestPricePercentChange = 'N/A';
+
+            if (firstPrice !== null && firstPrice !== 0) {
+                if (recentPrice !== null) {
+                    recentPricePercentChange = (((recentPrice - firstPrice) / firstPrice) * 100);
+                }
+                if (highestPrice !== null) {
+                    highestPricePercentChange = (((highestPrice - firstPrice) / firstPrice) * 100);
+                }
+                if (lowestPrice !== null) {
+                    lowestPricePercentChange = (((lowestPrice - firstPrice) / firstPrice) * 100);
+                }
+            } else if (firstPrice === null) {
+                console.log('[StatsFormatDebug] firstPrice is null for', itemPath, '- percentages will be N/A.');
+            } else if (firstPrice === 0) {
+                console.log('[StatsFormatDebug] firstPrice is 0 for', itemPath, '- percentages will be N/A to avoid division by zero.');
+            }
+
+            console.log('[StatsFormatDebug] Calculated Percent Changes for item', itemPath, '- Recent%:', recentPricePercentChange, 'High%:', highestPricePercentChange, 'Low%:', lowestPricePercentChange, 'based on firstPrice:', firstPrice);
+
+            let statsHTMLparts = [];
+            // For "Recent", baseValueForColoring is firstPrice.
+            statsHTMLparts.push(createFormattedStatHTML("Recent", recentPrice, recentPricePercentChange, firstPrice));
+            // For "High", baseValueForColoring is firstPrice (or recentPrice, depending on desired comparison). Let's use firstPrice for consistency here.
+            statsHTMLparts.push(createFormattedStatHTML("High", highestPrice, highestPricePercentChange, firstPrice));
+            // For "Low", baseValueForColoring is firstPrice.
+            statsHTMLparts.push(createFormattedStatHTML("Low", lowestPrice, lowestPricePercentChange, firstPrice));
+
+            const finalStatsHTML = statsHTMLparts.join('<br>');
+            console.log('[StatsFormatDebug] Final statsHTML for item', itemPath, ':', finalStatsHTML);
+
+            placeholderElement.innerHTML = finalStatsHTML;
+            console.log('[StatsDebug] Successfully set innerHTML for', itemPath);
+            // Add a class for styling if needed, e.g., placeholderElement.classList.add('item-stats-loaded');
+        })
+        .catch(error => {
+            console.error('[StatsDebug] Fetch error for', itemPath, ':', error);
+            // console.error('[Initial View Stats] Failed to load or process item data for stats:', itemPath, error); // Original log
+            placeholderElement.textContent = '(Stats N/A)';
+            console.log('[StatsDebug] Setting placeholder to (Stats N/A) for', itemPath, 'due to fetch/processing error.');
+        });
 }
 
 function toggleFavoriteOnItem(itemToToggle) {
@@ -808,30 +981,19 @@ function calculateAndDisplayPriceStatistics(labels, prices) {
         lowestPricePercentChange = calculatePercentageChange(lowestPrice, startPrice);
     }
 
-function formatPriceStat(value, percentChange) {
-    if (value === null || !isFinite(value)) return 'N/A';
-
-    let priceText = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ISK';
-    let priceHtml;
-
-    if (percentChange !== 'N/A') {
-        const isPositive = parseFloat(percentChange) >= 0;
-        const valueClass = isPositive ? 'price-value-positive' : 'price-value-negative';
-        priceHtml = `<span class="${valueClass}">${priceText}</span>`;
-
-        const changePrefix = isPositive ? '+' : '';
-        const changeClass = isPositive ? 'price-change-positive' : 'price-change-negative';
-        priceHtml += ` (<span class="${changeClass}">${changePrefix}${percentChange}%</span>)`;
-    } else {
-        priceHtml = priceText; // No coloring for price or percentage if percentChange is 'N/A'
+    // The local formatPriceStat function is now removed/commented out,
+    // as we are using the global createFormattedStatHTML function.
+    /*
+    function formatPriceStat(value, percentChange) {
+        // ... old implementation ...
     }
-    return priceHtml;
-}
+    */
 
     let htmlContent = '<ul>';
-    htmlContent += `<li>Current Price: ${formatPriceStat(currentPrice, currentPricePercentChange)}</li>`;
-    htmlContent += `<li>Highest Price (Period): ${formatPriceStat(highestPrice, highestPricePercentChange)}</li>`;
-    htmlContent += `<li>Lowest Price (Period): ${formatPriceStat(lowestPrice, lowestPricePercentChange)}</li>`;
+    // Use global createFormattedStatHTML. For chart view, startPrice is the base for coloring.
+    htmlContent += `<li>${createFormattedStatHTML("Current Price", currentPrice, currentPricePercentChange, startPrice)}</li>`;
+    htmlContent += `<li>${createFormattedStatHTML("Highest Price (Period)", highestPrice, highestPricePercentChange, startPrice)}</li>`;
+    htmlContent += `<li>${createFormattedStatHTML("Lowest Price (Period)", lowestPrice, lowestPricePercentChange, startPrice)}</li>`;
     htmlContent += '</ul>';
 
     statsDisplay.innerHTML = htmlContent;
