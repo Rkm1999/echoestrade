@@ -208,8 +208,12 @@
 #initial-view-content #recently-viewed-list li > span[style*="cursor: pointer"] {
     flex-grow: 1; /* Allow item name to take available space */
     margin-left: 0; /* Icon provides left margin */
-    margin-right: 10px; /* Space between name and favorite button */
+    margin-right: 10px; /* Space between name and Price Stats block */
     /* color and text-decoration are handled by more specific rules below */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0; /* Important for flex items to allow shrinking and ellipsis */
 }
 
 #initial-view-content #favorite-items-list li > .favorite-toggle-initial,
