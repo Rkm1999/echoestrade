@@ -224,9 +224,87 @@ function displayItemsForInitialView(items, containerDiv, listName) {
             toggleFavoriteOnItem(item); // Pass the full item object
         });
         li.appendChild(favButton);
+
+        // Create and append stats placeholder
+        const statsPlaceholder = document.createElement('span');
+        statsPlaceholder.className = 'item-stats-placeholder';
+        // statsPlaceholder.textContent = 'Loading stats...'; // Initial text, will be set by the function
+        li.appendChild(statsPlaceholder);
+
+        // Call the new function to fetch and display stats
+        fetchAndDisplayItemStatsForInitialView(item.path, statsPlaceholder);
+
         ul.appendChild(li);
     });
     containerDiv.appendChild(ul);
+}
+
+// New function to fetch and display item stats for the initial view
+function fetchAndDisplayItemStatsForInitialView(itemPath, placeholderElement) {
+    // console.log('[Initial View Stats] Requesting stats for item path:', itemPath);
+    if (!placeholderElement) {
+        console.error('[Initial View Stats] Placeholder element not provided for path:', itemPath);
+        return;
+    }
+    placeholderElement.textContent = 'Loading stats...';
+
+    if (!itemPath || typeof itemPath !== 'string') {
+        console.warn('[Initial View Stats] Invalid itemPath provided:', itemPath);
+        placeholderElement.textContent = '(Stats N/A)';
+        return;
+    }
+
+    fetch(itemPath)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status} for ${itemPath}`);
+            }
+            return response.text();
+        })
+        .then(csvData => {
+            const lines = csvData.trim().split(/\r?\n/);
+            if (lines.length <= 1) { // Only header or empty
+                placeholderElement.textContent = '(Stats N/A)';
+                console.warn('[Initial View Stats] CSV data has no data rows for:', itemPath);
+                return;
+            }
+
+            const prices = [];
+            const priceIndex = 2; // Adjusted Price column
+            // const dateCreatedIndex = 5; // Date Created column, not directly used for stats here but good to note
+
+            lines.slice(1).forEach(row => { // Skip header
+                const columns = row.split(',');
+                // Ensure column exists and price is valid
+                if (columns.length > priceIndex) {
+                    const price = parseFloat(columns[priceIndex]);
+                    if (!isNaN(price)) {
+                        prices.push(price);
+                    }
+                }
+            });
+
+            if (prices.length === 0) {
+                placeholderElement.textContent = '(Stats N/A)';
+                console.warn('[Initial View Stats] No valid prices found in CSV for:', itemPath);
+                return;
+            }
+
+            const recentPrice = prices[prices.length - 1];
+            const highestPrice = Math.max(...prices);
+            const lowestPrice = Math.min(...prices);
+
+            const formatOptions = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
+
+            const statsString = `(Recent: ${recentPrice.toLocaleString(undefined, formatOptions)}, High: ${highestPrice.toLocaleString(undefined, formatOptions)}, Low: ${lowestPrice.toLocaleString(undefined, formatOptions)}) ISK`;
+            placeholderElement.innerHTML = statsString; // Using innerHTML for potential styling later if needed, though textContent is fine for now.
+            // Add a class for styling if needed, e.g., placeholderElement.classList.add('item-stats-loaded');
+
+        })
+        .catch(error => {
+            console.error('[Initial View Stats] Failed to load or process item data for stats:', itemPath, error);
+            placeholderElement.textContent = '(Stats N/A)';
+        });
 }
 
 function toggleFavoriteOnItem(itemToToggle) {
