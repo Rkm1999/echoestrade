@@ -242,17 +242,22 @@ function displayItemsForInitialView(items, containerDiv, listName) {
 
 // Helper function to format prices safely
 function formatPrice(price) {
+  console.log('[FormatPriceDebug] Input to formatPrice:', price); // Added log
   if (price === null || typeof price === 'undefined' || isNaN(price)) {
+    console.log('[FormatPriceDebug] Returning: N/A'); // Added log
     return 'N/A';
   }
 
+  let formattedString;
   if (price >= 1000000) {
-    return (price / 1000000).toFixed(1) + ' mil ISK';
+    formattedString = (price / 1000000).toFixed(1) + ' mil ISK';
   } else if (price >= 1000) {
-    return (price / 1000).toFixed(0) + ' K ISK';
+    formattedString = (price / 1000).toFixed(0) + ' K ISK';
   } else {
-    return price.toFixed(2) + ' ISK';
+    formattedString = price.toFixed(2) + ' ISK';
   }
+  console.log('[FormatPriceDebug] Returning:', formattedString); // Added log
+  return formattedString;
 }
 
 // New function to fetch and display item stats for the initial view
@@ -315,11 +320,22 @@ function fetchAndDisplayItemStatsForInitialView(itemPath, placeholderElement) {
             const recentPrice = pricesArray[pricesArray.length - 1];
             const highestPrice = Math.max(...pricesArray);
             const lowestPrice = Math.min(...pricesArray);
-            console.log('[StatsDebug] Calculated stats for', itemPath, 'Recent:', recentPrice, 'High:', highestPrice, 'Low:', lowestPrice);
+            // console.log('[StatsDebug] Calculated stats for', itemPath, 'Recent:', recentPrice, 'High:', highestPrice, 'Low:', lowestPrice); // Original log, replaced by more detailed below
 
-            const statsString = `(Recent: ${formatPrice(recentPrice)}, High: ${formatPrice(highestPrice)}, Low: ${formatPrice(lowestPrice)}) ISK`;
+            console.log('[StatsFormatDebug] Raw values for item', itemPath, '- Recent:', recentPrice, 'High:', highestPrice, 'Low:', lowestPrice);
 
-            console.log('[StatsDebug] Attempting to set innerHTML for', itemPath, 'with statsString:', statsString);
+            const formattedRecent = formatPrice(recentPrice);
+            const formattedHigh = formatPrice(highestPrice);
+            const formattedLow = formatPrice(lowestPrice);
+
+            console.log('[StatsFormatDebug] Formatted values for item', itemPath, '- Recent:', formattedRecent, 'High:', formattedHigh, 'Low:', formattedLow);
+
+            // Construct statsString using new variables; formatPrice already appends appropriate ISK suffix.
+            const statsString = `(Recent: ${formattedRecent}, High: ${formattedHigh}, Low: ${formattedLow})`;
+
+            console.log('[StatsFormatDebug] Final statsString for item', itemPath, ':', statsString); // Log the final string
+
+            // console.log('[StatsDebug] Attempting to set innerHTML for', itemPath, 'with statsString:', statsString); // Original log, can be removed or kept
             placeholderElement.innerHTML = statsString;
             console.log('[StatsDebug] Successfully set innerHTML for', itemPath);
             // Add a class for styling if needed, e.g., placeholderElement.classList.add('item-stats-loaded');
