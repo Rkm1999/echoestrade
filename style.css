@@ -96,11 +96,24 @@
 }
 
 /* Leaf Item Styling (.item-leaf) */
-#item-selector-container .item-leaf > span {
-    color: #2266AA;
+#item-selector-container .nav-item.item-leaf { /* Target the LI element */
+    display: flex;       /* Arrange children (icon and text span) in a row */
+    align-items: center; /* Vertically align children in the middle */
+    /* Padding on the child span provides clickable area, so LI might not need direct padding */
 }
 
-#item-selector-container .item-leaf.selected-leaf > span { /* Style for the selected item */
+#item-selector-container .item-leaf > span { /* Style for the text span within the leaf item */
+    color: #2266AA;
+    /* The span will naturally take up remaining space in flex container.
+       If text overflow is needed:
+       flex-grow: 1;
+       overflow: hidden;
+       text-overflow: ellipsis;
+       white-space: nowrap;
+    */
+}
+
+#item-selector-container .item-leaf.selected-leaf > span { /* Style for the selected item's text span */
     background-color: #cce7ff;
     font-weight: bold;
 }
@@ -130,6 +143,7 @@
 
 #chart-view-content {
     display: none; /* Hidden by default, JS will manage visibility */
+    position: relative; /* For absolute positioning of chartItemIcon */
 }
 
 /* Styles for Initial View Content (Favorites & Recents) */
@@ -299,4 +313,75 @@ footer a {
 
 footer a:hover {
   text-decoration: underline;
+}
+
+/* Icon Styles */
+.sidebar-item-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    vertical-align: middle; /* Good fallback, but flexbox's align-items will manage this */
+    object-fit: contain; /* Fit image within dimensions without distortion */
+    flex-shrink: 0; /* Prevent icon from shrinking if item name is very long */
+}
+
+.home-item-icon {
+    width: 28px; /* Slightly larger than sidebar */
+    height: 28px;
+    margin-right: 10px;
+    vertical-align: middle;
+    object-fit: contain;
+}
+
+.chart-item-icon {
+    position: absolute;
+    top: 65px; /* Adjusted from 15px */
+    right: 15px;
+    width: 180px; /* Increased from 120px */
+    max-height: 270px; /* Increased from 180px */
+    height: auto;
+    object-fit: contain;
+    display: none; /* Visibility controlled by JavaScript */
+    z-index: 100;  /* Increased z-index */
+    /* Removed box-shadow, border, background-color, padding */
+    /* Removed flex-shrink and other properties from previous layout */
+}
+
+/* Adjustments for content to avoid overlap with the absolutely positioned icon */
+#chart-view-content #chartDisplayTitle {
+    margin-right: 210px; /* 180px (icon width) + 15px (icon right offset) + 15px (gap) */
+    margin-bottom: 10px; /* Added bottom margin */
+}
+
+#chart-view-content #priceStatsDisplay,
+#chart-view-content #controls {
+    margin-right: 210px; /* 180px (icon width) + 15px (icon right offset) + 15px (gap) */
+}
+
+
+/* Chart View Layout Styles (Previous two-column, largely unused now but kept for reference or cleanup) */
+#chart-main-area-wrapper {
+    display: flex;
+    align-items: flex-start; /* Aligns items to the top */
+    gap: 20px; /* Space between icon and info column */
+    margin-bottom: 20px; /* Space before the canvas chart */
+}
+
+#chart-info-column {
+    flex-grow: 1; /* Takes up available space */
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Optional spacing between elements in this column */
+}
+
+/* Adjustments for elements within the info column */
+#chart-info-column #chartDisplayTitle { /* Targeting H1 specifically within chart-info-column */
+    margin-top: 0; /* Remove default top margin of H1 if it causes misalignment */
+    font-size: 1.8em; /* Example: ensure it's appropriately sized */
+}
+
+#chart-info-column #currentItemFavoriteToggle {
+    align-self: flex-start; /* Prevent button from stretching full width of the column */
+    margin-left: 0; /* Reset margin if previously set for inline layout */
+    /* margin-top: 5px; /* Optional: add some top margin if needed */
 }

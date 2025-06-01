@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const MAX_RECENT_ITEMS = 10;
     let currentItemPath = null;
     let currentItemName = null;
+    let currentItemIconPath = null; // Added for icon path
     let priceChart = null;
     let activeTimeframe = "All"; // "30D", "3M", "6M", "1Y", "All", "Custom"
     let originalPriceData = [];
@@ -107,6 +108,12 @@ function showInitialView() {
         initialView.style.display = 'block';
         console.log('[Debug] initialView.style.display set to block');
     }
+    // Hide chart item icon when showing initial view
+    const chartItemIconElement = document.getElementById('chartItemIcon');
+    if (chartItemIconElement) {
+        chartItemIconElement.style.display = 'none';
+        chartItemIconElement.src = ''; // Also clear src
+    }
     refreshInitialViewLists();
 }
 
@@ -142,7 +149,7 @@ function isFavorited(itemPath, favorites) { // Changed signature to take itemPat
 }
 
 function displayItemsForInitialView(items, containerDiv, listName) {
-    console.log(`[Debug] displayItemsForInitialView called for ${listName}`, containerDiv, items); // New log
+    // console.log(`[Initial View] Displaying for: ${listName}`, items); // Original log from previous step, can be kept or removed
     if (!containerDiv) {
         // console.error(`Container div for "${listName}" not found in initial view.`);
         return;
@@ -160,14 +167,40 @@ function displayItemsForInitialView(items, containerDiv, listName) {
     const currentFavorites = loadFavorites();
 
     items.forEach(item => {
+        // Specific logging for Favorites as requested
+        if (listName === 'Favorite') {
+            console.log('[Favorites Display Loop] Item:', JSON.stringify(item), 'Icon Path:', item.icon_path);
+        }
+
         if (!item || !item.name || !item.path) {
             console.warn('Skipping invalid item for initial view display:', item);
             return;
         }
 
         const li = document.createElement('li');
+        const itemLinkSpan = document.createElement('span'); // Create span early to ensure it exists for insertBefore
 
-        const itemLinkSpan = document.createElement('span');
+        // Icon creation and prepending logic (forcefully corrected)
+        if (item.icon_path && typeof item.icon_path === 'string' && item.icon_path.trim() !== '') {
+            if (listName === 'Favorite') {
+                console.log('[Favorites Display Loop] Creating image for item:', item.name);
+            }
+            const img = document.createElement('img');
+            img.src = item.icon_path;
+            img.alt = item.name || 'Item icon'; // Ensure alt text
+            img.classList.add('home-item-icon');
+
+            // Prepend the image to the list item.
+            // Since itemLinkSpan will be appended later, we can safely prepend to li.
+            li.prepend(img);
+
+        } else {
+            if (listName === 'Favorite') { // More specific log for favorites if icon path is invalid
+                console.log('[Favorites Display Loop] No valid icon_path for item:', item.name, 'Value:', item.icon_path);
+            }
+        }
+
+        // Setup and append itemLinkSpan (text part)
         itemLinkSpan.textContent = item.name;
         itemLinkSpan.style.cursor = 'pointer';
         itemLinkSpan.style.textDecoration = 'underline';
@@ -176,7 +209,7 @@ function displayItemsForInitialView(items, containerDiv, listName) {
             loadItemData(item.path, item.name);
             // loadItemData will call showChartView
         });
-        li.appendChild(itemLinkSpan);
+        li.appendChild(itemLinkSpan); // Append text span after icon (if any)
 
         const favButton = document.createElement('button');
         favButton.classList.add('favorite-toggle-initial'); // Distinct class if needed
@@ -197,19 +230,65 @@ function displayItemsForInitialView(items, containerDiv, listName) {
 }
 
 function toggleFavoriteOnItem(itemToToggle) {
-    if (!itemToToggle || !itemToToggle.path || !itemToToggle.name) {
-        console.error('Cannot toggle favorite for invalid item:', itemToToggle);
+    console.log('[toggleFavoriteOnItem] Called with itemToToggle:', JSON.stringify(itemToToggle)); // Added log
+    if (!itemToToggle || !itemToToggle.name) { // Path can be initially missing and looked up
+        console.error('[toggleFavoriteOnItem] Cannot toggle favorite for invalid or incomplete item (name missing):', itemToToggle);
         return;
     }
 
     let favorites = loadFavorites();
-    const itemIndex = favorites.findIndex(fav => fav.path === itemToToggle.path);
+    // Try to find by path first if available, otherwise by name if path is missing from itemToToggle
+    const itemIndex = itemToToggle.path
+        ? favorites.findIndex(fav => fav.path === itemToToggle.path)
+        : favorites.findIndex(fav => fav.name === itemToToggle.name && fav.path === null); // Handle case where path might be null
 
-    if (itemIndex > -1) { // Already favorited, so remove
+    if (itemIndex > -1 && itemToToggle.path) { // If found by path, it's definitely the one to remove
         favorites.splice(itemIndex, 1);
-    } else { // Not favorited, so add
-        // Ensure we are adding an object with name and path
-        favorites.push({ name: itemToToggle.name, path: itemToToggle.path });
+        console.log('[toggleFavoriteOnItem] Removed favorite:', itemToToggle.name);
+    } else if (itemIndex > -1 && !itemToToggle.path) { // Found by name with null path
+         favorites.splice(itemIndex, 1);
+         console.log('[toggleFavoriteOnItem] Removed favorite (matched by name, path was null):', itemToToggle.name);
+    }
+    else { // Not favorited or path mismatch, so add a new favorite
+        let nameToStore = itemToToggle.name;
+        let pathToStore = itemToToggle.path; // This should be the history_path
+        let iconPathToStore = itemToToggle.icon_path; // Directly use from input first
+
+        // If crucial info is missing from itemToToggle, attempt a lookup.
+        if (!pathToStore && nameToStore && window.globalItemData) {
+            console.warn(`[toggleFavoriteOnItem] Path is missing for new favorite '${nameToStore}'. Attempting lookup by name.`);
+            const details = findItemDetailsInGlobalData(nameToStore, true); // true: searchByName
+            if (details) {
+                pathToStore = details.path; // This is history_path from findItemDetailsInGlobalData
+                iconPathToStore = iconPathToStore !== undefined ? iconPathToStore : details.icon_path; // Prioritize existing icon_path if any
+                nameToStore = details.name || nameToStore; // Update name if lookup provided a more canonical one
+            }
+        } else if (pathToStore && (iconPathToStore === undefined || iconPathToStore === null || (typeof iconPathToStore === 'string' && iconPathToStore.trim() === '')) && window.globalItemData) {
+            console.warn(`[toggleFavoriteOnItem] icon_path is missing or empty in itemToToggle for '${nameToStore}'. Attempting lookup by path: ${pathToStore}.`);
+            const details = findItemDetailsInGlobalData(pathToStore, false); // false: searchByPath (history_path)
+            if (details) {
+                iconPathToStore = details.icon_path;
+                nameToStore = details.name || nameToStore; // Update name if lookup provided a more canonical one
+            } else {
+                console.warn(`[toggleFavoriteOnItem] Fallback lookup failed for '${nameToStore}' using path '${pathToStore}'. Icon may be missing.`);
+            }
+        }
+
+        // Final check for essential data before saving
+        if (!nameToStore || !pathToStore) {
+            console.error('[toggleFavoriteOnItem] CRITICAL: Cannot add favorite. Name or path (history_path) is still missing after potential lookup for item initially identified as:', itemToToggle.name);
+            // alert('Error: Could not save favorite due to missing item data.'); // Inform user
+            return;
+        }
+
+        const newFavoriteEntry = {
+            name: nameToStore,
+            path: pathToStore,
+            icon_path: iconPathToStore !== undefined ? iconPathToStore : null // Ensure null if undefined
+        };
+
+        console.log('[toggleFavoriteOnItem] Adding to favorites array:', JSON.stringify(newFavoriteEntry));
+        favorites.push(newFavoriteEntry);
     }
     saveToLocalStorage('favoriteItems', favorites);
 
@@ -303,14 +382,60 @@ function refreshInitialViewLists() {
                 return response.json();
             })
             .then(jsonData => {
+                window.globalItemData = jsonData; // Make jsonData globally accessible
                 itemSelectorContainer.innerHTML = '';
-                buildSidebarNavigation(jsonData, itemSelectorContainer, 0);
+                buildSidebarNavigation(window.globalItemData, itemSelectorContainer, 0);
             })
             .catch(error => {
                 console.error('Error fetching item_data.json:', error);
                 itemSelectorContainer.innerHTML = '<p>Error loading item data.</p>';
             });
     }
+
+// Helper function to find item details (including icon_path) in the globalItemData
+// Recursively searches through the nested structure.
+function findItemDetailsInGlobalData(identifier, searchByName = true, dataNode = window.globalItemData) {
+    if (!dataNode) return null;
+
+    for (const key in dataNode) {
+        const currentNode = dataNode[key];
+
+        if (typeof currentNode === 'string') { // Leaf node (old format, path only)
+            let foundItemDetails = null;
+            if (searchByName && key === identifier) {
+                foundItemDetails = { name: key, path: currentNode, icon_path: '' };
+            } else if (!searchByName && currentNode === identifier) {
+                foundItemDetails = { name: key, path: currentNode, icon_path: '' };
+            }
+            if (foundItemDetails) {
+                // console.log('[findItemDetailsInGlobalData] Found item (old format):', JSON.stringify(foundItemDetails));
+                return foundItemDetails;
+            }
+        } else if (typeof currentNode === 'object' && currentNode !== null) {
+            // Check if currentNode itself is a leaf item (new format with history_path)
+            if (currentNode.history_path) {
+                let foundItemDetails = null;
+                if (searchByName && key === identifier) {
+                    foundItemDetails = { name: key, path: currentNode.history_path, icon_path: currentNode.icon_path || '' };
+                } else if (!searchByName && currentNode.history_path === identifier) {
+                    foundItemDetails = { name: key, path: currentNode.history_path, icon_path: currentNode.icon_path || '' };
+                }
+                if (foundItemDetails) {
+                    console.log('[findItemDetailsInGlobalData] Found item (new format):', JSON.stringify(foundItemDetails));
+                    return foundItemDetails;
+                }
+            } else {
+                // It's a category, so recurse
+                const foundInChildren = findItemDetailsInGlobalData(identifier, searchByName, currentNode);
+                if (foundInChildren) {
+                    // console.log('[findItemDetailsInGlobalData] Found item in children:', JSON.stringify(foundInChildren));
+                    return foundInChildren;
+                }
+            }
+        }
+    }
+    return null; // Not found
+}
 
     function buildSidebarNavigation(data, parentElement, level = 0) {
         parentElement.innerHTML = '';
@@ -326,24 +451,49 @@ function refreshInitialViewLists() {
 
             const textElement = document.createElement('span');
             textElement.style.cursor = 'pointer';
-            listItem.appendChild(textElement);
+            // Icon will be prepended to listItem, then textElement will be appended to listItem.
 
-            if (typeof data[key] === 'string') {
+            // Check if it's a new format leaf node (object with history_path)
+            if (typeof data[key] === 'object' && data[key] !== null && data[key].history_path) {
                 listItem.classList.add('item-leaf');
-                textElement.textContent = key;
-                listItem.dataset.csvPath = data[key];
-                textElement.addEventListener('click', function() {
-                    loadItemData(data[key], key);
+                textElement.textContent = key; // Item name is the key
 
+                // Add icon if available
+                if (data[key].icon_path && data[key].icon_path.trim() !== '') {
+                    const img = document.createElement('img');
+                    img.src = data[key].icon_path;
+                    img.alt = key;
+                    img.classList.add('sidebar-item-icon'); // Add class for styling
+                    listItem.appendChild(img); // Prepend icon
+                }
+                listItem.appendChild(textElement); // Append text span after icon
+
+                listItem.dataset.csvPath = data[key].history_path;
+                textElement.addEventListener('click', function() {
+                    loadItemData(data[key].history_path, key);
                     const currentlySelected = document.querySelector('.nav-item.selected-leaf');
                     if (currentlySelected) {
                         currentlySelected.classList.remove('selected-leaf');
                     }
                     listItem.classList.add('selected-leaf');
                 });
-            } else if (typeof data[key] === 'object') {
+            } else if (typeof data[key] === 'string') { // Old format leaf node (string path)
+                listItem.classList.add('item-leaf');
+                textElement.textContent = key;
+                listItem.appendChild(textElement); // Append text span
+                listItem.dataset.csvPath = data[key];
+                textElement.addEventListener('click', function() {
+                    loadItemData(data[key], key);
+                    const currentlySelected = document.querySelector('.nav-item.selected-leaf');
+                    if (currentlySelected) {
+                        currentlySelected.classList.remove('selected-leaf');
+                    }
+                    listItem.classList.add('selected-leaf');
+                });
+            } else if (typeof data[key] === 'object' && data[key] !== null) { // Category node
                 listItem.classList.add('item-category');
                 textElement.textContent = '► ' + key;
+                listItem.appendChild(textElement); // Append text span for category
 
                 const childListContainer = document.createElement('div');
                 childListContainer.className = 'child-list-container';
@@ -388,7 +538,49 @@ function refreshInitialViewLists() {
     function loadItemData(csvPath, itemName) {
         currentItemPath = csvPath;
         currentItemName = itemName;
-        console.log("Loading data for:", csvPath, "Item Name:", itemName);
+
+        // Find item details including icon_path from globalItemData
+        const itemDetails = findItemDetailsInGlobalData(itemName, true) || findItemDetailsInGlobalData(csvPath, false);
+        if (itemDetails) {
+            currentItemIconPath = itemDetails.icon_path;
+        } else {
+            currentItemIconPath = ''; // Default if not found
+            // console.warn(`Icon path not found for ${itemName} or ${csvPath} in globalItemData.`);
+        }
+        console.log("Loading data for:", csvPath, "Item Name:", itemName, "Icon Path:", currentItemIconPath);
+        console.log(`[loadItemData] For item ${currentItemName}, currentItemIconPath is: ${currentItemIconPath}`); // Added log
+
+        // Update chart item icon
+        const chartItemIconElement = document.getElementById('chartItemIcon');
+        // chartDisplayTitleElement is the H1, globally defined
+        // chartViewContentDiv is also globally defined
+
+        if (chartItemIconElement && chartDisplayTitleElement && chartViewContentDiv) {
+            if (currentItemIconPath && currentItemIconPath.trim() !== '') {
+                chartItemIconElement.src = currentItemIconPath;
+                chartItemIconElement.alt = currentItemName || 'Item Icon'; // Use default alt if name missing
+
+                // Defer position calculation to allow DOM to update with new title text
+                setTimeout(() => {
+                    const titleRect = chartDisplayTitleElement.getBoundingClientRect();
+                    const chartViewRect = chartViewContentDiv.getBoundingClientRect();
+
+                    // Calculate title's bottom relative to chartViewContentDiv's top edge
+                    const titleBottomRelativeToParent = titleRect.bottom - chartViewRect.top;
+
+                    // Ensure we have a positive, valid number before setting.
+                    // titleBottomRelativeToParent could be 0 or negative if titleElement is hidden or chartViewRect.top is unexpectedly large.
+                    // Default to a small top value if calculation is off, to prevent icon from disappearing.
+                    let iconTopPosition = titleBottomRelativeToParent > 0 ? titleBottomRelativeToParent + 5 : 15; // 5px gap or fallback 15px
+
+                    chartItemIconElement.style.top = iconTopPosition + 'px';
+                    chartItemIconElement.style.display = 'block'; // Use 'block' for absolutely positioned item
+                }, 0);
+            } else {
+                chartItemIconElement.style.display = 'none';
+                chartItemIconElement.src = ''; // Clear src if no icon
+            }
+        }
 
         // Reset timeframe to "All" when new item is loaded
         activeTimeframe = "All";
@@ -428,10 +620,11 @@ function refreshInitialViewLists() {
                     originalPriceData = tempPriceData;
                 }
 
-                if (chartDisplayTitleElement && itemName) {
-                    chartDisplayTitleElement.textContent = itemName;
-                } else if (chartDisplayTitleElement) {
-                    chartDisplayTitleElement.textContent = 'Item Analysis'; // Or a more generic title if itemName is missing
+                const chartDisplayTitleTextElement = document.getElementById('chartDisplayTitleText');
+                if (chartDisplayTitleTextElement && itemName) {
+                    chartDisplayTitleTextElement.textContent = itemName;
+                } else if (chartDisplayTitleTextElement) {
+                    chartDisplayTitleTextElement.textContent = 'Item Analysis'; // Or a more generic title if itemName is missing
                 }
                 console.log('Loading item data. Current activeSMAPeriods before updateChartWithIndicators:', JSON.stringify(activeSMAPeriods));
                 if (originalLabels.length === 0 && originalPriceData.length === 0) {
@@ -456,21 +649,25 @@ function refreshInitialViewLists() {
                         recentlyViewed = [];
                     }
 
-                    const newItem = { name: itemName, path: csvPath };
+                    // Add new item with icon_path to the beginning
+                    const newItem = { name: itemName, path: csvPath, icon_path: currentItemIconPath };
                     // Remove if already exists to move to top
                     recentlyViewed = recentlyViewed.filter(item => item.path !== csvPath);
-                    recentlyViewed.unshift(newItem); // Add to the beginning
+                    recentlyViewed.unshift(newItem);
                     if (recentlyViewed.length > MAX_RECENT_ITEMS) {
-                        recentlyViewed.length = MAX_RECENT_ITEMS; // Trim to max size
+                        recentlyViewed.length = MAX_RECENT_ITEMS;
                     }
                     localStorage.setItem('recentlyViewedItems', JSON.stringify(recentlyViewed));
+                    // Refresh initial view lists as recently viewed items (which now include icons) have changed.
+                    refreshInitialViewLists();
                 }
                 updateCurrentItemFavoriteButton();
             })
             .catch(error => {
                 console.error('Failed to load or process item data:', error);
-                if (chartDisplayTitleElement) {
-                    chartDisplayTitleElement.textContent = 'Failed to Load Item Data';
+                const chartDisplayTitleTextElement = document.getElementById('chartDisplayTitleText');
+                if (chartDisplayTitleTextElement) {
+                    chartDisplayTitleTextElement.textContent = 'Failed to Load Item Data';
                 }
                  originalLabels = [];
                  originalPriceData = [];
@@ -482,6 +679,11 @@ function refreshInitialViewLists() {
                  } else {
                     initializeChart(); // This already calls calculateAndDisplayPriceStatistics([], [])
                  }
+                // Also hide icon on error
+                if (chartItemIconElement) {
+                    chartItemIconElement.style.display = 'none';
+                    chartItemIconElement.src = '';
+                }
             });
         showChartView();
     }
@@ -798,10 +1000,19 @@ function formatPriceStat(value, percentChange) {
     if (itemPathFromUrl && itemNameFromUrl) {
         console.log(`Loading item from URL: ${itemNameFromUrl} (${itemPathFromUrl})`);
         loadItemData(itemPathFromUrl, itemNameFromUrl); // This will also call showChartView
-        if (chartDisplayTitleElement && itemNameFromUrl) { // Redundant if loadItemData sets it, but safe
-             chartDisplayTitleElement.textContent = itemNameFromUrl;
+        // The loadItemData function now handles setting the title text,
+        // so this redundant check/set might not be strictly necessary here,
+        // but keeping it for safety or if loadItemData's title setting is conditional.
+        const chartDisplayTitleTextElement = document.getElementById('chartDisplayTitleText');
+        if (chartDisplayTitleTextElement && itemNameFromUrl) {
+             chartDisplayTitleTextElement.textContent = itemNameFromUrl;
         }
     } else {
+        // When showing initial view, ensure the title text is reset or appropriate.
+        const chartDisplayTitleTextElement = document.getElementById('chartDisplayTitleText');
+        if (chartDisplayTitleTextElement) {
+            chartDisplayTitleTextElement.textContent = 'Item Analysis'; // Default title for home/initial
+        }
         showInitialView();
         const favToggleBtn = document.getElementById('currentItemFavoriteToggle');
         if (favToggleBtn) favToggleBtn.style.display = 'none'; // Hide chart's fav button
