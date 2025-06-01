@@ -260,6 +260,37 @@ function formatPrice(price) {
   return formattedString;
 }
 
+// Part 1: New global helper function to create formatted HTML for a single stat line
+function createFormattedStatHTML(label, value, percentChange, baseValueForColoring) {
+    const formattedPriceText = formatPrice(value); // Uses global formatPrice
+
+    if (formattedPriceText === 'N/A') {
+        // If the main value is N/A, probably don't show the line or show label + N/A
+        return `<strong>${label}:</strong> N/A`;
+    }
+
+    let valueColorClass = '';
+    if (typeof baseValueForColoring !== 'undefined' && value !== null && baseValueForColoring !== null && !isNaN(value) && !isNaN(baseValueForColoring)) {
+        if (value > baseValueForColoring) {
+            valueColorClass = 'price-value-positive';
+        } else if (value < baseValueForColoring) {
+            valueColorClass = 'price-value-negative';
+        }
+        // If equal, no specific color class, or add a 'neutral' if desired
+    }
+    const valueHtml = valueColorClass ? `<span class="${valueColorClass}">${formattedPriceText}</span>` : formattedPriceText;
+
+    let percentageHtml = '';
+    if (percentChange !== 'N/A' && typeof percentChange !== 'undefined' && isFinite(parseFloat(percentChange))) {
+        const pc = parseFloat(percentChange);
+        const percentColorClass = pc >= 0 ? 'price-change-positive' : 'price-change-negative';
+        const percentPrefix = pc >= 0 ? '+' : '';
+        percentageHtml = ` (<span class="${percentColorClass}">${percentPrefix}${pc.toFixed(1)}%</span>)`;
+    }
+
+    return `<strong>${label}:</strong> ${valueHtml}${percentageHtml}`;
+}
+
 // New function to fetch and display item stats for the initial view
 function fetchAndDisplayItemStatsForInitialView(itemPath, placeholderElement) {
     console.log('[StatsDebug] fetchAndDisplayItemStatsForInitialView called with path:', itemPath, 'and placeholder:', placeholderElement);
@@ -320,26 +351,46 @@ function fetchAndDisplayItemStatsForInitialView(itemPath, placeholderElement) {
             const recentPrice = pricesArray[pricesArray.length - 1];
             const highestPrice = Math.max(...pricesArray);
             const lowestPrice = Math.min(...pricesArray);
-            // console.log('[StatsDebug] Calculated stats for', itemPath, 'Recent:', recentPrice, 'High:', highestPrice, 'Low:', lowestPrice); // Original log, replaced by more detailed below
 
             console.log('[StatsFormatDebug] Raw values for item', itemPath, '- Recent:', recentPrice, 'High:', highestPrice, 'Low:', lowestPrice);
 
-            const formattedRecent = formatPrice(recentPrice);
-            const formattedHigh = formatPrice(highestPrice);
-            const formattedLow = formatPrice(lowestPrice);
+            const firstPrice = pricesArray.length > 0 ? pricesArray[0] : null;
+            let recentPricePercentChange = 'N/A';
+            let highestPricePercentChange = 'N/A';
+            let lowestPricePercentChange = 'N/A';
 
-            console.log('[StatsFormatDebug] Formatted values for item', itemPath, '- Recent:', formattedRecent, 'High:', formattedHigh, 'Low:', formattedLow);
+            if (firstPrice !== null && firstPrice !== 0) {
+                if (recentPrice !== null) {
+                    recentPricePercentChange = (((recentPrice - firstPrice) / firstPrice) * 100);
+                }
+                if (highestPrice !== null) {
+                    highestPricePercentChange = (((highestPrice - firstPrice) / firstPrice) * 100);
+                }
+                if (lowestPrice !== null) {
+                    lowestPricePercentChange = (((lowestPrice - firstPrice) / firstPrice) * 100);
+                }
+            } else if (firstPrice === null) {
+                console.log('[StatsFormatDebug] firstPrice is null for', itemPath, '- percentages will be N/A.');
+            } else if (firstPrice === 0) {
+                console.log('[StatsFormatDebug] firstPrice is 0 for', itemPath, '- percentages will be N/A to avoid division by zero.');
+            }
 
-            // Construct statsString using new variables; formatPrice already appends appropriate ISK suffix.
-            const statsString = `(Recent: ${formattedRecent}, High: ${formattedHigh}, Low: ${formattedLow})`;
+            console.log('[StatsFormatDebug] Calculated Percent Changes for item', itemPath, '- Recent%:', recentPricePercentChange, 'High%:', highestPricePercentChange, 'Low%:', lowestPricePercentChange, 'based on firstPrice:', firstPrice);
 
-            console.log('[StatsFormatDebug] Final statsString for item', itemPath, ':', statsString); // Log the final string
+            let statsHTMLparts = [];
+            // For "Recent", baseValueForColoring is firstPrice.
+            statsHTMLparts.push(createFormattedStatHTML("Recent", recentPrice, recentPricePercentChange, firstPrice));
+            // For "High", baseValueForColoring is firstPrice (or recentPrice, depending on desired comparison). Let's use firstPrice for consistency here.
+            statsHTMLparts.push(createFormattedStatHTML("High", highestPrice, highestPricePercentChange, firstPrice));
+            // For "Low", baseValueForColoring is firstPrice.
+            statsHTMLparts.push(createFormattedStatHTML("Low", lowestPrice, lowestPricePercentChange, firstPrice));
 
-            // console.log('[StatsDebug] Attempting to set innerHTML for', itemPath, 'with statsString:', statsString); // Original log, can be removed or kept
-            placeholderElement.innerHTML = statsString;
+            const finalStatsHTML = statsHTMLparts.join('<br>');
+            console.log('[StatsFormatDebug] Final statsHTML for item', itemPath, ':', finalStatsHTML);
+
+            placeholderElement.innerHTML = finalStatsHTML;
             console.log('[StatsDebug] Successfully set innerHTML for', itemPath);
             // Add a class for styling if needed, e.g., placeholderElement.classList.add('item-stats-loaded');
-
         })
         .catch(error => {
             console.error('[StatsDebug] Fetch error for', itemPath, ':', error);
@@ -928,45 +979,19 @@ function calculateAndDisplayPriceStatistics(labels, prices) {
         lowestPricePercentChange = calculatePercentageChange(lowestPrice, startPrice);
     }
 
-function formatPriceStat(value, percentChange) {
-    // value is the price, percentChange is the percentage string (e.g., "10.5", "-2.0")
-
-    // Use the global formatPrice function for the price value.
-    // The global formatPrice already handles N/A cases and adds " ISK", "mil ISK", or "K ISK".
-    const priceText = formatPrice(value); // Correctly use global formatPrice
-
-    // If the formatted price itself is 'N/A', then the whole stat line for this value is 'N/A'.
-    // No need to show percentage change if the base value is not available.
-    if (priceText === 'N/A') {
-        return 'N/A';
+    // The local formatPriceStat function is now removed/commented out,
+    // as we are using the global createFormattedStatHTML function.
+    /*
+    function formatPriceStat(value, percentChange) {
+        // ... old implementation ...
     }
-
-    let priceHtml = priceText; // Start with the formatted price (e.g., "123.45 ISK" or "1.2 mil ISK")
-
-    // If there's a valid percentage change, apply coloring to priceHtml and append the percentage.
-    if (percentChange !== 'N/A' && typeof percentChange !== 'undefined' && isFinite(parseFloat(percentChange))) {
-        const isPositive = parseFloat(percentChange) >= 0;
-        const valueClass = isPositive ? 'price-value-positive' : 'price-value-negative';
-        // Wrap the already formatted priceText in a span for color.
-        priceHtml = `<span class="${valueClass}">${priceText}</span>`;
-
-        // Append the percentage change part.
-        const changePrefix = isPositive ? '+' : '';
-        const changeClass = isPositive ? 'price-change-positive' : 'price-change-negative';
-        priceHtml += ` (<span class="${changeClass}">${changePrefix}${percentChange}%</span>)`;
-    }
-    // If percentChange is 'N/A' or invalid, priceHtml remains as the raw formatted priceText
-    // (which might have been wrapped in a color span if percentChange was valid, or just plain if not).
-    // More accurately, if percentChange is not valid, priceHtml is just priceText.
-    // The logic above ensures priceHtml is priceText initially, and only gets color + percentage if percentChange is valid.
-
-    return priceHtml;
-}
+    */
 
     let htmlContent = '<ul>';
-    htmlContent += `<li>Current Price: ${formatPriceStat(currentPrice, currentPricePercentChange)}</li>`;
-    htmlContent += `<li>Highest Price (Period): ${formatPriceStat(highestPrice, highestPricePercentChange)}</li>`;
-    htmlContent += `<li>Lowest Price (Period): ${formatPriceStat(lowestPrice, lowestPricePercentChange)}</li>`;
+    // Use global createFormattedStatHTML. For chart view, startPrice is the base for coloring.
+    htmlContent += `<li>${createFormattedStatHTML("Current Price", currentPrice, currentPricePercentChange, startPrice)}</li>`;
+    htmlContent += `<li>${createFormattedStatHTML("Highest Price (Period)", highestPrice, highestPricePercentChange, startPrice)}</li>`;
+    htmlContent += `<li>${createFormattedStatHTML("Lowest Price (Period)", lowestPrice, lowestPricePercentChange, startPrice)}</li>`;
     htmlContent += '</ul>';
 
     statsDisplay.innerHTML = htmlContent;

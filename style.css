@@ -194,7 +194,7 @@
     border-bottom: 1px solid #eee;
     display: flex;
     justify-content: flex-start; /* Changed from space-between */
-    align-items: center;
+    align-items: flex-start; /* Changed from center to flex-start */
 }
 
 /* Ensure child elements are spaced correctly within the flex container */
@@ -224,7 +224,8 @@
     font-size: 0.85em;
     color: #777;
     /* margin-left is effectively handled by favorite button's margin-right */
-    white-space: nowrap; /* Prevent stats from wrapping */
+    white-space: normal; /* Allow wrapping for <br> tags */
+    line-height: 1.3; /* Improve readability of multi-line stats */
     flex-shrink: 0; /* Prevent stats from shrinking */
 }
 
@@ -298,23 +299,24 @@
     color: #333; /* Dark grey text */
 }
 
-#priceStatsDisplay .price-change-positive {
+/* Global price/percentage change color classes */
+.price-change-positive {
     color: #28a745; /* Green */
     font-weight: bold;
 }
 
-#priceStatsDisplay .price-change-negative {
+.price-change-negative {
     color: #dc3545; /* Red */
     font-weight: bold;
 }
 
 /* Styles for coloring the actual price values */
-#priceStatsDisplay .price-value-positive {
+.price-value-positive {
     color: #28a745; /* Green, same as price-change-positive */
     /* font-weight: bold; /* Optional: if price itself should be bold too */
 }
 
-#priceStatsDisplay .price-value-negative {
+.price-value-negative {
     color: #dc3545; /* Red, same as price-change-negative */
     /* font-weight: bold; /* Optional: if price itself should be bold too */
 }
