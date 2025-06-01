@@ -242,10 +242,17 @@ function displayItemsForInitialView(items, containerDiv, listName) {
 
 // Helper function to format prices safely
 function formatPrice(price) {
-    if (price === null || typeof price === 'undefined' || isNaN(price)) {
-        return 'N/A';
-    }
-    return price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (price === null || typeof price === 'undefined' || isNaN(price)) {
+    return 'N/A';
+  }
+
+  if (price >= 1000000) {
+    return (price / 1000000).toFixed(1) + ' mil ISK';
+  } else if (price >= 1000) {
+    return (price / 1000).toFixed(0) + ' K ISK';
+  } else {
+    return price.toFixed(2) + ' ISK';
+  }
 }
 
 // New function to fetch and display item stats for the initial view
@@ -906,22 +913,37 @@ function calculateAndDisplayPriceStatistics(labels, prices) {
     }
 
 function formatPriceStat(value, percentChange) {
-    if (value === null || !isFinite(value)) return 'N/A';
+    // value is the price, percentChange is the percentage string (e.g., "10.5", "-2.0")
 
-    let priceText = value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ISK';
-    let priceHtml;
+    // Use the global formatPrice function for the price value.
+    // The global formatPrice already handles N/A cases and adds " ISK", "mil ISK", or "K ISK".
+    const priceText = formatPrice(value); // Correctly use global formatPrice
 
-    if (percentChange !== 'N/A') {
+    // If the formatted price itself is 'N/A', then the whole stat line for this value is 'N/A'.
+    // No need to show percentage change if the base value is not available.
+    if (priceText === 'N/A') {
+        return 'N/A';
+    }
+
+    let priceHtml = priceText; // Start with the formatted price (e.g., "123.45 ISK" or "1.2 mil ISK")
+
+    // If there's a valid percentage change, apply coloring to priceHtml and append the percentage.
+    if (percentChange !== 'N/A' && typeof percentChange !== 'undefined' && isFinite(parseFloat(percentChange))) {
         const isPositive = parseFloat(percentChange) >= 0;
         const valueClass = isPositive ? 'price-value-positive' : 'price-value-negative';
+        // Wrap the already formatted priceText in a span for color.
         priceHtml = `<span class="${valueClass}">${priceText}</span>`;
 
+        // Append the percentage change part.
         const changePrefix = isPositive ? '+' : '';
         const changeClass = isPositive ? 'price-change-positive' : 'price-change-negative';
         priceHtml += ` (<span class="${changeClass}">${changePrefix}${percentChange}%</span>)`;
-    } else {
-        priceHtml = priceText; // No coloring for price or percentage if percentChange is 'N/A'
     }
+    // If percentChange is 'N/A' or invalid, priceHtml remains as the raw formatted priceText
+    // (which might have been wrapped in a color span if percentChange was valid, or just plain if not).
+    // More accurately, if percentChange is not valid, priceHtml is just priceText.
+    // The logic above ensures priceHtml is priceText initially, and only gets color + percentage if percentChange is valid.
+
     return priceHtml;
 }
 
