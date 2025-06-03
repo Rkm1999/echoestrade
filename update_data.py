@@ -4,6 +4,7 @@ import os
 import csv
 import re
 from datetime import datetime, timezone # Ensure timezone is imported
+import sys # Added for safe_print
 import cloudflare
 import boto3
 from botocore.exceptions import ClientError
@@ -35,6 +36,21 @@ def sanitize_for_path(name_str):
     name_str = re.sub(r'[^\w\-_]', '', name_str)
     return name_str[:100]
 
+def safe_print(text_to_print):
+    try:
+        print(text_to_print)
+    except UnicodeEncodeError:
+        if sys.stdout.encoding:
+            try:
+                encoded_text = text_to_print.encode(sys.stdout.encoding, errors='replace').decode(sys.stdout.encoding)
+                print(encoded_text)
+            except Exception: # Fallback if even replacement fails with stdout.encoding
+                print(text_to_print.encode('ascii', errors='replace').decode('ascii'))
+        else: # If sys.stdout.encoding is None
+            print(text_to_print.encode('ascii', errors='replace').decode('ascii'))
+    except Exception as e:
+            print(f"<print error: {e}>") # Catch other potential print errors
+
 def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
     """
     Fetches item data from API, merges with D1 data (or local CSV as fallback), saves to D1, and then to CSV.
@@ -45,7 +61,7 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
 
     # Prioritize loading from D1
     if d1_client_instance:
-        print("Attempting to load existing item data from D1...")
+        safe_print("Attempting to load existing item data from D1...")
         try:
             select_all_sql = "SELECT item_id, name, category_name, group_name, weekly_average_price, icon_id, icon_r2_key, date_created, date_updated FROM items;"
             response = d1_client_instance.d1.database.query(
@@ -72,14 +88,14 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                                 item_entry[header] = None # Or appropriate default like ''
 
                         all_items_data[item_id] = item_entry
-                print(f"Loaded {len(all_items_data)} items from D1.")
+                safe_print(f"Loaded {len(all_items_data)} items from D1.")
             else:
                 if not response.success:
-                    print(f"D1 query to load items failed. Errors: {response.errors}")
+                    safe_print(f"D1 query to load items failed. Errors: {response.errors}")
                 else:
-                    print("No items found in D1 database or query returned no results.")
+                    safe_print("No items found in D1 database or query returned no results.")
                 # Fallback to CSV if D1 load was not successful or empty
-                print(f"Falling back to loading from {ITEMS_OUTPUT_CSV_FILE}...")
+                safe_print(f"Falling back to loading from {ITEMS_OUTPUT_CSV_FILE}...")
                 # Re-add CSV loading logic here if desired as a fallback
                 if os.path.exists(ITEMS_OUTPUT_CSV_FILE):
                     try:
@@ -91,18 +107,18 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                                     row_csv.setdefault('icon_downloaded', 'False')
                                     row_csv['needs_history_update'] = 'False'
                                     all_items_data[item_id_csv] = row_csv
-                            print(f"Loaded additional {len(all_items_data)} items from CSV as fallback/supplement.")
+                            safe_print(f"Loaded additional {len(all_items_data)} items from CSV as fallback/supplement.")
                     except Exception as e_csv:
-                        print(f"Error reading {ITEMS_OUTPUT_CSV_FILE} during fallback: {e_csv}")
+                        safe_print(f"Error reading {ITEMS_OUTPUT_CSV_FILE} during fallback: {e_csv}")
         except cloudflare.APIError as e_d1_api:
-            print(f"D1 APIError during initial load: {e_d1_api}. Falling back to CSV if possible.")
+            safe_print(f"D1 APIError during initial load: {e_d1_api}. Falling back to CSV if possible.")
             # Fallback to CSV (similar to above)
         except Exception as e_generic:
-            print(f"Generic error during D1 initial load: {e_generic}. Falling back to CSV if possible.")
+            safe_print(f"Generic error during D1 initial load: {e_generic}. Falling back to CSV if possible.")
             # Fallback to CSV (similar to above)
     else:
         # Fallback to CSV if D1 client is not available
-        print(f"D1 client not available. Loading from {ITEMS_OUTPUT_CSV_FILE}...")
+        safe_print(f"D1 client not available. Loading from {ITEMS_OUTPUT_CSV_FILE}...")
         if os.path.exists(ITEMS_OUTPUT_CSV_FILE):
             try:
                 with open(ITEMS_OUTPUT_CSV_FILE, mode='r', encoding='utf-8', newline='') as csvfile:
@@ -113,14 +129,14 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                             row.setdefault('icon_downloaded', 'False')
                             row['needs_history_update'] = 'False'
                             all_items_data[item_id] = row
-                    print(f"Loaded {len(all_items_data)} items from CSV.")
+                    safe_print(f"Loaded {len(all_items_data)} items from CSV.")
             except Exception as e:
-                print(f"Error reading {ITEMS_OUTPUT_CSV_FILE}: {e}. Starting with an empty dataset.")
+                safe_print(f"Error reading {ITEMS_OUTPUT_CSV_FILE}: {e}. Starting with an empty dataset.")
                 all_items_data = {}
 
     current_page = 1
     headers = {'accept': 'text/csv'}
-    print("Starting to fetch item data from API...")
+    safe_print("Starting to fetch item data from API...")
 
     api_data_processed = False
 
@@ -134,21 +150,21 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
         }
         
         try:
-            print(f"Fetching API item list page {current_page}...")
+            safe_print(f"Fetching API item list page {current_page}...")
             response = requests.get(API_BASE_URL_ITEMS, headers=headers, params=params, timeout=30)
 
             if response.status_code == 200:
                 response_text_stripped = response.text.strip()
 
                 if not response_text_stripped:
-                    print(f"API Page {current_page} is effectively empty. Assuming no more item data.")
+                    safe_print(f"API Page {current_page} is effectively empty. Assuming no more item data.")
                     break
 
                 reader = csv.DictReader(response_text_stripped.splitlines())
                 api_items_on_page = list(reader)
 
                 if not api_items_on_page: # Handles header-only response or empty after parsing
-                    print(f"No data items on API page {current_page} (only header or empty). Ending pagination.")
+                    safe_print(f"No data items on API page {current_page} (only header or empty). Ending pagination.")
                     break
                 
                 api_data_processed = True # Mark that we have processed at least one page with data
@@ -156,7 +172,7 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                 for api_item in api_items_on_page:
                     item_id = api_item.get('id')
                     if not item_id:
-                        print(f"Skipping API item due to missing ID: {api_item.get('name', 'Unknown Name')}")
+                        safe_print(f"Skipping API item due to missing ID: {api_item.get('name', 'Unknown Name')}")
                         continue
 
                     date_updated_api = api_item.get('date_updated')
@@ -168,7 +184,7 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                         icon_downloaded_status = existing_item.get('icon_downloaded', 'False') # Preserve existing
 
                         if date_updated_api and date_updated_local and date_updated_api > date_updated_local:
-                            print(f"Updating item {item_id} ('{api_item.get('name')}') as API data is newer.")
+                            safe_print(f"Updating item {item_id} ('{api_item.get('name')}') as API data is newer.")
                             # Update all fields from API, preserve icon_downloaded
                             for key, value in api_item.items():
                                 existing_item[key] = value
@@ -180,22 +196,22 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                         all_items_data[item_id] = existing_item # Ensure reference is updated if dict was copied
                     else:
                         # New item
-                        print(f"Adding new item {item_id} ('{api_item.get('name')}').")
+                        safe_print(f"Adding new item {item_id} ('{api_item.get('name')}').")
                         new_item_entry = {header: '' for header in FINAL_CSV_HEADERS} # Initialize with all headers
                         new_item_entry.update(api_item) # Populate with API data
                         new_item_entry['icon_downloaded'] = 'False'
                         new_item_entry['needs_history_update'] = 'True'
                         all_items_data[item_id] = new_item_entry
             else:
-                print(f"Error fetching API item list page {current_page}: Status code {response.status_code}")
-                print(f"Response content: {response.text[:200]}")
+                safe_print(f"Error fetching API item list page {current_page}: Status code {response.status_code}")
+                safe_print(f"Response content: {response.text[:200]}")
                 break # Stop on error
         
         except requests.exceptions.RequestException as e:
-            print(f"Request for API item list failed on page {current_page}: {e}")
+            safe_print(f"Request for API item list failed on page {current_page}: {e}")
             break # Stop on error
         except csv.Error as e:
-            print(f"CSV parsing error on API page {current_page}: {e}. Response text: {response.text[:500]}")
+            safe_print(f"CSV parsing error on API page {current_page}: {e}. Response text: {response.text[:500]}")
             break
 
         current_page += 1
@@ -213,11 +229,11 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
         if data.get('needs_history_update') == 'True':
             items_needing_history_update.append(item_id)
 
-    print(f"Found {len(items_needing_history_update)} items needing history update.")
+    safe_print(f"Found {len(items_needing_history_update)} items needing history update.")
 
     # Save/Update items in D1
     if d1_client_instance and all_items_data:
-        print(f"\nUpserting {len(all_items_data)} items into D1 database...")
+        safe_print(f"\nUpserting {len(all_items_data)} items into D1 database...")
         items_upserted_count = 0
         items_failed_upsert_count = 0
         for item_id_key, item_data_dict in all_items_data.items():
@@ -228,7 +244,7 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                     try:
                         wap_float = float(wap)
                     except ValueError:
-                        print(f"Warning: Could not convert weekly_average_price '{wap}' to float for item {item_id_key}. Setting to NULL.")
+                        safe_print(f"Warning: Could not convert weekly_average_price '{wap}' to float for item {item_id_key}. Setting to NULL.")
                         wap_float = None
                 else:
                     wap_float = None
@@ -269,15 +285,15 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                 if response.success:
                     items_upserted_count +=1
                 else:
-                    print(f"Failed to upsert item {item_id_key} into D1. Errors: {response.errors}")
+                    safe_print(f"Failed to upsert item {item_id_key} into D1. Errors: {response.errors}")
                     items_failed_upsert_count +=1
             except cloudflare.APIError as e:
-                print(f"D1 APIError during upsert for item {item_id_key}: {e}")
+                safe_print(f"D1 APIError during upsert for item {item_id_key}: {e}")
                 items_failed_upsert_count +=1
             except Exception as e:
-                print(f"Generic error during D1 upsert for item {item_id_key}: {e}")
+                safe_print(f"Generic error during D1 upsert for item {item_id_key}: {e}")
                 items_failed_upsert_count +=1
-        print(f"D1 Upsert Summary: {items_upserted_count} succeeded, {items_failed_upsert_count} failed.")
+        safe_print(f"D1 Upsert Summary: {items_upserted_count} succeeded, {items_failed_upsert_count} failed.")
 
     return items_needing_history_update, list(all_items_data.values())
 
@@ -287,7 +303,7 @@ def download_item_icons(all_items_data: list[dict], r2_client_instance, d1_clien
     Downloads icons for items, uploads them to R2, and updates D1 with the R2 key.
     Updates 'icon_downloaded' and 'icon_r2_key' status in each item's dictionary.
     """
-    print(f"\nStarting to process icons for {len(all_items_data)} items (download, R2 upload, D1 update)...")
+    safe_print(f"\nStarting to process icons for {len(all_items_data)} items (download, R2 upload, D1 update)...")
     icons_found_locally = 0
     icons_downloaded_successfully = 0
     icons_skipped_no_info = 0
@@ -320,7 +336,7 @@ def download_item_icons(all_items_data: list[dict], r2_client_instance, d1_clien
         icon_is_present_locally = False
         if local_icon_path and os.path.exists(local_icon_path):
             if item_data.get('icon_downloaded') != 'True': # Log if flag was false but file exists
-                print(f"Icon for {item_id_str} ('{item_name_str}') found locally at {local_icon_path}, flag was '{item_data.get('icon_downloaded')}'. Updating flag.")
+                safe_print(f"Icon for {item_id_str} ('{item_name_str}') found locally at {local_icon_path}, flag was '{item_data.get('icon_downloaded')}'. Updating flag.")
             item_data['icon_downloaded'] = 'True' # Ensure flag is true
             icon_is_present_locally = True
             icons_found_locally += 1
@@ -335,7 +351,7 @@ def download_item_icons(all_items_data: list[dict], r2_client_instance, d1_clien
                 icons_skipped_no_info += 1
                 continue # Skip to next item if essential info for download is missing
 
-            print(f"Downloading icon for item {item_id_str} ('{item_name_str}') from {icon_url} to {local_icon_path}")
+            safe_print(f"Downloading icon for item {item_id_str} ('{item_name_str}') from {icon_url} to {local_icon_path}")
             download_attempted = True # Moved here
             try:
                 response = requests.get(icon_url, stream=True, timeout=30)
@@ -346,17 +362,17 @@ def download_item_icons(all_items_data: list[dict], r2_client_instance, d1_clien
                     icon_is_present_locally = True # Mark as present for R2 upload
                     icons_downloaded_successfully += 1
                 else:
-                    print(f"Error downloading icon for {item_id_str} ('{item_name_str}'): Status {response.status_code}, Content-Length {response.headers.get('Content-Length', 'N/A')}")
+                    safe_print(f"Error downloading icon for {item_id_str} ('{item_name_str}'): Status {response.status_code}, Content-Length {response.headers.get('Content-Length', 'N/A')}")
                     item_data['icon_downloaded'] = 'False'
                     icons_failed_download += 1
                     continue # Skip R2 upload if download failed
             except requests.exceptions.RequestException as e:
-                print(f"Request failed for icon download {item_id_str} ('{item_name_str}'): {e}")
+                safe_print(f"Request failed for icon download {item_id_str} ('{item_name_str}'): {e}")
                 item_data['icon_downloaded'] = 'False'
                 icons_failed_download += 1
                 continue # Skip R2 upload
             except IOError as e:
-                print(f"IOError saving icon for item {item_id_str} ('{item_name_str}'): {e}")
+                safe_print(f"IOError saving icon for item {item_id_str} ('{item_name_str}'): {e}")
                 item_data['icon_downloaded'] = 'False'
                 icons_failed_download += 1
                 continue # Skip R2 upload
@@ -371,7 +387,7 @@ def download_item_icons(all_items_data: list[dict], r2_client_instance, d1_clien
             # A more robust check would query D1 or compare with a known state.
             if not item_data.get('icon_r2_key'):
                 r2_object_key = f"icons/{sanitize_for_path(str(icon_id_val))}.png"
-                print(f"Attempting to upload icon {local_icon_path} to R2 as {r2_object_key} for item {item_id_str}...")
+                safe_print(f"Attempting to upload icon {local_icon_path} to R2 as {r2_object_key} for item {item_id_str}...")
                 try:
                     with open(local_icon_path, 'rb') as icon_file_to_upload:
                         r2_client_instance.put_object(
@@ -380,12 +396,12 @@ def download_item_icons(all_items_data: list[dict], r2_client_instance, d1_clien
                             Body=icon_file_to_upload,
                             ContentType='image/png'
                         )
-                    print(f"Successfully uploaded icon to R2: {r2_object_key}")
+                    safe_print(f"Successfully uploaded icon to R2: {r2_object_key}")
                     icons_uploaded_to_r2 += 1
                     item_data['icon_r2_key'] = r2_object_key # Update local dict
 
                     # Update D1 with the R2 key
-                    print(f"Updating D1 item {item_id_str} with R2 key: {r2_object_key}...")
+                    safe_print(f"Updating D1 item {item_id_str} with R2 key: {r2_object_key}...")
                     update_d1_sql = "UPDATE items SET icon_r2_key = ? WHERE item_id = ?;"
                     d1_response = d1_client_instance.d1.database.query(
                         database_id=CLOUDFLARE_D1_DATABASE_ID,
@@ -394,42 +410,42 @@ def download_item_icons(all_items_data: list[dict], r2_client_instance, d1_clien
                         params=[r2_object_key, item_id_str]
                     )
                     if d1_response.success:
-                        print(f"D1 updated successfully for item {item_id_str}.")
+                        safe_print(f"D1 updated successfully for item {item_id_str}.")
                         d1_updates_successful += 1
                         item_data['icon_downloaded'] = 'True' # Mark as fully processed
                         # Attempt to delete local icon file
                         try:
                             if local_icon_path and os.path.exists(local_icon_path):
                                 os.remove(local_icon_path)
-                                print(f"Successfully deleted local icon: {local_icon_path}")
+                                safe_print(f"Successfully deleted local icon: {local_icon_path}")
                         except OSError as e_os:
-                            print(f"Error deleting local icon {local_icon_path}: {e_os}")
+                            safe_print(f"Error deleting local icon {local_icon_path}: {e_os}")
                     else:
-                        print(f"Failed to update D1 for item {item_id_str}. Errors: {d1_response.errors}")
+                        safe_print(f"Failed to update D1 for item {item_id_str}. Errors: {d1_response.errors}")
                         d1_updates_failed += 1
                         item_data['icon_downloaded'] = 'False' # Explicitly mark as not fully processed if D1 fails
                 except ClientError as e:
-                    print(f"R2 ClientError uploading icon {r2_object_key} for item {item_id_str}: {e}")
+                    safe_print(f"R2 ClientError uploading icon {r2_object_key} for item {item_id_str}: {e}")
                     icons_failed_r2_upload += 1
                     item_data['icon_downloaded'] = 'False'
                 except FileNotFoundError:
-                    print(f"Error: Local icon file {local_icon_path} not found for R2 upload (item {item_id_str}). Should have been downloaded or found.")
+                    safe_print(f"Error: Local icon file {local_icon_path} not found for R2 upload (item {item_id_str}). Should have been downloaded or found.")
                     icons_failed_r2_upload += 1
                     item_data['icon_downloaded'] = 'False'
                 except cloudflare.APIError as e:
-                    print(f"D1 APIError updating icon_r2_key for item {item_id_str}: {e}")
+                    safe_print(f"D1 APIError updating icon_r2_key for item {item_id_str}: {e}")
                     d1_updates_failed += 1
                     item_data['icon_downloaded'] = 'False'
                 except Exception as e:
-                    print(f"Generic error during R2 upload or D1 update for item {item_id_str}: {e}")
+                    safe_print(f"Generic error during R2 upload or D1 update for item {item_id_str}: {e}")
                     icons_failed_r2_upload += 1
                     item_data['icon_downloaded'] = 'False'
             elif item_data.get('icon_r2_key'): # If key already exists
                  item_data['icon_downloaded'] = 'True' # Ensure flag is true if R2 key is present
-                 # print(f"Skipping R2 upload for item {item_id_str}, icon_r2_key '{item_data.get('icon_r2_key')}' already set.")
+                 # safe_print(f"Skipping R2 upload for item {item_id_str}, icon_r2_key '{item_data.get('icon_r2_key')}' already set.")
 
         elif icon_is_present_locally and (not r2_client_instance or not d1_client_instance):
-            print(f"Skipping R2/D1 update for item {item_id_str} because R2 or D1 client is not available.")
+            safe_print(f"Skipping R2/D1 update for item {item_id_str} because R2 or D1 client is not available.")
             # Keep icon_downloaded as True if local file exists, but R2 key won't be set.
             # Or set to False if 'downloaded' means fully processed to cloud. For now, let it reflect local state if cloud fails.
 
@@ -442,16 +458,16 @@ def download_item_icons(all_items_data: list[dict], r2_client_instance, d1_clien
             # icons_skipped_no_info += 1
             # continue # This was original logic, removed to integrate R2 upload
 
-    print("\n--- Icon Processing Summary ---")
-    print(f"Icons found locally (and flag potentially updated): {icons_found_locally}")
-    print(f"Icons newly downloaded successfully: {icons_downloaded_successfully}")
-    print(f"Skipped local download (missing URL/ID or invalid path): {icons_skipped_no_info}")
-    print(f"Failed local download/save: {icons_failed_download}")
-    print(f"Icons uploaded to R2: {icons_uploaded_to_r2}")
-    print(f"Failed R2 uploads: {icons_failed_r2_upload}")
-    print(f"D1 'icon_r2_key' updates successful: {d1_updates_successful}")
-    print(f"D1 'icon_r2_key' updates failed: {d1_updates_failed}")
-    print("-----------------------------")
+    safe_print("\n--- Icon Processing Summary ---")
+    safe_print(f"Icons found locally (and flag potentially updated): {icons_found_locally}")
+    safe_print(f"Icons newly downloaded successfully: {icons_downloaded_successfully}")
+    safe_print(f"Skipped local download (missing URL/ID or invalid path): {icons_skipped_no_info}")
+    safe_print(f"Failed local download/save: {icons_failed_download}")
+    safe_print(f"Icons uploaded to R2: {icons_uploaded_to_r2}")
+    safe_print(f"Failed R2 uploads: {icons_failed_r2_upload}")
+    safe_print(f"D1 'icon_r2_key' updates successful: {d1_updates_successful}")
+    safe_print(f"D1 'icon_r2_key' updates failed: {d1_updates_failed}")
+    safe_print("-----------------------------")
     return all_items_data
 
 API_V2_ITEM_PRICES_URL = "https://echoes.mobi/api/v2/item_prices"
@@ -461,7 +477,7 @@ def load_all_current_prices() -> dict:
     Fetches all current item prices from the v2 API endpoint.
     Returns a dictionary mapping item_id to its price data.
     """
-    print(f"\nFetching all current item prices from {API_V2_ITEM_PRICES_URL}...")
+    safe_print(f"\nFetching all current item prices from {API_V2_ITEM_PRICES_URL}...")
     current_prices_map = {}
     headers = {'accept': 'text/csv'}
 
@@ -470,7 +486,7 @@ def load_all_current_prices() -> dict:
         if response.status_code == 200:
             response_text_stripped = response.text.strip()
             if not response_text_stripped:
-                print("API response for current prices was empty.")
+                safe_print("API response for current prices was empty.")
                 return current_prices_map
 
             reader = csv.DictReader(response_text_stripped.splitlines())
@@ -482,16 +498,16 @@ def load_all_current_prices() -> dict:
                         'estimated_price': row.get('estimated_price'),
                         'date_updated': row.get('date_updated')
                     }
-            print(f"Successfully loaded {len(current_prices_map)} current item prices.")
+            safe_print(f"Successfully loaded {len(current_prices_map)} current item prices.")
         else:
-            print(f"Error fetching current prices: Status code {response.status_code}")
-            print(f"Response content: {response.text[:200]}")
+            safe_print(f"Error fetching current prices: Status code {response.status_code}")
+            safe_print(f"Response content: {response.text[:200]}")
     except requests.exceptions.RequestException as e:
-        print(f"Request failed for current prices: {e}")
+        safe_print(f"Request failed for current prices: {e}")
     except csv.Error as e:
-        print(f"CSV parsing error for current prices: {e}. Response text: {response.text[:500]}")
+        safe_print(f"CSV parsing error for current prices: {e}. Response text: {response.text[:500]}")
     except Exception as e:
-        print(f"An unexpected error occurred while loading current prices: {e}")
+        safe_print(f"An unexpected error occurred while loading current prices: {e}")
 
     return current_prices_map
 
@@ -517,10 +533,10 @@ def get_week_year_from_isodate(iso_date_string: str) -> tuple[str, str]:
         # Format week number with leading zero if needed (e.g., "01", "02", ..., "52")
         return (f"{iso_week:02d}", str(iso_year))
     except ValueError as e:
-        print(f"Error parsing date string '{iso_date_string}': {e}. Returning default week/year ('00', '0000').")
+        safe_print(f"Error parsing date string '{iso_date_string}': {e}. Returning default week/year ('00', '0000').")
         return ("00", "0000") # Fallback values
     except Exception as e: # Catch any other unexpected errors
-        print(f"An unexpected error occurred while parsing date '{iso_date_string}': {e}. Returning default week/year ('00', '0000').")
+        safe_print(f"An unexpected error occurred while parsing date '{iso_date_string}': {e}. Returning default week/year ('00', '0000').")
         return ("00", "0000")
 
 HISTORY_CSV_HEADERS = ['id', 'item_id', 'price', 'week', 'year', 'date_created', 'date_updated'] # Kept for reference if CSVs are ever manually checked or as a schema reminder
@@ -531,9 +547,9 @@ def fetch_and_save_histories(item_ids_to_update: list[str], all_current_prices_m
     - item_ids_to_update: List of item IDs whose history needs to be processed.
     - all_current_prices_map: Dictionary with current price data from /v2/item_prices.
     """
-    print(f"\nStarting to process histories for {len(item_ids_to_update)} items...")
+    safe_print(f"\nStarting to process histories for {len(item_ids_to_update)} items...")
     if not item_ids_to_update:
-        print("No items require history updates.")
+        safe_print("No items require history updates.")
         return
 
     all_items_details_for_paths = {} # To store category/group/name for path creation
@@ -544,15 +560,15 @@ def fetch_and_save_histories(item_ids_to_update: list[str], all_current_prices_m
                 required_path_cols = ['id', 'category_name', 'group_name', 'name']
                 if not all(col in reader.fieldnames for col in required_path_cols):
                     missing_cols = [col for col in required_path_cols if col not in reader.fieldnames]
-                    print(f"Error: {ITEMS_OUTPUT_CSV_FILE} is missing required columns for path creation: {', '.join(missing_cols)}.")
+                    safe_print(f"Error: {ITEMS_OUTPUT_CSV_FILE} is missing required columns for path creation: {', '.join(missing_cols)}.")
                     return
                 for row in reader:
                     if row.get('id') in item_ids_to_update:
                         all_items_details_for_paths[row['id']] = row
             if not all_items_details_for_paths and item_ids_to_update:
-                print(f"Warning: No details found in {ITEMS_OUTPUT_CSV_FILE} for the item IDs to update.")
+                safe_print(f"Warning: No details found in {ITEMS_OUTPUT_CSV_FILE} for the item IDs to update.")
         except Exception as e:
-            print(f"Error reading {ITEMS_OUTPUT_CSV_FILE} for path details: {e}")
+            safe_print(f"Error reading {ITEMS_OUTPUT_CSV_FILE} for path details: {e}")
             return # Cannot proceed without path details
 
     # os.makedirs(HISTORIES_BASE_DIR, exist_ok=True) # Local CSV folder no longer primary
@@ -566,14 +582,14 @@ def fetch_and_save_histories(item_ids_to_update: list[str], all_current_prices_m
     # failed_full_histories_to_d1_count = 0
 
     if not d1_client_instance:
-        print("D1 client is not available. Skipping D1 history operations.")
+        safe_print("D1 client is not available. Skipping D1 history operations.")
         return
 
     for item_id in item_ids_to_update:
         current_price_data = all_current_prices_map.get(item_id)
 
         if not (current_price_data and current_price_data.get('estimated_price') is not None and current_price_data.get('estimated_price') != ''):
-            print(f"Skipping D1 history update for item {item_id}: No current price data available in map.")
+            safe_print(f"Skipping D1 history update for item {item_id}: No current price data available in map.")
             d1_inserts_failed +=1 # Count as failed if data is missing for an update attempt
             continue
 
@@ -583,7 +599,7 @@ def fetch_and_save_histories(item_ids_to_update: list[str], all_current_prices_m
         try:
             api_price_float = float(api_price_str)
         except ValueError:
-            print(f"Error converting price '{api_price_str}' to float for item {item_id}. Skipping D1 history update.")
+            safe_print(f"Error converting price '{api_price_str}' to float for item {item_id}. Skipping D1 history update.")
             d1_inserts_failed += 1
             continue
 
@@ -600,12 +616,12 @@ def fetch_and_save_histories(item_ids_to_update: list[str], all_current_prices_m
             if response_latest.success and response_latest.result and response_latest.result[0].results:
                 latest_d1_date_updated = response_latest.result[0].results[0].get('latest_date')
         except cloudflare.APIError as e:
-            print(f"D1 APIError querying latest date for item {item_id}: {e}. Proceeding to insert.")
+            safe_print(f"D1 APIError querying latest date for item {item_id}: {e}. Proceeding to insert.")
         except Exception as e:
-            print(f"Generic error querying latest date for item {item_id}: {e}. Proceeding to insert.")
+            safe_print(f"Generic error querying latest date for item {item_id}: {e}. Proceeding to insert.")
 
         if latest_d1_date_updated and api_date_updated <= latest_d1_date_updated:
-            print(f"D1 history for item {item_id} (date: {api_date_updated}) is current or newer than API. Skipping insert.")
+            safe_print(f"D1 history for item {item_id} (date: {api_date_updated}) is current or newer than API. Skipping insert.")
             d1_skipped_already_latest += 1
             continue
 
@@ -627,7 +643,7 @@ def fetch_and_save_histories(item_ids_to_update: list[str], all_current_prices_m
         """
 
         try:
-            print(f"Inserting/Updating D1 history for item {item_id}, price: {api_price_float}, date: {api_date_updated}")
+            safe_print(f"Inserting/Updating D1 history for item {item_id}, price: {api_price_float}, date: {api_date_updated}")
             d1_response = d1_client_instance.d1.database.query(
                 database_id=CLOUDFLARE_D1_DATABASE_ID,
                 account_id=CLOUDFLARE_ACCOUNT_ID,
@@ -637,22 +653,22 @@ def fetch_and_save_histories(item_ids_to_update: list[str], all_current_prices_m
             if d1_response.success:
                 d1_inserts_success += 1
             else:
-                print(f"Failed to insert D1 history for item {item_id}. Errors: {d1_response.errors}")
+                safe_print(f"Failed to insert D1 history for item {item_id}. Errors: {d1_response.errors}")
                 d1_inserts_failed += 1
         except cloudflare.APIError as e:
-            print(f"D1 APIError during history insert for item {item_id}: {e}")
+            safe_print(f"D1 APIError during history insert for item {item_id}: {e}")
             d1_inserts_failed += 1
         except Exception as e:
-            print(f"Generic error during D1 history insert for item {item_id}: {e}")
+            safe_print(f"Generic error during D1 history insert for item {item_id}: {e}")
             d1_inserts_failed += 1
 
         time.sleep(REQUEST_DELAY_SECONDS / 2) # Shorter delay for D1 history inserts if needed
 
-    print("\n--- D1 Item History Update Summary ---")
-    print(f"New history entries successfully inserted into D1: {d1_inserts_success}")
-    print(f"Skipped (already latest in D1 or API data not newer): {d1_skipped_already_latest}")
-    print(f"Failed D1 history inserts (includes missing price data or DB errors): {d1_inserts_failed}")
-    print("------------------------------------")
+    safe_print("\n--- D1 Item History Update Summary ---")
+    safe_print(f"New history entries successfully inserted into D1: {d1_inserts_success}")
+    safe_print(f"Skipped (already latest in D1 or API data not newer): {d1_skipped_already_latest}")
+    safe_print(f"Failed D1 history inserts (includes missing price data or DB errors): {d1_inserts_failed}")
+    safe_print("------------------------------------")
 
 
 def check_cloudflare_config():
@@ -674,16 +690,16 @@ def check_cloudflare_config():
     if not CLOUDFLARE_R2_S3_ENDPOINT_URL:
         if CLOUDFLARE_ACCOUNT_ID:
             CLOUDFLARE_R2_S3_ENDPOINT_URL = f"https://{CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com"
-            print(f"NOTE: CLOUDFLARE_R2_S3_ENDPOINT_URL was not set, constructed: {CLOUDFLARE_R2_S3_ENDPOINT_URL}")
+            safe_print(f"NOTE: CLOUDFLARE_R2_S3_ENDPOINT_URL was not set, constructed: {CLOUDFLARE_R2_S3_ENDPOINT_URL}")
         else:
             missing_vars.append("CLOUDFLARE_R2_S3_ENDPOINT_URL (and CLOUDFLARE_ACCOUNT_ID to construct it)")
 
     if missing_vars:
-        print("Error: The following Cloudflare environment variables are not set or derivable:")
+        safe_print("Error: The following Cloudflare environment variables are not set or derivable:")
         for var in missing_vars:
-            print(f" - {var}")
+            safe_print(f" - {var}")
         return False
-    print("Cloudflare configuration variables are present.")
+    safe_print("Cloudflare configuration variables are present.")
     return True
 
 def create_d1_tables(d1_client_instance):
@@ -691,10 +707,10 @@ def create_d1_tables(d1_client_instance):
     Creates the 'items' and 'item_history' tables in the D1 database if they don't already exist.
     """
     if not d1_client_instance:
-        print("D1 client is not available. Skipping table creation.")
+        safe_print("D1 client is not available. Skipping table creation.")
         return
 
-    print("\nAttempting to create D1 tables if they don't exist...")
+    safe_print("\nAttempting to create D1 tables if they don't exist...")
 
     items_table_sql = """
     CREATE TABLE IF NOT EXISTS items (
@@ -728,7 +744,7 @@ def create_d1_tables(d1_client_instance):
 
     success_all = True
     for table_name, sql_statement in tables_to_create.items():
-        print(f"Creating table '{table_name}'...")
+        safe_print(f"Creating table '{table_name}'...")
         try:
             response = d1_client_instance.d1.database.query(
                 database_id=CLOUDFLARE_D1_DATABASE_ID,
@@ -736,43 +752,43 @@ def create_d1_tables(d1_client_instance):
                 sql=sql_statement
             )
             if response.success:
-                print(f"Table '{table_name}' creation command executed successfully (or table already exists).")
+                safe_print(f"Table '{table_name}' creation command executed successfully (or table already exists).")
             else:
-                print(f"Failed to create table '{table_name}'. Errors: {response.errors}")
+                safe_print(f"Failed to create table '{table_name}'. Errors: {response.errors}")
                 success_all = False
         except cloudflare.APIError as e:
-            print(f"D1 APIError during table '{table_name}' creation: {e}")
+            safe_print(f"D1 APIError during table '{table_name}' creation: {e}")
             success_all = False
         except Exception as e:
-            print(f"Generic error during table '{table_name}' creation: {e}")
+            safe_print(f"Generic error during table '{table_name}' creation: {e}")
             success_all = False
 
     if success_all:
-        print("D1 table creation process completed successfully for all tables.")
+        safe_print("D1 table creation process completed successfully for all tables.")
     else:
-        print("D1 table creation process encountered errors.")
+        safe_print("D1 table creation process encountered errors.")
 
 
 def get_d1_client():
-    print("\nInitializing Cloudflare D1 client...")
+    safe_print("\nInitializing Cloudflare D1 client...")
     if not CLOUDFLARE_API_TOKEN:
-        print("Error: CLOUDFLARE_API_TOKEN is not set. Cannot initialize D1 client.")
+        safe_print("Error: CLOUDFLARE_API_TOKEN is not set. Cannot initialize D1 client.")
         return None
     try:
         client = cloudflare.Cloudflare(api_token=CLOUDFLARE_API_TOKEN)
-        print("Cloudflare D1 client initialized successfully.")
+        safe_print("Cloudflare D1 client initialized successfully.")
         return client
     except Exception as e:
-        print(f"Error initializing Cloudflare D1 client: {e}")
+        safe_print(f"Error initializing Cloudflare D1 client: {e}")
         return None
 
 def get_r2_client():
-    print("\nInitializing Cloudflare R2 client (Boto3 S3)...")
+    safe_print("\nInitializing Cloudflare R2 client (Boto3 S3)...")
     if not all([CLOUDFLARE_R2_S3_ENDPOINT_URL, CLOUDFLARE_R2_S3_ACCESS_KEY_ID, CLOUDFLARE_R2_S3_SECRET_ACCESS_KEY]):
-        print("Error: Missing one or more R2 S3 configuration variables. Cannot initialize R2 client.")
-        print(f"  Endpoint URL set: {'Yes' if CLOUDFLARE_R2_S3_ENDPOINT_URL else 'No'}")
-        print(f"  Access Key ID set: {'Yes' if CLOUDFLARE_R2_S3_ACCESS_KEY_ID else 'No'}")
-        print(f"  Secret Access Key set: {'Yes' if CLOUDFLARE_R2_S3_SECRET_ACCESS_KEY else 'No'}")
+        safe_print("Error: Missing one or more R2 S3 configuration variables. Cannot initialize R2 client.")
+        safe_print(f"  Endpoint URL set: {'Yes' if CLOUDFLARE_R2_S3_ENDPOINT_URL else 'No'}")
+        safe_print(f"  Access Key ID set: {'Yes' if CLOUDFLARE_R2_S3_ACCESS_KEY_ID else 'No'}")
+        safe_print(f"  Secret Access Key set: {'Yes' if CLOUDFLARE_R2_S3_SECRET_ACCESS_KEY else 'No'}")
         return None
     try:
         client = boto3.client(
@@ -781,13 +797,13 @@ def get_r2_client():
             aws_access_key_id=CLOUDFLARE_R2_S3_ACCESS_KEY_ID,
             aws_secret_access_key=CLOUDFLARE_R2_S3_SECRET_ACCESS_KEY,
         )
-        print("Cloudflare R2 S3 client initialized successfully.")
+        safe_print("Cloudflare R2 S3 client initialized successfully.")
         return client
     except ClientError as e:
-        print(f"Boto3 ClientError initializing R2 S3 client: {e}")
+        safe_print(f"Boto3 ClientError initializing R2 S3 client: {e}")
         return None
     except Exception as e:
-        print(f"Generic error initializing R2 S3 client: {e}")
+        safe_print(f"Generic error initializing R2 S3 client: {e}")
         return None
 
 # Global clients, to be initialized in main
@@ -795,19 +811,19 @@ d1_client = None
 r2_client = None
 
 if __name__ == "__main__":
-    print("Starting data update script...")
+    safe_print("Starting data update script...")
 
     if not check_cloudflare_config():
-        print("Cloudflare configuration check failed. Please set the required environment variables.")
+        safe_print("Cloudflare configuration check failed. Please set the required environment variables.")
         exit(1)
 
     d1_client = get_d1_client()
     r2_client = get_r2_client()
 
     if not d1_client:
-        print("D1 client initialization failed. D1 related operations will be skipped.")
+        safe_print("D1 client initialization failed. D1 related operations will be skipped.")
     if not r2_client:
-        print("R2 client initialization failed. R2 related operations will be skipped.")
+        safe_print("R2 client initialization failed. R2 related operations will be skipped.")
 
     create_d1_tables(d1_client) # Ensure tables are created before fetching items
 
@@ -821,7 +837,7 @@ if __name__ == "__main__":
 
         # Write the potentially updated all_items_data (with new icon_downloaded flags) to CSV
         # FINAL_CSV_HEADERS is defined globally
-        print(f"\nWriting final item data for {len(all_items_data_list)} items to {ITEMS_OUTPUT_CSV_FILE}...")
+        safe_print(f"\nWriting final item data for {len(all_items_data_list)} items to {ITEMS_OUTPUT_CSV_FILE}...")
         try:
             with open(ITEMS_OUTPUT_CSV_FILE, 'w', encoding='utf-8', newline='') as csvfile:
                 writer = csv.DictWriter(csvfile, fieldnames=FINAL_CSV_HEADERS)
@@ -829,17 +845,17 @@ if __name__ == "__main__":
                 for item_dict in all_items_data_list:
                     row_to_write = {header: item_dict.get(header, '') for header in FINAL_CSV_HEADERS}
                     writer.writerow(row_to_write)
-            print(f"Final item data including icon status written to {ITEMS_OUTPUT_CSV_FILE}")
+            safe_print(f"Final item data including icon status written to {ITEMS_OUTPUT_CSV_FILE}")
         except IOError as e:
-            print(f"Error writing final item data to CSV: {e}")
+            safe_print(f"Error writing final item data to CSV: {e}")
         except Exception as e: # Catch any other unexpected error during write
-             print(f"An unexpected error occurred while writing final CSV: {e}")
+             safe_print(f"An unexpected error occurred while writing final CSV: {e}")
 
         if items_to_update_history_for:
             fetch_and_save_histories(items_to_update_history_for, current_prices, d1_client_instance=d1_client)
         else:
-            print("No items require history updates based on initial fetch.")
+            safe_print("No items require history updates based on initial fetch.")
     else:
-        print("\nSkipping icon downloading and history fetching because item list was not created or is empty.")
+        safe_print("\nSkipping icon downloading and history fetching because item list was not created or is empty.")
 
-    print("\nData update script finished.")
+    safe_print("\nData update script finished.")
