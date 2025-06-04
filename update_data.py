@@ -61,6 +61,7 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
     initial_d1_item_ids = set()
     d1_new_inserts_count = 0
     d1_updated_items_count = 0
+    d1_skipped_no_change_count = 0 # Added counter
     # items_failed_upsert_count is initialized later, just before the D1 upsert loop
 
     # Prioritize loading from D1
@@ -284,17 +285,22 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
         # d1_new_inserts_count and d1_updated_items_count were initialized at the start of the function
 
         for item_id_key, item_data_dict in all_items_data.items():
-            item_id_to_upsert = item_data_dict.get('id')
+            item_id_to_process = item_data_dict.get('id') # Renamed for clarity within this specific task logic
             item_name_for_log = item_data_dict.get('name', 'Unknown Name')
 
-            if item_id_to_upsert in initial_d1_item_ids:
-                safe_print(f"D1: Updating existing item {item_id_to_upsert} ('{item_name_for_log}')...")
-            else:
-                safe_print(f"D1: Inserting new item {item_id_to_upsert} ('{item_name_for_log}')...")
+            is_new_to_d1_this_run = item_id_to_process not in initial_d1_item_ids
+            metadata_has_changed = item_data_dict.get('needs_history_update') == 'True'
 
-            try:
-                # Ensure weekly_average_price is float or None
-                wap = item_data_dict.get('weekly_average_price')
+            if is_new_to_d1_this_run or metadata_has_changed:
+                if is_new_to_d1_this_run:
+                    safe_print(f"D1: Queuing INSERT for new item {item_id_to_process} ('{item_name_for_log}')...")
+                else: # Existing item, but metadata changed
+                    safe_print(f"D1: Queuing UPDATE for existing item {item_id_to_process} ('{item_name_for_log}') due to metadata changes...")
+
+                # --- D1 UPSERT try-except block starts here ---
+                try:
+                    # Ensure weekly_average_price is float or None
+                    wap = item_data_dict.get('weekly_average_price')
                 if wap is not None and wap != '':
                     try:
                         wap_float = float(wap)
@@ -337,27 +343,34 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                     params=params
                 )
 
-                if response.success:
-                    if item_id_to_upsert in initial_d1_item_ids:
-                        d1_updated_items_count += 1
+                    if response.success:
+                        if is_new_to_d1_this_run: # Use the more specific flag
+                            d1_new_inserts_count += 1
+                        else: # Existing in D1 and metadata changed
+                            d1_updated_items_count += 1
                     else:
-                        d1_new_inserts_count += 1
-                else:
-                    safe_print(f"Failed to upsert item {item_id_key} into D1. Errors: {response.errors}") # item_id_key is correct here as it's the dict key
+                        safe_print(f"Failed to upsert item {item_id_to_process} into D1. Errors: {response.errors}")
+                        items_failed_upsert_count +=1
+                except cloudflare.APIError as e:
+                    safe_print(f"D1 APIError during upsert for item {item_id_to_process}: {e}")
                     items_failed_upsert_count +=1
-            except cloudflare.APIError as e:
-                safe_print(f"D1 APIError during upsert for item {item_id_key}: {e}") # item_id_key is correct here
-                items_failed_upsert_count +=1
-            except Exception as e:
-                safe_print(f"Generic error during D1 upsert for item {item_id_key}: {e}") # item_id_key is correct here
-                items_failed_upsert_count +=1
+                except Exception as e:
+                    safe_print(f"Generic error during D1 upsert for item {item_id_to_process}: {e}")
+                    items_failed_upsert_count +=1
+                # --- Existing D1 UPSERT try-except block ends here ---
+            else:
+                # Item was loaded from D1 and its metadata did NOT change
+                safe_print(f"D1: Item {item_id_to_process} ('{item_name_for_log}') data unchanged, D1 write skipped.")
+                d1_skipped_no_change_count += 1
 
         total_successful_d1_ops = d1_new_inserts_count + d1_updated_items_count
-        safe_print(f"D1 Sync for 'items' table Summary: {total_successful_d1_ops} items successfully processed.")
+        safe_print(f"D1 Sync for 'items' table Summary:")
         safe_print(f"  - New items inserted into D1: {d1_new_inserts_count}")
-        safe_print(f"  - Existing items updated/refreshed in D1: {d1_updated_items_count}")
+        safe_print(f"  - Existing items updated in D1 (metadata change): {d1_updated_items_count}")
+        safe_print(f"  - Items skipped (no metadata change): {d1_skipped_no_change_count}")
         if items_failed_upsert_count > 0:
             safe_print(f"  - Failed D1 operations: {items_failed_upsert_count}")
+        safe_print(f"  Total items successfully written to D1 this run: {total_successful_d1_ops}")
 
     return items_needing_history_update, list(all_items_data.values())
 
