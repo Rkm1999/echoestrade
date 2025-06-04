@@ -539,137 +539,164 @@ def get_week_year_from_isodate(iso_date_string: str) -> tuple[str, str]:
         safe_print(f"An unexpected error occurred while parsing date '{iso_date_string}': {e}. Returning default week/year ('00', '0000').")
         return ("00", "0000")
 
-HISTORY_CSV_HEADERS = ['id', 'item_id', 'price', 'week', 'year', 'date_created', 'date_updated'] # Kept for reference if CSVs are ever manually checked or as a schema reminder
+HISTORY_CSV_HEADERS = ['id', 'item_id', 'price', 'week', 'year', 'date_created', 'date_updated']
 
-def fetch_and_save_histories(item_ids_to_update: list[str], all_current_prices_map: dict, d1_client_instance):
+def fetch_and_save_histories(item_ids_to_process: list[str], all_current_prices_map: dict, d1_client_instance):
     """
-    Appends the latest price to item_history in D1 if it's newer than the existing latest.
-    - item_ids_to_update: List of item IDs whose history needs to be processed.
+    Fetches full history for new items or appends latest price for existing items in D1.
+    - item_ids_to_process: List of all item IDs to process.
     - all_current_prices_map: Dictionary with current price data from /v2/item_prices.
     """
-    safe_print(f"\nStarting to process histories for {len(item_ids_to_update)} items...")
-    if not item_ids_to_update:
-        safe_print("No items require history updates.")
-        return
-
-    all_items_details_for_paths = {} # To store category/group/name for path creation
-    if os.path.exists(ITEMS_OUTPUT_CSV_FILE):
-        try:
-            with open(ITEMS_OUTPUT_CSV_FILE, mode='r', encoding='utf-8', newline='') as csvfile:
-                reader = csv.DictReader(csvfile)
-                required_path_cols = ['id', 'category_name', 'group_name', 'name']
-                if not all(col in reader.fieldnames for col in required_path_cols):
-                    missing_cols = [col for col in required_path_cols if col not in reader.fieldnames]
-                    safe_print(f"Error: {ITEMS_OUTPUT_CSV_FILE} is missing required columns for path creation: {', '.join(missing_cols)}.")
-                    return
-                for row in reader:
-                    if row.get('id') in item_ids_to_update:
-                        all_items_details_for_paths[row['id']] = row
-            if not all_items_details_for_paths and item_ids_to_update:
-                safe_print(f"Warning: No details found in {ITEMS_OUTPUT_CSV_FILE} for the item IDs to update.")
-        except Exception as e:
-            safe_print(f"Error reading {ITEMS_OUTPUT_CSV_FILE} for path details: {e}")
-            return # Cannot proceed without path details
-
-    # os.makedirs(HISTORIES_BASE_DIR, exist_ok=True) # Local CSV folder no longer primary
-    # headers = {'accept': 'text/csv'} # For API calls, still relevant if full fetch is implemented
-
-    d1_inserts_success = 0
-    d1_inserts_failed = 0
-    d1_skipped_already_latest = 0
-    # For a more detailed full history fetch, these would be used:
-    # new_full_histories_to_d1_count = 0
-    # failed_full_histories_to_d1_count = 0
-
+    safe_print(f"\nStarting to process D1 histories for {len(item_ids_to_process)} items...")
     if not d1_client_instance:
         safe_print("D1 client is not available. Skipping D1 history operations.")
         return
+    if not item_ids_to_process:
+        safe_print("No item IDs provided for history processing.")
+        return
 
-    for item_id in item_ids_to_update:
-        current_price_data = all_current_prices_map.get(item_id)
+    # Statistics
+    full_history_items_processed = 0
+    full_history_records_inserted = 0
+    full_history_api_failures = 0
+    full_history_d1_failures = 0
+    appended_latest_price_count = 0
+    append_failures_missing_data = 0
+    append_failures_d1 = 0
+    items_already_up_to_date = 0
 
-        if not (current_price_data and current_price_data.get('estimated_price') is not None and current_price_data.get('estimated_price') != ''):
-            safe_print(f"Skipping D1 history update for item {item_id}: No current price data available in map.")
-            d1_inserts_failed +=1 # Count as failed if data is missing for an update attempt
-            continue
+    api_headers = {'accept': 'text/csv'}
 
-        api_price_str = current_price_data['estimated_price']
-        api_date_updated = current_price_data['date_updated']
+    for item_id in item_ids_to_process:
+        latest_d1_date_updated_for_item = None
+        max_date_from_full_history = None # Used if full history is fetched
 
-        try:
-            api_price_float = float(api_price_str)
-        except ValueError:
-            safe_print(f"Error converting price '{api_price_str}' to float for item {item_id}. Skipping D1 history update.")
-            d1_inserts_failed += 1
-            continue
-
-        # Check latest date in D1 for this item_id
-        latest_d1_date_updated = None
         try:
             query_latest_sql = "SELECT MAX(date_updated) as latest_date FROM item_history WHERE item_id = ?;"
             response_latest = d1_client_instance.d1.database.query(
-                database_id=CLOUDFLARE_D1_DATABASE_ID,
-                account_id=CLOUDFLARE_ACCOUNT_ID,
-                sql=query_latest_sql,
-                params=[item_id]
+                database_id=CLOUDFLARE_D1_DATABASE_ID, account_id=CLOUDFLARE_ACCOUNT_ID,
+                sql=query_latest_sql, params=[item_id]
             )
             if response_latest.success and response_latest.result and response_latest.result[0].results:
-                latest_d1_date_updated = response_latest.result[0].results[0].get('latest_date')
-        except cloudflare.APIError as e:
-            safe_print(f"D1 APIError querying latest date for item {item_id}: {e}. Proceeding to insert.")
+                latest_d1_date_updated_for_item = response_latest.result[0].results[0].get('latest_date')
         except Exception as e:
-            safe_print(f"Generic error querying latest date for item {item_id}: {e}. Proceeding to insert.")
+            safe_print(f"Error querying latest D1 history date for item {item_id}: {e}. Will attempt full backfill/append.")
 
-        if latest_d1_date_updated and api_date_updated <= latest_d1_date_updated:
-            safe_print(f"D1 history for item {item_id} (date: {api_date_updated}) is current or newer than API. Skipping insert.")
-            d1_skipped_already_latest += 1
-            continue
+        if latest_d1_date_updated_for_item is None:
+            safe_print(f"No history found in D1 for item {item_id}. Attempting full history fetch...")
+            full_history_items_processed += 1
+            history_api_url = f"{API_BASE_URL_HISTORY}{item_id}" # Assumes page=1 is sufficient or gets all
 
-        # Proceed to insert if no D1 history or if API data is newer
-        derived_week, derived_year = get_week_year_from_isodate(api_date_updated)
+            try:
+                response = requests.get(history_api_url, headers=api_headers, timeout=30)
+                if response.status_code == 200:
+                    response_text_stripped = response.text.strip()
+                    if response_text_stripped:
+                        history_reader = csv.DictReader(response_text_stripped.splitlines())
+                        records_for_this_item = 0
+                        current_max_date_in_batch = None
+                        for row in history_reader:
+                            try:
+                                price = float(row.get('price'))
+                                week = row.get('week')
+                                year = row.get('year')
+                                date_created = row.get('date_created')
+                                date_updated = row.get('date_updated')
 
-        insert_params = [
-            item_id,
-            api_price_float,
-            derived_week,
-            derived_year,
-            api_date_updated, # date_created for this new history entry
-            api_date_updated  # date_updated for this new history entry
-        ]
+                                if not all([week, year, date_created, date_updated]):
+                                    safe_print(f"Skipping history row for item {item_id} due to missing date/week/year fields: {row}")
+                                    continue
 
-        insert_sql = """
-        INSERT INTO item_history (item_id, price, week, year, date_created, date_updated)
-        VALUES (?, ?, ?, ?, ?, ?);
-        """
+                                insert_hist_sql = "INSERT INTO item_history (item_id, price, week, year, date_created, date_updated) VALUES (?, ?, ?, ?, ?, ?);"
+                                hist_params = [item_id, price, week, year, date_created, date_updated]
 
-        try:
-            safe_print(f"Inserting/Updating D1 history for item {item_id}, price: {api_price_float}, date: {api_date_updated}")
-            d1_response = d1_client_instance.d1.database.query(
-                database_id=CLOUDFLARE_D1_DATABASE_ID,
-                account_id=CLOUDFLARE_ACCOUNT_ID,
-                sql=insert_sql,
-                params=insert_params
-            )
-            if d1_response.success:
-                d1_inserts_success += 1
-            else:
-                safe_print(f"Failed to insert D1 history for item {item_id}. Errors: {d1_response.errors}")
-                d1_inserts_failed += 1
-        except cloudflare.APIError as e:
-            safe_print(f"D1 APIError during history insert for item {item_id}: {e}")
-            d1_inserts_failed += 1
-        except Exception as e:
-            safe_print(f"Generic error during D1 history insert for item {item_id}: {e}")
-            d1_inserts_failed += 1
+                                hist_resp = d1_client_instance.d1.database.query(
+                                    database_id=CLOUDFLARE_D1_DATABASE_ID, account_id=CLOUDFLARE_ACCOUNT_ID,
+                                    sql=insert_hist_sql, params=hist_params
+                                )
+                                if hist_resp.success:
+                                    full_history_records_inserted += 1
+                                    records_for_this_item += 1
+                                    if current_max_date_in_batch is None or date_updated > current_max_date_in_batch:
+                                        current_max_date_in_batch = date_updated
+                                else:
+                                    safe_print(f"Failed to insert full history row for item {item_id}: {hist_resp.errors}")
+                                    full_history_d1_failures +=1
+                            except ValueError:
+                                safe_print(f"Skipping history row for item {item_id} due to invalid price: {row.get('price')}")
+                            except Exception as e_row:
+                                safe_print(f"Error processing row for item {item_id}: {e_row} - Row: {row}")
+                                full_history_d1_failures +=1
 
-        time.sleep(REQUEST_DELAY_SECONDS / 2) # Shorter delay for D1 history inserts if needed
+                        if records_for_this_item > 0:
+                            safe_print(f"Successfully inserted {records_for_this_item} full history records for item {item_id}.")
+                            if current_max_date_in_batch: # Update latest known date for this item
+                                latest_d1_date_updated_for_item = current_max_date_in_batch
+                        else:
+                            safe_print(f"No valid history records found in API response for item {item_id}.")
+                    else:
+                        safe_print(f"Full history API response for item {item_id} was empty.")
+                else:
+                    safe_print(f"Error fetching full history for item {item_id}: Status {response.status_code}")
+                    full_history_api_failures += 1
+            except requests.exceptions.RequestException as e_req:
+                safe_print(f"Request failed for full history for item {item_id}: {e_req}")
+                full_history_api_failures += 1
+            except Exception as e_outer:
+                safe_print(f"Outer error processing full history for item {item_id}: {e_outer}")
+                full_history_api_failures +=1
 
-    safe_print("\n--- D1 Item History Update Summary ---")
-    safe_print(f"New history entries successfully inserted into D1: {d1_inserts_success}")
-    safe_print(f"Skipped (already latest in D1 or API data not newer): {d1_skipped_already_latest}")
-    safe_print(f"Failed D1 history inserts (includes missing price data or DB errors): {d1_inserts_failed}")
-    safe_print("------------------------------------")
+            time.sleep(REQUEST_DELAY_SECONDS) # Delay after each full history API call
 
+        # Always attempt to append from current_prices_map, as it might be more up-to-date.
+        current_price_point = all_current_prices_map.get(item_id)
+        if current_price_point and current_price_point.get('estimated_price') is not None and current_price_point.get('estimated_price') != '':
+            api_price_str = current_price_point['estimated_price']
+            api_date_updated = current_price_point['date_updated']
+
+            try:
+                api_price_float = float(api_price_str)
+                if latest_d1_date_updated_for_item and api_date_updated <= latest_d1_date_updated_for_item:
+                    safe_print(f"Latest price for item {item_id} (date: {api_date_updated}) already reflected or older than D1 history. Skipping append.")
+                    if latest_d1_date_updated_for_item is not None : # Only count if there was a D1 record to compare against
+                         items_already_up_to_date +=1
+                else: # D1 history is older or non-existent, so append this price
+                    derived_week, derived_year = get_week_year_from_isodate(api_date_updated)
+                    insert_latest_sql = "INSERT INTO item_history (item_id, price, week, year, date_created, date_updated) VALUES (?, ?, ?, ?, ?, ?);"
+                    latest_params = [item_id, api_price_float, derived_week, derived_year, api_date_updated, api_date_updated]
+
+                    safe_print(f"Appending latest price to D1 for item {item_id}, price: {api_price_float}, date: {api_date_updated}")
+                    latest_resp = d1_client_instance.d1.database.query(
+                        database_id=CLOUDFLARE_D1_DATABASE_ID, account_id=CLOUDFLARE_ACCOUNT_ID,
+                        sql=insert_latest_sql, params=latest_params
+                    )
+                    if latest_resp.success:
+                        appended_latest_price_count += 1
+                    else:
+                        safe_print(f"Failed to append latest price for item {item_id} to D1: {latest_resp.errors}")
+                        append_failures_d1 += 1
+            except ValueError:
+                safe_print(f"Error converting current price '{api_price_str}' to float for item {item_id} during append. Skipping.")
+                append_failures_missing_data +=1
+            except Exception as e_append:
+                safe_print(f"Generic error during append logic for item {item_id}: {e_append}")
+                append_failures_d1 +=1
+        else:
+            safe_print(f"No current price data in all_current_prices_map for item {item_id} to consider for append.")
+            append_failures_missing_data +=1 # Count as failure to append if data not present
+
+        # Optional: Short delay between processing each item if D1 rate limits are a concern
+        # time.sleep(REQUEST_DELAY_SECONDS / 4)
+
+    safe_print("\n--- D1 Item History Processing Summary ---")
+    safe_print(f"Items processed for full history backfill (attempted): {full_history_items_processed}")
+    safe_print(f"Total records inserted from full history fetches: {full_history_records_inserted}")
+    safe_print(f"Full history API fetch failures: {full_history_api_failures}")
+    safe_print(f"Full history D1 insert failures (individual records): {full_history_d1_failures}")
+    safe_print(f"Latest price entries successfully appended to D1: {appended_latest_price_count}")
+    safe_print(f"Items skipped (latest price already up-to-date in D1): {items_already_up_to_date}")
+    safe_print(f"Append failures (missing data or D1 error): {append_failures_d1 + append_failures_missing_data}")
+    safe_print("---------------------------------------------")
 
 def check_cloudflare_config():
     global CLOUDFLARE_R2_S3_ENDPOINT_URL # Allow modification of global
@@ -828,7 +855,7 @@ if __name__ == "__main__":
     create_d1_tables(d1_client) # Ensure tables are created before fetching items
 
     # Proceed with existing logic, clients can be checked before use in respective functions
-    items_to_update_history_for, all_items_data_list = fetch_and_save_items(d1_client_instance=d1_client)
+    items_to_update_history_for, all_items_data_list = fetch_and_save_items(d1_client_instance=d1_client) # items_to_update_history_for is now less critical for history function
 
     if all_items_data_list: # Check if there's any data to process
         all_items_data_list = download_item_icons(all_items_data_list, r2_client_instance=r2_client, d1_client_instance=d1_client) # Update icon_downloaded flags
@@ -851,10 +878,12 @@ if __name__ == "__main__":
         except Exception as e: # Catch any other unexpected error during write
              safe_print(f"An unexpected error occurred while writing final CSV: {e}")
 
-        if items_to_update_history_for:
-            fetch_and_save_histories(items_to_update_history_for, current_prices, d1_client_instance=d1_client)
+
+        all_item_ids_for_history = [item['id'] for item in all_items_data_list if item.get('id')]
+        if all_item_ids_for_history: # Check if there are any IDs to process
+            fetch_and_save_histories(all_item_ids_for_history, current_prices, d1_client_instance=d1_client)
         else:
-            safe_print("No items require history updates based on initial fetch.")
+            safe_print("No item IDs available to process for history updates.")
     else:
         safe_print("\nSkipping icon downloading and history fetching because item list was not created or is empty.")
 
