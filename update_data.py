@@ -58,6 +58,10 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
     """
     all_items_data = {} # Keyed by item ID
     items_needing_history_update = []
+    initial_d1_item_ids = set()
+    d1_new_inserts_count = 0
+    d1_updated_items_count = 0
+    # items_failed_upsert_count is initialized later, before its relevant loop
 
     # Prioritize loading from D1
     if d1_client_instance:
@@ -88,34 +92,63 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                                 item_entry[header] = None # Or appropriate default like ''
 
                         all_items_data[item_id] = item_entry
-                safe_print(f"Loaded {len(all_items_data)} items from D1.")
-            else:
+                if all_items_data: # Check if any items were actually loaded
+                    initial_d1_item_ids = set(all_items_data.keys())
+                    safe_print(f"Successfully loaded {len(initial_d1_item_ids)} items from D1. Their IDs are now tracked for insert/update distinction.")
+                else: # D1 query succeeded but no items were in the DB
+                    safe_print("No existing items found in D1 database via initial query.")
+            else: # D1 query failed or returned no results structure
                 if not response.success:
                     safe_print(f"D1 query to load items failed. Errors: {response.errors}")
-                else:
-                    safe_print("No items found in D1 database or query returned no results.")
-                # Fallback to CSV if D1 load was not successful or empty
-                safe_print(f"Falling back to loading from {ITEMS_OUTPUT_CSV_FILE}...")
-                # Re-add CSV loading logic here if desired as a fallback
+                else: # response.success is True, but no response.result or no response.result[0].results
+                    safe_print("D1 query successful but returned no parseable results. Assuming D1 is empty or structure is unexpected.")
+
+                safe_print(f"D1 query failed or returned no data. Falling back to loading from {ITEMS_OUTPUT_CSV_FILE}...")
                 if os.path.exists(ITEMS_OUTPUT_CSV_FILE):
                     try:
                         with open(ITEMS_OUTPUT_CSV_FILE, mode='r', encoding='utf-8', newline='') as csvfile:
                             reader = csv.DictReader(csvfile)
+                            csv_items_loaded_count = 0
                             for row_csv in reader:
                                 item_id_csv = row_csv.get('id')
-                                if item_id_csv and item_id_csv not in all_items_data: # Avoid overwriting D1 data if some was loaded
+                                if item_id_csv: # Ensure item_id_csv is not None or empty
                                     row_csv.setdefault('icon_downloaded', 'False')
                                     row_csv['needs_history_update'] = 'False'
-                                    all_items_data[item_id_csv] = row_csv
-                            safe_print(f"Loaded additional {len(all_items_data)} items from CSV as fallback/supplement.")
+                                    all_items_data[item_id_csv] = row_csv # This will form the baseline if D1 failed
+                                    csv_items_loaded_count +=1
+                            safe_print(f"Loaded {csv_items_loaded_count} items from CSV as fallback.")
                     except Exception as e_csv:
-                        safe_print(f"Error reading {ITEMS_OUTPUT_CSV_FILE} during fallback: {e_csv}")
+                        safe_print(f"Error reading {ITEMS_OUTPUT_CSV_FILE} during fallback: {e_csv}. Starting with an empty dataset.")
+                        all_items_data = {} # Ensure it's empty if CSV also fails
+                else:
+                    safe_print(f"Fallback CSV {ITEMS_OUTPUT_CSV_FILE} not found. Starting with an empty dataset as D1 was also unavailable/empty.")
+                    all_items_data = {}
         except cloudflare.APIError as e_d1_api:
-            safe_print(f"D1 APIError during initial load: {e_d1_api}. Falling back to CSV if possible.")
-            # Fallback to CSV (similar to above)
+            safe_print(f"D1 APIError during initial load: {e_d1_api}. Attempting CSV fallback.")
+            # CSV Fallback logic (similar to above, can be refactored into a helper if too repetitive)
+            if os.path.exists(ITEMS_OUTPUT_CSV_FILE):
+                try:
+                    # ... (CSV loading logic) ...
+                    safe_print(f"Loaded items from CSV after D1 APIError.")
+                except Exception as e_csv:
+                    safe_print(f"Error reading {ITEMS_OUTPUT_CSV_FILE} during D1 APIError fallback: {e_csv}. Starting empty.")
+                    all_items_data = {}
+            else:
+                safe_print(f"Fallback CSV {ITEMS_OUTPUT_CSV_FILE} not found after D1 APIError. Starting empty.")
+                all_items_data = {}
         except Exception as e_generic:
-            safe_print(f"Generic error during D1 initial load: {e_generic}. Falling back to CSV if possible.")
-            # Fallback to CSV (similar to above)
+            safe_print(f"Generic error during D1 initial load: {e_generic}. Attempting CSV fallback.")
+            # CSV Fallback logic (similar to above)
+            if os.path.exists(ITEMS_OUTPUT_CSV_FILE):
+                try:
+                    # ... (CSV loading logic) ...
+                    safe_print(f"Loaded items from CSV after generic D1 load error.")
+                except Exception as e_csv:
+                    safe_print(f"Error reading {ITEMS_OUTPUT_CSV_FILE} during generic D1 error fallback: {e_csv}. Starting empty.")
+                    all_items_data = {}
+            else:
+                safe_print(f"Fallback CSV {ITEMS_OUTPUT_CSV_FILE} not found after generic D1 load error. Starting empty.")
+                all_items_data = {}
     else:
         # Fallback to CSV if D1 client is not available
         safe_print(f"D1 client not available. Loading from {ITEMS_OUTPUT_CSV_FILE}...")
@@ -123,16 +156,22 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
             try:
                 with open(ITEMS_OUTPUT_CSV_FILE, mode='r', encoding='utf-8', newline='') as csvfile:
                     reader = csv.DictReader(csvfile)
+                    csv_items_loaded_count = 0
                     for row in reader:
                         item_id = row.get('id')
                         if item_id:
                             row.setdefault('icon_downloaded', 'False')
                             row['needs_history_update'] = 'False'
                             all_items_data[item_id] = row
-                    safe_print(f"Loaded {len(all_items_data)} items from CSV.")
+                            csv_items_loaded_count +=1
+                    safe_print(f"Loaded {csv_items_loaded_count} items from CSV.")
             except Exception as e:
                 safe_print(f"Error reading {ITEMS_OUTPUT_CSV_FILE}: {e}. Starting with an empty dataset.")
                 all_items_data = {}
+        else:
+            safe_print(f"CSV file {ITEMS_OUTPUT_CSV_FILE} not found. Starting with an empty dataset.")
+            all_items_data = {}
+
 
     current_page = 1
     headers = {'accept': 'text/csv'}
@@ -162,6 +201,7 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
 
                 reader = csv.DictReader(response_text_stripped.splitlines())
                 api_items_on_page = list(reader)
+                safe_print(f"Successfully fetched and parsed {len(api_items_on_page)} items from API page {current_page}.")
 
                 if not api_items_on_page: # Handles header-only response or empty after parsing
                     safe_print(f"No data items on API page {current_page} (only header or empty). Ending pagination.")
@@ -217,6 +257,8 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
         current_page += 1
         time.sleep(REQUEST_DELAY_SECONDS)
 
+    safe_print(f"Finished fetching from item API. Total pages processed: {current_page -1}. API data was processed: {'Yes' if api_data_processed else 'No'}.")
+
     # After loop, ensure items loaded from CSV but not in API have needs_history_update='False'
     # This is implicitly handled by the logic: initial load is 'False', and only API interaction changes it.
     # If an item from CSV was never found in API, its 'needs_history_update' remains 'False'.
@@ -234,9 +276,19 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
     # Save/Update items in D1
     if d1_client_instance and all_items_data:
         safe_print(f"\nUpserting {len(all_items_data)} items into D1 database...")
-        items_upserted_count = 0
+        # items_upserted_count = 0 # Replaced by d1_new_inserts_count and d1_updated_items_count
         items_failed_upsert_count = 0
+        # d1_new_inserts_count and d1_updated_items_count were initialized at the start of the function
+
         for item_id_key, item_data_dict in all_items_data.items():
+            item_id_to_upsert = item_data_dict.get('id')
+            item_name_for_log = item_data_dict.get('name', 'Unknown Name')
+
+            if item_id_to_upsert in initial_d1_item_ids:
+                safe_print(f"D1: Updating existing item {item_id_to_upsert} ('{item_name_for_log}')...")
+            else:
+                safe_print(f"D1: Inserting new item {item_id_to_upsert} ('{item_name_for_log}')...")
+
             try:
                 # Ensure weekly_average_price is float or None
                 wap = item_data_dict.get('weekly_average_price')
@@ -283,7 +335,10 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                 )
 
                 if response.success:
-                    items_upserted_count +=1
+                    if item_id_to_upsert in initial_d1_item_ids:
+                        d1_updated_items_count += 1
+                    else:
+                        d1_new_inserts_count += 1
                 else:
                     safe_print(f"Failed to upsert item {item_id_key} into D1. Errors: {response.errors}")
                     items_failed_upsert_count +=1
@@ -293,7 +348,13 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
             except Exception as e:
                 safe_print(f"Generic error during D1 upsert for item {item_id_key}: {e}")
                 items_failed_upsert_count +=1
-        safe_print(f"D1 Upsert Summary: {items_upserted_count} succeeded, {items_failed_upsert_count} failed.")
+
+        total_successful_d1_ops = d1_new_inserts_count + d1_updated_items_count
+        safe_print(f"D1 Sync for 'items' table Summary: {total_successful_d1_ops} items successfully processed.")
+        safe_print(f"  - New items inserted into D1: {d1_new_inserts_count}")
+        safe_print(f"  - Existing items updated/refreshed in D1: {d1_updated_items_count}")
+        if items_failed_upsert_count > 0:
+            safe_print(f"  - Failed D1 operations: {items_failed_upsert_count}")
 
     return items_needing_history_update, list(all_items_data.values())
 
@@ -557,9 +618,9 @@ def fetch_and_save_histories(item_ids_to_process: list[str], all_current_prices_
 
     # Statistics
     full_history_items_processed = 0
-    full_history_records_inserted = 0
+    full_history_records_inserted_total = 0 # Renamed for clarity
     full_history_api_failures = 0
-    full_history_d1_failures = 0
+    full_history_d1_failures_total = 0 # Renamed for clarity
     appended_latest_price_count = 0
     append_failures_missing_data = 0
     append_failures_d1 = 0
@@ -569,7 +630,7 @@ def fetch_and_save_histories(item_ids_to_process: list[str], all_current_prices_
 
     for item_id in item_ids_to_process:
         latest_d1_date_updated_for_item = None
-        max_date_from_full_history = None # Used if full history is fetched
+        # max_date_from_full_history = None # This was for an intermediate step, not strictly needed here
 
         try:
             query_latest_sql = "SELECT MAX(date_updated) as latest_date FROM item_history WHERE item_id = ?;"
@@ -585,7 +646,7 @@ def fetch_and_save_histories(item_ids_to_process: list[str], all_current_prices_
         if latest_d1_date_updated_for_item is None:
             safe_print(f"No history found in D1 for item {item_id}. Attempting full history fetch...")
             full_history_items_processed += 1
-            history_api_url = f"{API_BASE_URL_HISTORY}{item_id}" # Assumes page=1 is sufficient or gets all
+            history_api_url = f"{API_BASE_URL_HISTORY}{item_id}"
 
             try:
                 response = requests.get(history_api_url, headers=api_headers, timeout=30)
@@ -593,18 +654,23 @@ def fetch_and_save_histories(item_ids_to_process: list[str], all_current_prices_
                     response_text_stripped = response.text.strip()
                     if response_text_stripped:
                         history_reader = csv.DictReader(response_text_stripped.splitlines())
-                        records_for_this_item = 0
+                        records_inserted_this_item = 0
                         current_max_date_in_batch = None
                         for row in history_reader:
                             try:
-                                price = float(row.get('price'))
+                                price_val = row.get('price')
+                                if price_val is None or price_val == '':
+                                    safe_print(f"Skipping history row for item {item_id} due to missing price: {row}")
+                                    continue
+                                price = float(price_val)
+
                                 week = row.get('week')
                                 year = row.get('year')
-                                date_created = row.get('date_created')
-                                date_updated = row.get('date_updated')
+                                date_created = row.get('date_created') # API's date_created for this history point
+                                date_updated = row.get('date_updated') # API's date_updated for this history point
 
                                 if not all([week, year, date_created, date_updated]):
-                                    safe_print(f"Skipping history row for item {item_id} due to missing date/week/year fields: {row}")
+                                    safe_print(f"Skipping history row for item {item_id} due to missing week, year, or date fields: {row}")
                                     continue
 
                                 insert_hist_sql = "INSERT INTO item_history (item_id, price, week, year, date_created, date_updated) VALUES (?, ?, ?, ?, ?, ?);"
@@ -615,25 +681,25 @@ def fetch_and_save_histories(item_ids_to_process: list[str], all_current_prices_
                                     sql=insert_hist_sql, params=hist_params
                                 )
                                 if hist_resp.success:
-                                    full_history_records_inserted += 1
-                                    records_for_this_item += 1
+                                    full_history_records_inserted_total += 1
+                                    records_inserted_this_item += 1
                                     if current_max_date_in_batch is None or date_updated > current_max_date_in_batch:
                                         current_max_date_in_batch = date_updated
                                 else:
                                     safe_print(f"Failed to insert full history row for item {item_id}: {hist_resp.errors}")
-                                    full_history_d1_failures +=1
+                                    full_history_d1_failures_total +=1
                             except ValueError:
                                 safe_print(f"Skipping history row for item {item_id} due to invalid price: {row.get('price')}")
                             except Exception as e_row:
-                                safe_print(f"Error processing row for item {item_id}: {e_row} - Row: {row}")
-                                full_history_d1_failures +=1
+                                safe_print(f"Error processing/inserting history row for item {item_id}: {e_row} - Row: {row}")
+                                full_history_d1_failures_total +=1
 
-                        if records_for_this_item > 0:
-                            safe_print(f"Successfully inserted {records_for_this_item} full history records for item {item_id}.")
-                            if current_max_date_in_batch: # Update latest known date for this item
-                                latest_d1_date_updated_for_item = current_max_date_in_batch
+                        if records_inserted_this_item > 0:
+                            safe_print(f"Successfully inserted {records_inserted_this_item} full history records for item {item_id}.")
+                            if current_max_date_in_batch:
+                                latest_d1_date_updated_for_item = current_max_date_in_batch # Update with the latest from the batch
                         else:
-                            safe_print(f"No valid history records found in API response for item {item_id}.")
+                            safe_print(f"No valid history records found or inserted from API response for item {item_id}.")
                     else:
                         safe_print(f"Full history API response for item {item_id} was empty.")
                 else:
@@ -642,30 +708,33 @@ def fetch_and_save_histories(item_ids_to_process: list[str], all_current_prices_
             except requests.exceptions.RequestException as e_req:
                 safe_print(f"Request failed for full history for item {item_id}: {e_req}")
                 full_history_api_failures += 1
-            except Exception as e_outer:
+            except Exception as e_outer: # Catch other errors like CSV parsing issues
                 safe_print(f"Outer error processing full history for item {item_id}: {e_outer}")
-                full_history_api_failures +=1
+                full_history_api_failures +=1 # Count as API/processing failure
 
-            time.sleep(REQUEST_DELAY_SECONDS) # Delay after each full history API call
+            time.sleep(REQUEST_DELAY_SECONDS) # Delay after each full history API call, even if it failed
 
-        # Always attempt to append from current_prices_map, as it might be more up-to-date.
+        # This block now runs regardless of whether a full history backfill was attempted or if history already existed.
+        # It ensures the very latest price from all_current_prices_map is considered.
         current_price_point = all_current_prices_map.get(item_id)
         if current_price_point and current_price_point.get('estimated_price') is not None and current_price_point.get('estimated_price') != '':
             api_price_str = current_price_point['estimated_price']
-            api_date_updated = current_price_point['date_updated']
+            api_date_updated_from_v2 = current_price_point['date_updated'] # Date from /v2/item_prices
 
             try:
                 api_price_float = float(api_price_str)
-                if latest_d1_date_updated_for_item and api_date_updated <= latest_d1_date_updated_for_item:
-                    safe_print(f"Latest price for item {item_id} (date: {api_date_updated}) already reflected or older than D1 history. Skipping append.")
-                    if latest_d1_date_updated_for_item is not None : # Only count if there was a D1 record to compare against
-                         items_already_up_to_date +=1
-                else: # D1 history is older or non-existent, so append this price
-                    derived_week, derived_year = get_week_year_from_isodate(api_date_updated)
-                    insert_latest_sql = "INSERT INTO item_history (item_id, price, week, year, date_created, date_updated) VALUES (?, ?, ?, ?, ?, ?);"
-                    latest_params = [item_id, api_price_float, derived_week, derived_year, api_date_updated, api_date_updated]
 
-                    safe_print(f"Appending latest price to D1 for item {item_id}, price: {api_price_float}, date: {api_date_updated}")
+                # Compare with latest_d1_date_updated_for_item (which might have been updated by full backfill)
+                if latest_d1_date_updated_for_item and api_date_updated_from_v2 <= latest_d1_date_updated_for_item:
+                    safe_print(f"Latest price for item {item_id} (date: {api_date_updated_from_v2}) from v2 API already reflected or older than D1 history. Skipping append.")
+                    if latest_d1_date_updated_for_item is not None: # Only count if there was a D1 record to compare against
+                        items_already_up_to_date +=1
+                else: # D1 history is older, or non-existent, or v2 price is newer
+                    derived_week, derived_year = get_week_year_from_isodate(api_date_updated_from_v2)
+                    insert_latest_sql = "INSERT INTO item_history (item_id, price, week, year, date_created, date_updated) VALUES (?, ?, ?, ?, ?, ?);"
+                    latest_params = [item_id, api_price_float, derived_week, derived_year, api_date_updated_from_v2, api_date_updated_from_v2]
+
+                    safe_print(f"Appending latest price (from v2 map) to D1 for item {item_id}, price: {api_price_float}, date: {api_date_updated_from_v2}")
                     latest_resp = d1_client_instance.d1.database.query(
                         database_id=CLOUDFLARE_D1_DATABASE_ID, account_id=CLOUDFLARE_ACCOUNT_ID,
                         sql=insert_latest_sql, params=latest_params
@@ -673,29 +742,28 @@ def fetch_and_save_histories(item_ids_to_process: list[str], all_current_prices_
                     if latest_resp.success:
                         appended_latest_price_count += 1
                     else:
-                        safe_print(f"Failed to append latest price for item {item_id} to D1: {latest_resp.errors}")
+                        safe_print(f"Failed to append latest price (from v2 map) for item {item_id} to D1: {latest_resp.errors}")
                         append_failures_d1 += 1
             except ValueError:
-                safe_print(f"Error converting current price '{api_price_str}' to float for item {item_id} during append. Skipping.")
+                safe_print(f"Error converting current price '{api_price_str}' (from v2 map) to float for item {item_id} during append. Skipping.")
                 append_failures_missing_data +=1
             except Exception as e_append:
-                safe_print(f"Generic error during append logic for item {item_id}: {e_append}")
+                safe_print(f"Generic error during append logic (from v2 map) for item {item_id}: {e_append}")
                 append_failures_d1 +=1
         else:
             safe_print(f"No current price data in all_current_prices_map for item {item_id} to consider for append.")
-            append_failures_missing_data +=1 # Count as failure to append if data not present
+            # append_failures_missing_data +=1 # Not necessarily a failure if it was backfilled and this map is just for more recent
 
-        # Optional: Short delay between processing each item if D1 rate limits are a concern
-        # time.sleep(REQUEST_DELAY_SECONDS / 4)
+        time.sleep(REQUEST_DELAY_SECONDS / 5) # Shorter delay between processing each item
 
     safe_print("\n--- D1 Item History Processing Summary ---")
     safe_print(f"Items processed for full history backfill (attempted): {full_history_items_processed}")
-    safe_print(f"Total records inserted from full history fetches: {full_history_records_inserted}")
+    safe_print(f"Total records inserted from full history fetches: {full_history_records_inserted_total}")
     safe_print(f"Full history API fetch failures: {full_history_api_failures}")
-    safe_print(f"Full history D1 insert failures (individual records): {full_history_d1_failures}")
-    safe_print(f"Latest price entries successfully appended to D1: {appended_latest_price_count}")
-    safe_print(f"Items skipped (latest price already up-to-date in D1): {items_already_up_to_date}")
-    safe_print(f"Append failures (missing data or D1 error): {append_failures_d1 + append_failures_missing_data}")
+    safe_print(f"Full history D1 insert failures (individual records): {full_history_d1_failures_total}")
+    safe_print(f"Latest price entries successfully appended to D1 (from v2 map): {appended_latest_price_count}")
+    safe_print(f"Items skipped (latest v2 price already up-to-date in D1): {items_already_up_to_date}")
+    safe_print(f"Append failures (missing data or D1 error for v2 price): {append_failures_d1 + append_failures_missing_data}")
     safe_print("---------------------------------------------")
 
 def check_cloudflare_config():
@@ -855,10 +923,10 @@ if __name__ == "__main__":
     create_d1_tables(d1_client) # Ensure tables are created before fetching items
 
     # Proceed with existing logic, clients can be checked before use in respective functions
-    items_to_update_history_for, all_items_data_list = fetch_and_save_items(d1_client_instance=d1_client) # items_to_update_history_for is now less critical for history function
+    items_to_update_history_for, all_items_data_list = fetch_and_save_items(d1_client_instance=d1_client)
 
     if all_items_data_list: # Check if there's any data to process
-        all_items_data_list = download_item_icons(all_items_data_list, r2_client_instance=r2_client, d1_client_instance=d1_client) # Update icon_downloaded flags
+        all_items_data_list = download_item_icons(all_items_data_list, r2_client_instance=r2_client, d1_client_instance=d1_client)
 
         current_prices = load_all_current_prices()
 
