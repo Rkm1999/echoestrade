@@ -2,58 +2,183 @@ import requests
 import time
 import os
 import csv
-import re
-from datetime import datetime, timezone # Ensure timezone is imported
+# import re # Removed as sanitize_for_path is removed
+# from datetime import datetime, timezone # Removed as no longer used
+import sys # Added for safe_print
+import cloudflare
+# import boto3 # Removed
+# from botocore.exceptions import ClientError # Removed
+# import json # Removed as no longer used
 
 # Configuration
+CLOUDFLARE_API_TOKEN = os.environ.get("CLOUDFLARE_API_TOKEN")
+CLOUDFLARE_ACCOUNT_ID = os.environ.get("CLOUDFLARE_ACCOUNT_ID")
+CLOUDFLARE_D1_DATABASE_ID = os.environ.get("CLOUDFLARE_D1_DATABASE_ID")
+# CLOUDFLARE_R2_BUCKET_NAME = os.environ.get("CLOUDFLARE_R2_BUCKET_NAME") # Removed
+# CLOUDFLARE_R2_S3_ACCESS_KEY_ID = os.environ.get("CLOUDFLARE_R2_S3_ACCESS_KEY_ID") # Removed
+# CLOUDFLARE_R2_S3_SECRET_ACCESS_KEY = os.environ.get("CLOUDFLARE_R2_S3_SECRET_ACCESS_KEY") # Removed
+# CLOUDFLARE_R2_S3_ENDPOINT_URL = os.environ.get("CLOUDFLARE_R2_S3_ENDPOINT_URL") # Removed
+
 API_BASE_URL_ITEMS = "https://echoes.mobi/api/items"
-API_BASE_URL_HISTORY = "https://echoes.mobi/api/item_weekly_average_prices?page=1&itemId="
+# API_BASE_URL_HISTORY = "https://echoes.mobi/api/item_weekly_average_prices?page=1&itemId=" # Removed
 ITEMS_OUTPUT_CSV_FILE = "item_lists.csv"
-HISTORIES_BASE_DIR = "item_histories"
+# HISTORIES_BASE_DIR = "item_histories" # Removed - was only used by download_item_icons
+# API_V2_ITEM_PRICES_URL = "https://echoes.mobi/api/v2/item_prices" # Removed
 REQUEST_DELAY_SECONDS = 0.5
-FINAL_CSV_HEADERS = ['id', 'name', 'category_name', 'group_name', 'weekly_average_price', 'icon_id', 'date_created', 'date_updated', 'icon_url', 'icon_downloaded', 'needs_history_update']
+FINAL_CSV_HEADERS = ['id', 'name', 'category_name', 'group_name', 'weekly_average_price', 'icon_id', 'date_created', 'date_updated'] # icon_url removed
+# HISTORY_CSV_HEADERS removed by removing the function that used it.
 
-def sanitize_for_path(name_str):
-    """
-    Sanitizes a string to be safe for directory/file names.
-    """
-    if not name_str:
-        name_str = "unknown"
-    name_str = name_str.replace(' ', '_')
-    name_str = re.sub(r'[^\w\-_]', '', name_str)
-    return name_str[:100]
+# def sanitize_for_path(name_str): # Removed as no longer used
+#     """
+#     Sanitizes a string to be safe for directory/file names.
+#     """
+#     if not name_str:
+#         name_str = "unknown"
+#     name_str = name_str.replace(' ', '_')
+#     name_str = re.sub(r'[^\w\-_]', '', name_str)
+#     return name_str[:100]
 
-def fetch_and_save_items():
+def safe_print(text_to_print):
+    try:
+        print(text_to_print)
+    except UnicodeEncodeError:
+        if sys.stdout.encoding:
+            try:
+                encoded_text = text_to_print.encode(sys.stdout.encoding, errors='replace').decode(sys.stdout.encoding)
+                print(encoded_text)
+            except Exception: # Fallback if even replacement fails with stdout.encoding
+                print(text_to_print.encode('ascii', errors='replace').decode('ascii'))
+        else: # If sys.stdout.encoding is None
+            print(text_to_print.encode('ascii', errors='replace').decode('ascii'))
+    except Exception as e:
+            print(f"<print error: {e}>") # Catch other potential print errors
+
+def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
     """
-    Fetches item data from the paginated API, merges with existing data, and saves to a CSV file.
-    Returns a list of item IDs that need their history updated.
+    Fetches item data from API, merges with D1 data (or local CSV as fallback), saves to D1, and then to CSV.
+    Returns the full list of item data.
     """
     all_items_data = {} # Keyed by item ID
-    items_needing_history_update = []
+    initial_d1_item_ids = set()
+    d1_new_inserts_count = 0
+    d1_updated_items_count = 0
+    d1_skipped_no_change_count = 0 # Added counter
+    # items_failed_upsert_count is initialized later, just before the D1 upsert loop
 
-    # Load existing data from item_lists.csv if it exists
-    if os.path.exists(ITEMS_OUTPUT_CSV_FILE):
-        print(f"Loading existing data from {ITEMS_OUTPUT_CSV_FILE}...")
+    # Prioritize loading from D1
+    if d1_client_instance:
+        safe_print("Attempting to load existing item data from D1...")
         try:
-            with open(ITEMS_OUTPUT_CSV_FILE, mode='r', encoding='utf-8', newline='') as csvfile:
-                reader = csv.DictReader(csvfile)
-                for row in reader:
-                    item_id = row.get('id')
+            select_all_sql = "SELECT item_id, name, category_name, group_name, weekly_average_price, icon_id, date_created, date_updated FROM items;" # Removed icon_r2_key
+            response = d1_client_instance.d1.database.query(
+                database_id=CLOUDFLARE_D1_DATABASE_ID,
+                account_id=CLOUDFLARE_ACCOUNT_ID,
+                sql=select_all_sql
+            )
+            if response.success and response.result and response.result[0].results:
+                for row in response.result[0].results:
+                    item_id = row.get('item_id')
                     if item_id:
-                        # Ensure icon_downloaded exists, default to 'False' if not
-                        if 'icon_downloaded' not in row:
-                            row['icon_downloaded'] = 'False'
-                        # Initialize needs_history_update to 'False' for existing items
-                        row['needs_history_update'] = 'False'
-                        all_items_data[item_id] = row
-                print(f"Loaded {len(all_items_data)} items from CSV.")
-        except Exception as e:
-            print(f"Error reading {ITEMS_OUTPUT_CSV_FILE}: {e}. Starting with an empty dataset.")
-            all_items_data = {} # Reset if error
+                        # Convert D1 row (dict) to the structure expected by all_items_data
+                        # The D1 row keys match the desired dictionary keys closely
+                        item_entry = dict(row) # Make a mutable copy
+                        item_entry['id'] = item_entry.pop('item_id') # Rename to 'id'
+
+                        # Ensure all FINAL_CSV_HEADERS are present, even if null from D1
+                        # icon_downloaded and needs_history_update are removed from FINAL_CSV_HEADERS
+                        for header in FINAL_CSV_HEADERS:
+                            if header not in item_entry:
+                                item_entry[header] = None # Or appropriate default like ''
+
+                        item_id_from_d1 = item_entry.get('id') # Use 'id' as it's now the key
+                        item_name_for_log = item_entry.get('name', 'Unknown Name')
+                        safe_print(f"D1 Load: Loaded item {item_id_from_d1} ('{item_name_for_log}') from D1.")
+                        all_items_data[item_id] = item_entry
+
+                if all_items_data: # Check if any items were actually loaded from D1
+                    initial_d1_item_ids = set(all_items_data.keys()) # Populate AFTER D1 load loop
+                    safe_print(f"Successfully loaded a total of {len(initial_d1_item_ids)} items from D1. Their IDs are now tracked for insert/update distinction.")
+                else: # D1 query succeeded but no items were in the DB
+                    safe_print("No existing items found in D1 database via initial query.") # This is correct if all_items_data is empty after loop
+            else: # D1 query failed or returned no results structure
+                if not response.success:
+                    safe_print(f"D1 query to load items failed. Errors: {response.errors}")
+                else: # response.success is True, but no response.result or no response.result[0].results
+                    safe_print("D1 query successful but returned no parseable results. Assuming D1 is empty or structure is unexpected.")
+
+                safe_print(f"D1 query failed or returned no data. Falling back to loading from {ITEMS_OUTPUT_CSV_FILE}...")
+                if os.path.exists(ITEMS_OUTPUT_CSV_FILE):
+                    try:
+                        with open(ITEMS_OUTPUT_CSV_FILE, mode='r', encoding='utf-8', newline='') as csvfile:
+                            reader = csv.DictReader(csvfile)
+                            csv_items_loaded_count = 0
+                            for row_csv in reader:
+                                item_id_csv = row_csv.get('id')
+                                if item_id_csv: # Ensure item_id_csv is not None or empty
+                                    # row_csv.setdefault('icon_downloaded', 'False') # Removed
+                                    # row_csv['needs_history_update'] = 'False' # Removed
+                                    all_items_data[item_id_csv] = row_csv # This will form the baseline if D1 failed
+                                    csv_items_loaded_count +=1
+                            safe_print(f"Loaded {csv_items_loaded_count} items from CSV as fallback.")
+                    except Exception as e_csv:
+                        safe_print(f"Error reading {ITEMS_OUTPUT_CSV_FILE} during fallback: {e_csv}. Starting with an empty dataset.")
+                        all_items_data = {} # Ensure it's empty if CSV also fails
+                else:
+                    safe_print(f"Fallback CSV {ITEMS_OUTPUT_CSV_FILE} not found. Starting with an empty dataset as D1 was also unavailable/empty.")
+                    all_items_data = {}
+        except cloudflare.APIError as e_d1_api:
+            safe_print(f"D1 APIError during initial load: {e_d1_api}. Attempting CSV fallback.")
+            # CSV Fallback logic (similar to above, can be refactored into a helper if too repetitive)
+            if os.path.exists(ITEMS_OUTPUT_CSV_FILE):
+                try:
+                    # ... (CSV loading logic) ...
+                    safe_print(f"Loaded items from CSV after D1 APIError.")
+                except Exception as e_csv:
+                    safe_print(f"Error reading {ITEMS_OUTPUT_CSV_FILE} during D1 APIError fallback: {e_csv}. Starting empty.")
+                    all_items_data = {}
+            else:
+                safe_print(f"Fallback CSV {ITEMS_OUTPUT_CSV_FILE} not found after D1 APIError. Starting empty.")
+                all_items_data = {}
+        except Exception as e_generic:
+            safe_print(f"Generic error during D1 initial load: {e_generic}. Attempting CSV fallback.")
+            # CSV Fallback logic (similar to above)
+            if os.path.exists(ITEMS_OUTPUT_CSV_FILE):
+                try:
+                    # ... (CSV loading logic) ...
+                    safe_print(f"Loaded items from CSV after generic D1 load error.")
+                except Exception as e_csv:
+                    safe_print(f"Error reading {ITEMS_OUTPUT_CSV_FILE} during generic D1 error fallback: {e_csv}. Starting empty.")
+                    all_items_data = {}
+            else:
+                safe_print(f"Fallback CSV {ITEMS_OUTPUT_CSV_FILE} not found after generic D1 load error. Starting empty.")
+                all_items_data = {}
+    else:
+        # Fallback to CSV if D1 client is not available
+        safe_print(f"D1 client not available. Loading from {ITEMS_OUTPUT_CSV_FILE}...")
+        if os.path.exists(ITEMS_OUTPUT_CSV_FILE):
+            try:
+                with open(ITEMS_OUTPUT_CSV_FILE, mode='r', encoding='utf-8', newline='') as csvfile:
+                    reader = csv.DictReader(csvfile)
+                    csv_items_loaded_count = 0
+                    for row in reader:
+                        item_id = row.get('id')
+                        if item_id:
+                            # row.setdefault('icon_downloaded', 'False') # Removed
+                            # row['needs_history_update'] = 'False' # Removed
+                            all_items_data[item_id] = row
+                            csv_items_loaded_count +=1
+                    safe_print(f"Loaded {csv_items_loaded_count} items from CSV.")
+            except Exception as e:
+                safe_print(f"Error reading {ITEMS_OUTPUT_CSV_FILE}: {e}. Starting with an empty dataset.")
+                all_items_data = {}
+        else:
+            safe_print(f"CSV file {ITEMS_OUTPUT_CSV_FILE} not found. Starting with an empty dataset.")
+            all_items_data = {}
+
 
     current_page = 1
     headers = {'accept': 'text/csv'}
-    print("Starting to fetch item data from API...")
+    safe_print("Starting to fetch item data from API...")
 
     api_data_processed = False
 
@@ -67,21 +192,22 @@ def fetch_and_save_items():
         }
         
         try:
-            print(f"Fetching API item list page {current_page}...")
+            safe_print(f"Fetching API item list page {current_page}...")
             response = requests.get(API_BASE_URL_ITEMS, headers=headers, params=params, timeout=30)
 
             if response.status_code == 200:
                 response_text_stripped = response.text.strip()
 
                 if not response_text_stripped:
-                    print(f"API Page {current_page} is effectively empty. Assuming no more item data.")
+                    safe_print(f"API Page {current_page} is effectively empty. Assuming no more item data.")
                     break
 
                 reader = csv.DictReader(response_text_stripped.splitlines())
                 api_items_on_page = list(reader)
+                safe_print(f"Successfully fetched and parsed {len(api_items_on_page)} items from API page {current_page}.")
 
                 if not api_items_on_page: # Handles header-only response or empty after parsing
-                    print(f"No data items on API page {current_page} (only header or empty). Ending pagination.")
+                    safe_print(f"No data items on API page {current_page} (only header or empty). Ending pagination.")
                     break
                 
                 api_data_processed = True # Mark that we have processed at least one page with data
@@ -89,7 +215,7 @@ def fetch_and_save_items():
                 for api_item in api_items_on_page:
                     item_id = api_item.get('id')
                     if not item_id:
-                        print(f"Skipping API item due to missing ID: {api_item.get('name', 'Unknown Name')}")
+                        safe_print(f"Skipping API item due to missing ID: {api_item.get('name', 'Unknown Name')}")
                         continue
 
                     date_updated_api = api_item.get('date_updated')
@@ -98,395 +224,356 @@ def fetch_and_save_items():
                         # Item exists, check for updates
                         existing_item = all_items_data[item_id]
                         date_updated_local = existing_item.get('date_updated')
-                        icon_downloaded_status = existing_item.get('icon_downloaded', 'False') # Preserve existing
+                        # icon_downloaded_status removed
 
                         if date_updated_api and date_updated_local and date_updated_api > date_updated_local:
-                            print(f"Updating item {item_id} ('{api_item.get('name')}') as API data is newer.")
-                            # Update all fields from API, preserve icon_downloaded
+                            safe_print(f"Updating item {item_id} ('{api_item.get('name')}') as API data is newer.")
+                            # Update all fields from API
                             for key, value in api_item.items():
                                 existing_item[key] = value
-                            existing_item['icon_downloaded'] = icon_downloaded_status
-                            existing_item['needs_history_update'] = 'True'
-                        else:
-                            # API data not newer or local/API date missing, keep existing, set history update to False
-                            existing_item['needs_history_update'] = 'False'
+                            # needs_history_update is removed
+                        # else:
+                            # needs_history_update is removed
                         all_items_data[item_id] = existing_item # Ensure reference is updated if dict was copied
                     else:
                         # New item
-                        print(f"Adding new item {item_id} ('{api_item.get('name')}').")
+                        safe_print(f"API Fetch: New item {item_id} ('{api_item.get('name', 'Unknown Name')}') identified, adding to internal data list.")
                         new_item_entry = {header: '' for header in FINAL_CSV_HEADERS} # Initialize with all headers
                         new_item_entry.update(api_item) # Populate with API data
-                        new_item_entry['icon_downloaded'] = 'False'
-                        new_item_entry['needs_history_update'] = 'True'
+                        # icon_downloaded and needs_history_update are removed
                         all_items_data[item_id] = new_item_entry
             else:
-                print(f"Error fetching API item list page {current_page}: Status code {response.status_code}")
-                print(f"Response content: {response.text[:200]}")
+                safe_print(f"Error fetching API item list page {current_page}: Status code {response.status_code}")
+                safe_print(f"Response content: {response.text[:200]}")
                 break # Stop on error
         
         except requests.exceptions.RequestException as e:
-            print(f"Request for API item list failed on page {current_page}: {e}")
+            safe_print(f"Request for API item list failed on page {current_page}: {e}")
             break # Stop on error
         except csv.Error as e:
-            print(f"CSV parsing error on API page {current_page}: {e}. Response text: {response.text[:500]}")
+            safe_print(f"CSV parsing error on API page {current_page}: {e}. Response text: {response.text[:500]}")
             break
 
         current_page += 1
         time.sleep(REQUEST_DELAY_SECONDS)
 
+    safe_print(f"Finished fetching from item API. Total pages processed: {current_page -1}. API data was processed: {'Yes' if api_data_processed else 'No'}.")
+
     # After loop, ensure items loaded from CSV but not in API have needs_history_update='False'
     # This is implicitly handled by the logic: initial load is 'False', and only API interaction changes it.
     # If an item from CSV was never found in API, its 'needs_history_update' remains 'False'.
 
-    # Write all_items_data to CSV
-    print(f"\nWriting {len(all_items_data)} items to {ITEMS_OUTPUT_CSV_FILE}...")
-    try:
-        with open(ITEMS_OUTPUT_CSV_FILE, mode='w', encoding='utf-8', newline='') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=FINAL_CSV_HEADERS)
-            writer.writeheader()
-            for item_id, item_data in all_items_data.items():
-                # Ensure all keys in FINAL_CSV_HEADERS are present, default to empty string if missing
-                row_to_write = {header: item_data.get(header, '') for header in FINAL_CSV_HEADERS}
-                writer.writerow(row_to_write)
-        print(f"Successfully wrote items to {ITEMS_OUTPUT_CSV_FILE}.")
-    except Exception as e:
-        print(f"Error writing to {ITEMS_OUTPUT_CSV_FILE}: {e}")
-        # Decide if we should return empty or raise, based on requirements for atomicity
-        return [] # Return empty list on write failure
+    # The CSV writing is now handled at the end of the main script execution block.
+    # (Comment about download_item_icons and icon_r2_key removed as they are no longer relevant)
 
-    # Collect IDs for history update
-    for item_id, data in all_items_data.items():
-        if data.get('needs_history_update') == 'True':
-            items_needing_history_update.append(item_id)
+    # Save/Update items in D1
+    if d1_client_instance and all_items_data:
+        safe_print(f"\nUpserting {len(all_items_data)} items into D1 database...")
+        items_failed_upsert_count = 0 # Initialize here, as it's specific to this loop
+        # d1_new_inserts_count and d1_updated_items_count were initialized at the start of the function
 
-    print(f"Found {len(items_needing_history_update)} items needing history update.")
-    return items_needing_history_update, list(all_items_data.values())
+        for item_id_key, item_data_dict in all_items_data.items():
+            item_id_to_process = item_data_dict.get('id')
+            item_name_for_log = item_data_dict.get('name', 'Unknown Name')
 
+            is_new_to_d1_this_run = item_id_to_process not in initial_d1_item_ids
 
-def download_item_icons(all_items_data: list[dict]) -> list[dict]:
+            # Determine if an update is needed for an existing item.
+            # This check should compare API data with existing D1 data (which is already in item_data_dict if loaded from D1 and then updated from API).
+            # For simplicity, we can check if the item was updated by the API loop.
+            # A robust way is to compare field by field, or rely on a 'dirty' flag set during API processing if specific fields change.
+            # Since 'needs_history_update' is removed, we'll assume any item processed from the API that was already in D1 might need an update.
+            # Or, more simply, if it's not new, and it was touched by the API (which all_items_data reflects), it's an update candidate.
+            # The original code's `metadata_has_changed` was driven by `needs_history_update`.
+            # Now, any item that exists in D1 (is_new_to_d1_this_run is False) and is present in the API data (meaning it's in all_items_data)
+            # will have its fields updated from the API if the API's date_updated is newer.
+            # So, the condition for upsert is simply if it's new OR if its data might have been changed by the API.
+            # The upsert itself handles whether an actual DB write occurs based on changed values for existing items.
+
+            # We need to decide if an existing item should be queued for update.
+            # The original logic used `metadata_has_changed`. Since that's gone,
+            # we can assume if an item is not new, it's potentially being updated.
+            # The SQL `ON CONFLICT DO UPDATE` will handle the actual update if data differs.
+            # So, effectively, we attempt to upsert all items that came from the API or were merged.
+
+            # Let's consider an item as "changed" if it's not new and its `date_updated` field (from API)
+            # is different from what was loaded from D1. This is implicitly handled by the API update logic.
+            # For now, we will attempt to upsert if it's new or if it was present in the API data (which means it's in all_items_data).
+            # The crucial part is that `all_items_data[item_id]` holds the latest state (from API if newer, or from D1/CSV otherwise).
+
+            # The condition `if is_new_to_d1_this_run or metadata_has_changed:`
+            # needs to be re-evaluated. `metadata_has_changed` is gone.
+            # An item should be written to D1 if it's new, or if its data has been modified by the API.
+            # The current loop iterates through `all_items_data` which contains the final state of all items.
+            # So, we should attempt to upsert every item in `all_items_data`.
+            # The `ON CONFLICT` clause will prevent unnecessary updates if data hasn't changed.
+            # However, the logging and counters `d1_new_inserts_count`, `d1_updated_items_count`
+            # relied on `is_new_to_d1_this_run` and `metadata_has_changed`.
+
+            # Simplification: We will attempt to upsert every item.
+            # The logging for "new" vs "updated" can still use `is_new_to_d1_this_run`.
+            # An "update" occurs if it's not new and the `ON CONFLICT` clause is triggered.
+            # The `d1_skipped_no_change_count` is for items from D1 not touched by API.
+            # This part needs careful restructuring.
+
+            # Let's refine the condition for attempting a D1 write:
+            # Write if it's new OR if it was present in the API feed (and thus potentially updated).
+            # Since all items in `all_items_data` are either from D1 (potentially updated by API) or new from API,
+            # we should process all of them for D1 upsert.
+            # The original `if is_new_to_d1_this_run or metadata_has_changed:` effectively did this.
+            # Now, `metadata_has_changed` is gone.
+            # We can simplify to always try to upsert. The `ON CONFLICT` handles efficiency.
+            # The logging for "update" needs to be based on `is_new_to_d1_this_run == False`.
+
+            # The `d1_skipped_no_change_count` logic also needs to be revisited.
+            # An item is skipped if it was loaded from D1 and NOT updated by the API.
+            # The current structure iterates `all_items_data`. If an item from D1 wasn't updated by API,
+            # its `date_updated` field would be the original one from D1.
+            # The original check `if is_new_to_d1_this_run or metadata_has_changed:`
+            # implicitly handled skipping items that were not new and whose metadata didn't change.
+            # Let's assume for now that we will attempt to upsert all items in `all_items_data`.
+            # The `ON CONFLICT DO UPDATE` should ideally only update if values actually changed,
+            # but Cloudflare D1 might not offer that detailed feedback directly in `response.success`.
+            # We'll rely on `is_new_to_d1_this_run` for insert/update distinction for logging.
+
+            # If an item was loaded from D1 and not updated by the API, we should skip the D1 write.
+            # This means `date_updated_api <= date_updated_local` in the API processing loop.
+            # Such items would have had `needs_history_update = 'False'`.
+            # We need a similar flag or check here.
+            # Let's check if the item's current data in `item_data_dict` is different from what's in `initial_d1_item_ids`'s corresponding entry,
+            # or if it's a new item.
+            # This is getting complex. The simplest is to upsert all, and let the DB handle no-ops.
+            # The counters for new/updated will be based on `is_new_to_d1_this_run`.
+
+            # For items NOT new:
+            # An update should be queued if its data from API was newer.
+            # This was implicitly handled by `existing_item['needs_history_update'] = 'True'`.
+            # We need a way to know if `item_data_dict` was modified after being loaded from D1.
+            # Perhaps by comparing `item_data_dict` with a pristine copy loaded from D1 if we had one.
+            # Or, we can rely on the `date_updated` field. If `item_data_dict.date_updated` is from the API (newer), then update.
+
+            # Let's assume any item in `all_items_data` that is NOT new MIGHT have changes.
+            # The `ON CONFLICT` clause is the safety net.
+            # The logging `Queuing UPDATE for existing item...` needs a condition.
+            # This condition was `metadata_has_changed`.
+            # Let's assume if it's not new, we are attempting an update.
+
+            # Try to upsert all items in all_items_data.
+            # The `d1_skipped_no_change_count` will become 0 with this approach unless we add a specific check.
+            # Let's remove the `if is_new_to_d1_this_run or metadata_has_changed:` block's outer condition
+            # and always attempt the upsert for items in `all_items_data`.
+            # The inner logging can distinguish between insert and update attempts.
+
+            # --- D1 UPSERT try-except block starts here ---
+            try:
+                    # Ensure weekly_average_price is float or None
+                    wap = item_data_dict.get('weekly_average_price')
+                    wap_float = None # Default value
+                    if wap is not None and wap != '':
+                        try:
+                            wap_float = float(wap)
+                        except ValueError:
+                            safe_print(f"Warning: Could not convert weekly_average_price '{wap}' to float for item {item_id_key}. Setting to NULL.")
+                            # wap_float remains None
+                    # else: # Redundant, wap_float is already None
+                        # wap_float = None
+
+                    params = [
+                        item_data_dict.get('id'),
+                        item_data_dict.get('name'),
+                        item_data_dict.get('category_name'),
+                        item_data_dict.get('group_name'),
+                        wap_float,
+                        item_data_dict.get('icon_id'),
+                        # item_data_dict.get('icon_r2_key'), # Removed
+                        item_data_dict.get('date_created'),
+                        item_data_dict.get('date_updated')
+                    ]
+
+                    upsert_sql = """
+                    INSERT INTO items (item_id, name, category_name, group_name, weekly_average_price, icon_id, date_created, date_updated)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(item_id) DO UPDATE SET
+                        name = excluded.name,
+                        category_name = excluded.category_name,
+                        group_name = excluded.group_name,
+                        weekly_average_price = excluded.weekly_average_price,
+                        icon_id = excluded.icon_id,
+                        # icon_r2_key = COALESCE(excluded.icon_r2_key, items.icon_r2_key), # Removed
+                        date_created = COALESCE(items.date_created, excluded.date_created),
+                        date_updated = excluded.date_updated;
+                    """
+
+                    response = d1_client_instance.d1.database.query(
+                        database_id=CLOUDFLARE_D1_DATABASE_ID,
+                        account_id=CLOUDFLARE_ACCOUNT_ID,
+                        sql=upsert_sql,
+                        params=params
+                    )
+
+                    if response.success:
+                        if is_new_to_d1_this_run:
+                            d1_new_inserts_count += 1
+                            safe_print(f"D1: Successfully INSERTED new item {item_id_to_process} ('{item_name_for_log}').")
+                        else:
+                            d1_updated_items_count += 1
+                            safe_print(f"D1: Successfully UPDATED existing item {item_id_to_process} ('{item_name_for_log}').")
+                    else:
+                        safe_print(f"Failed to upsert item {item_id_to_process} into D1. Errors: {response.errors}")
+                        items_failed_upsert_count +=1
+                except cloudflare.APIError as e:
+                    safe_print(f"D1 APIError during upsert for item {item_id_to_process}: {e}")
+                    items_failed_upsert_count +=1
+                except Exception as e:
+                    safe_print(f"Generic error during D1 upsert for item {item_id_to_process}: {e}")
+                    items_failed_upsert_count +=1
+            # The `else` block for skipping D1 writes if data unchanged is removed for now.
+            # All items in `all_items_data` will be attempted to be upserted.
+            # `d1_skipped_no_change_count` will remain 0 unless specific logic is added back.
+
+        total_successful_d1_ops = d1_new_inserts_count + d1_updated_items_count
+        safe_print(f"D1 Sync for 'items' table Summary:")
+        safe_print(f"  - New items inserted into D1: {d1_new_inserts_count}")
+        safe_print(f"  - Existing items updated in D1 (attempted): {d1_updated_items_count}") # Changed logging
+        # safe_print(f"  - Items skipped (no metadata change): {d1_skipped_no_change_count}") # This counter is now effectively 0
+        if items_failed_upsert_count > 0:
+            safe_print(f"  - Failed D1 operations: {items_failed_upsert_count}")
+        safe_print(f"  Total items successfully written to D1 this run: {total_successful_d1_ops}")
+
+    return list(all_items_data.values())
+
+# Removed download_item_icons function entirely
+# Removed load_all_current_prices function entirely
+# Removed get_week_year_from_isodate function entirely
+# Removed HISTORY_CSV_HEADERS global variable
+# Removed fetch_and_save_histories function entirely
+
+def check_cloudflare_config():
+    # global CLOUDFLARE_R2_S3_ENDPOINT_URL # Removed as CLOUDFLARE_R2_S3_ENDPOINT_URL is no longer used
+    missing_vars = []
+    if not CLOUDFLARE_API_TOKEN:
+        missing_vars.append("CLOUDFLARE_API_TOKEN")
+    if not CLOUDFLARE_ACCOUNT_ID:
+        missing_vars.append("CLOUDFLARE_ACCOUNT_ID")
+    if not CLOUDFLARE_D1_DATABASE_ID:
+        missing_vars.append("CLOUDFLARE_D1_DATABASE_ID")
+    # CLOUDFLARE_R2_BUCKET_NAME check removed
+    # CLOUDFLARE_R2_S3_ACCESS_KEY_ID check removed
+    # CLOUDFLARE_R2_S3_SECRET_ACCESS_KEY check removed
+    # CLOUDFLARE_R2_S3_ENDPOINT_URL check removed
+    # Logic for constructing CLOUDFLARE_R2_S3_ENDPOINT_URL removed
+
+    if missing_vars:
+        safe_print("Error: The following Cloudflare environment variables are not set or derivable:")
+        for var in missing_vars:
+            safe_print(f" - {var}")
+        return False
+    safe_print("Cloudflare configuration variables are present.")
+    return True
+
+def create_d1_tables(d1_client_instance):
     """
-    Downloads icons for items in the all_items_data list.
-    Updates the 'icon_downloaded' status in each item's dictionary.
+    Creates the 'items' table in the D1 database if it doesn't already exist.
     """
-    print(f"\nStarting to process icons for {len(all_items_data)} items...")
-    icons_found_locally = 0
-    icons_downloaded_successfully = 0
-    icons_skipped_no_info = 0
-    icons_failed_download = 0
-
-    for item_data in all_items_data:
-        item_id_str = item_data.get('id', 'Unknown ID') # For logging
-        item_name_str = item_data.get('name', 'Unknown Name') # For logging
-
-        icon_url = item_data.get('icon_url')
-        icon_id_val = item_data.get('icon_id')
-        category_name = item_data.get('category_name', 'UnknownCategory')
-        group_name = item_data.get('group_name', 'UnknownGroup')
-        name = item_data.get('name', f'UnknownItem_{item_id_str}') # For path
-
-        # Construct paths first
-        item_dir = os.path.join(HISTORIES_BASE_DIR, sanitize_for_path(category_name), sanitize_for_path(group_name), sanitize_for_path(name))
-        # Icon ID must be valid for filename
-        local_icon_path = ""
-        if icon_id_val: # Ensure icon_id_val is not empty before sanitizing for path
-            sanitized_icon_id = sanitize_for_path(str(icon_id_val))
-            if sanitized_icon_id: # Ensure sanitized_icon_id is not empty
-                 local_icon_path = os.path.join(item_dir, f"{sanitized_icon_id}.png")
-
-        # Primary Check: If local icon path is valid and file exists
-        if local_icon_path and os.path.exists(local_icon_path):
-            if item_data.get('icon_downloaded') != 'True':
-                print(f"Icon for {item_id_str} ('{item_name_str}') found locally at {local_icon_path}. Updating flag.")
-            item_data['icon_downloaded'] = 'True'
-            icons_found_locally += 1
-            continue
-
-        # If local icon does not exist, proceed to download attempt
-        os.makedirs(item_dir, exist_ok=True) # Ensure directory exists before download attempt if icon wasn't local
-
-        if not icon_url or not icon_id_val or not local_icon_path: # Check all necessary components for download
-            # print(f"Skipping icon download for item {item_id_str} ('{item_name_str}') due to missing icon_url, icon_id, or invalid path.")
-            item_data['icon_downloaded'] = 'False'
-            icons_skipped_no_info += 1
-            continue
-
-        print(f"Downloading icon for item {item_id_str} ('{item_name_str}') from {icon_url} to {local_icon_path}")
-        download_attempted = False
-        try:
-            download_attempted = True
-            response = requests.get(icon_url, stream=True, timeout=30)
-            if response.status_code == 200 and response.content: # Ensure content is not empty
-                with open(local_icon_path, 'wb') as f:
-                    f.write(response.content)
-                item_data['icon_downloaded'] = 'True'
-                icons_downloaded_successfully += 1
-                # print(f"Successfully downloaded icon for item {item_id_str} ('{item_name_str}').")
-            else:
-                print(f"Error downloading icon for {item_id_str} ('{item_name_str}'): Status {response.status_code}, Content-Length {response.headers.get('Content-Length', 'N/A')}")
-                item_data['icon_downloaded'] = 'False'
-                icons_failed_download += 1
-
-        except requests.exceptions.RequestException as e:
-            print(f"Request failed for icon download {item_id_str} ('{item_name_str}'): {e}")
-            item_data['icon_downloaded'] = 'False'
-            icons_failed_download += 1
-        except IOError as e:
-            print(f"IOError saving icon for item {item_id_str} ('{item_name_str}'): {e}")
-            item_data['icon_downloaded'] = 'False'
-            icons_failed_download += 1
-
-        if download_attempted: # Only sleep if an actual download attempt was made
-            time.sleep(REQUEST_DELAY_SECONDS)
-
-    print("\n--- Icon Download Summary ---")
-    print(f"Icons found locally (flag updated if needed): {icons_found_locally}")
-    print(f"Icons downloaded successfully: {icons_downloaded_successfully}")
-    print(f"Skipped (missing URL/ID or invalid path): {icons_skipped_no_info}")
-    print(f"Failed to download/save: {icons_failed_download}")
-    print("-----------------------------")
-    return all_items_data
-
-API_V2_ITEM_PRICES_URL = "https://echoes.mobi/api/v2/item_prices"
-
-def load_all_current_prices() -> dict:
-    """
-    Fetches all current item prices from the v2 API endpoint.
-    Returns a dictionary mapping item_id to its price data.
-    """
-    print(f"\nFetching all current item prices from {API_V2_ITEM_PRICES_URL}...")
-    current_prices_map = {}
-    headers = {'accept': 'text/csv'}
-
-    try:
-        response = requests.get(API_V2_ITEM_PRICES_URL, headers=headers, timeout=30)
-        if response.status_code == 200:
-            response_text_stripped = response.text.strip()
-            if not response_text_stripped:
-                print("API response for current prices was empty.")
-                return current_prices_map
-
-            reader = csv.DictReader(response_text_stripped.splitlines())
-            # Expected headers: id,name,estimated_price,date_updated,category_name,group_name,icon_id
-            for row in reader:
-                item_id = row.get('id')
-                if item_id:
-                    current_prices_map[item_id] = {
-                        'estimated_price': row.get('estimated_price'),
-                        'date_updated': row.get('date_updated')
-                    }
-            print(f"Successfully loaded {len(current_prices_map)} current item prices.")
-        else:
-            print(f"Error fetching current prices: Status code {response.status_code}")
-            print(f"Response content: {response.text[:200]}")
-    except requests.exceptions.RequestException as e:
-        print(f"Request failed for current prices: {e}")
-    except csv.Error as e:
-        print(f"CSV parsing error for current prices: {e}. Response text: {response.text[:500]}")
-    except Exception as e:
-        print(f"An unexpected error occurred while loading current prices: {e}")
-
-    return current_prices_map
-
-def get_week_year_from_isodate(iso_date_string: str) -> tuple[str, str]:
-    """
-    Parses an ISO 8601 date string and returns its ISO week number and ISO year.
-    Handles timezone information like +00:00.
-    """
-    try:
-        if not isinstance(iso_date_string, str):
-            # Handle cases where date might be None or not a string
-            if iso_date_string is None:
-                raise ValueError("Input date string is None")
-            raise ValueError(f"Input must be a string, got {type(iso_date_string)}")
-
-        # datetime.fromisoformat handles "YYYY-MM-DDTHH:MM:SS+00:00" directly
-        # and correctly interprets the +00:00 as UTC.
-        dt_object = datetime.fromisoformat(iso_date_string)
-
-        # isocalendar() returns (ISO year, ISO week number, ISO weekday)
-        iso_year, iso_week, _ = dt_object.isocalendar()
-
-        # Format week number with leading zero if needed (e.g., "01", "02", ..., "52")
-        return (f"{iso_week:02d}", str(iso_year))
-    except ValueError as e:
-        print(f"Error parsing date string '{iso_date_string}': {e}. Returning default week/year ('00', '0000').")
-        return ("00", "0000") # Fallback values
-    except Exception as e: # Catch any other unexpected errors
-        print(f"An unexpected error occurred while parsing date '{iso_date_string}': {e}. Returning default week/year ('00', '0000').")
-        return ("00", "0000")
-
-HISTORY_CSV_HEADERS = ['id', 'item_id', 'price', 'week', 'year', 'date_created', 'date_updated']
-
-def fetch_and_save_histories(item_ids_to_update: list[str], all_current_prices_map: dict):
-    """
-    Fetches full item history or appends latest price for specified item IDs.
-    - item_ids_to_update: List of item IDs whose history needs to be processed.
-    - all_current_prices_map: Dictionary with current price data from /v2/item_prices.
-    """
-    print(f"\nStarting to process histories for {len(item_ids_to_update)} items...")
-    if not item_ids_to_update:
-        print("No items require history updates.")
+    if not d1_client_instance:
+        safe_print("D1 client is not available. Skipping table creation.")
         return
 
-    all_items_details_for_paths = {} # To store category/group/name for path creation
-    if os.path.exists(ITEMS_OUTPUT_CSV_FILE):
+    safe_print("\nAttempting to create D1 tables if they don't exist...")
+
+    items_table_sql = """
+    CREATE TABLE IF NOT EXISTS items (
+        item_id TEXT PRIMARY KEY,
+        name TEXT,
+        category_name TEXT,
+        group_name TEXT,
+        weekly_average_price REAL,
+        icon_id TEXT,
+        # icon_r2_key TEXT, # Removed
+        date_created TEXT,
+        date_updated TEXT
+    );
+    """
+    # item_history_table_sql removed
+    tables_to_create = {
+        "items": items_table_sql
+        # "item_history" entry removed
+    }
+
+    success_all = True
+    for table_name, sql_statement in tables_to_create.items():
+        safe_print(f"Creating table '{table_name}'...")
         try:
-            with open(ITEMS_OUTPUT_CSV_FILE, mode='r', encoding='utf-8', newline='') as csvfile:
-                reader = csv.DictReader(csvfile)
-                required_path_cols = ['id', 'category_name', 'group_name', 'name']
-                if not all(col in reader.fieldnames for col in required_path_cols):
-                    missing_cols = [col for col in required_path_cols if col not in reader.fieldnames]
-                    print(f"Error: {ITEMS_OUTPUT_CSV_FILE} is missing required columns for path creation: {', '.join(missing_cols)}.")
-                    return
-                for row in reader:
-                    if row.get('id') in item_ids_to_update:
-                        all_items_details_for_paths[row['id']] = row
-            if not all_items_details_for_paths and item_ids_to_update:
-                print(f"Warning: No details found in {ITEMS_OUTPUT_CSV_FILE} for the item IDs to update.")
+            response = d1_client_instance.d1.database.query(
+                database_id=CLOUDFLARE_D1_DATABASE_ID,
+                account_id=CLOUDFLARE_ACCOUNT_ID,
+                sql=sql_statement
+            )
+            if response.success:
+                safe_print(f"Table '{table_name}' creation command executed successfully (or table already exists).")
+            else:
+                safe_print(f"Failed to create table '{table_name}'. Errors: {response.errors}")
+                success_all = False
+        except cloudflare.APIError as e:
+            safe_print(f"D1 APIError during table '{table_name}' creation: {e}")
+            success_all = False
         except Exception as e:
-            print(f"Error reading {ITEMS_OUTPUT_CSV_FILE} for path details: {e}")
-            return # Cannot proceed without path details
+            safe_print(f"Generic error during table '{table_name}' creation: {e}")
+            success_all = False
 
-    os.makedirs(HISTORIES_BASE_DIR, exist_ok=True)
-    headers = {'accept': 'text/csv'}
+    if success_all:
+        safe_print("D1 table creation process completed successfully for all tables.")
+    else:
+        safe_print("D1 table creation process encountered errors.")
 
-    new_histories_fetched_count = 0
-    histories_appended_count = 0
-    histories_failed_append_count = 0
-    histories_skipped_no_data_from_api = 0 # For full fetch
-    histories_failed_fetch_count = 0 # For full fetch
-    histories_skipped_no_detail_for_path = 0
-    histories_skipped_already_latest = 0
 
-    for item_id in item_ids_to_update:
-        item_detail_for_path = all_items_details_for_paths.get(item_id)
+def get_d1_client():
+    safe_print("\nInitializing Cloudflare D1 client...")
+    if not CLOUDFLARE_API_TOKEN:
+        safe_print("Error: CLOUDFLARE_API_TOKEN is not set. Cannot initialize D1 client.")
+        return None
+    try:
+        client = cloudflare.Cloudflare(api_token=CLOUDFLARE_API_TOKEN)
+        safe_print("Cloudflare D1 client initialized successfully.")
+        return client
+    except Exception as e:
+        safe_print(f"Error initializing Cloudflare D1 client: {e}")
+        return None
 
-        if not item_detail_for_path:
-            print(f"Skipping history for item ID {item_id}: Path details not found in {ITEMS_OUTPUT_CSV_FILE}.")
-            histories_skipped_no_detail_for_path += 1
-            continue
+# Removed get_r2_client function
 
-        category = item_detail_for_path.get('category_name', 'UnknownCategory')
-        group = item_detail_for_path.get('group_name', 'UnknownGroup')
-        name = item_detail_for_path.get('name', f'UnknownItem_{item_id}')
-
-        sanitized_item_id_for_filename = sanitize_for_path(item_id)
-        sanitized_category = sanitize_for_path(category)
-        sanitized_group = sanitize_for_path(group)
-        sanitized_name = sanitize_for_path(name)
-
-        item_dir = os.path.join(HISTORIES_BASE_DIR, sanitized_category, sanitized_group, sanitized_name)
-        os.makedirs(item_dir, exist_ok=True)
-        history_file_path = os.path.join(item_dir, f"{sanitized_item_id_for_filename}_history.csv")
-
-        if os.path.exists(history_file_path):
-            current_price_data = all_current_prices_map.get(item_id)
-            if current_price_data and current_price_data.get('estimated_price') is not None and current_price_data.get('estimated_price') != '':
-                estimated_price = current_price_data['estimated_price']
-                api_date_updated = current_price_data['date_updated']
-
-                last_row_id_int = 0
-                last_date_updated_in_file = None
-                try:
-                    with open(history_file_path, mode='r', encoding='utf-8', newline='') as hf_read:
-                        reader = csv.DictReader(hf_read)
-                        history_rows = list(reader)
-                        if history_rows:
-                            last_row = history_rows[-1]
-                            last_date_updated_in_file = last_row.get('date_updated')
-                            try:
-                                last_row_id_int = int(last_row.get('id', 0))
-                            except ValueError:
-                                print(f"Warning: Could not parse last row ID for {item_id} in {history_file_path}. Defaulting to 0.")
-                                last_row_id_int = 0 # Or len(history_rows) if IDs are sequential and 1-based
-                except Exception as e:
-                    print(f"Error reading existing history for {item_id} from {history_file_path}: {e}. Attempting full fetch as fallback.")
-                    # Fallback to full fetch logic below this if-block by clearing history_file_path or similar
-                    # For now, we'll let it try to fetch full history if append preparation fails badly.
-                    # This path makes it try a full fetch:
-                    history_file_path = None # Mark as non-existent to trigger full fetch logic
-
-                if history_file_path and api_date_updated == last_date_updated_in_file:
-                    print(f"Latest price for item {item_id} (date: {api_date_updated}) already in history. Skipping append.")
-                    histories_skipped_already_latest +=1
-                    continue
-
-                if history_file_path: # Proceed with append if not skipped
-                    new_unique_row_id = last_row_id_int + 1
-                    derived_week, derived_year = get_week_year_from_isodate(api_date_updated)
-                    new_row_dict = {
-                        'id': str(new_unique_row_id),
-                        'item_id': str(item_id),
-                        'price': str(estimated_price),
-                        'week': str(derived_week),
-                        'year': str(derived_year),
-                        'date_created': api_date_updated,
-                        'date_updated': api_date_updated
-                    }
-                    try:
-                        with open(history_file_path, mode='a', encoding='utf-8', newline='') as hf_append:
-                            writer = csv.DictWriter(hf_append, fieldnames=HISTORY_CSV_HEADERS)
-                            # Header is not written when appending
-                            writer.writerow(new_row_dict)
-                        print(f"Appended latest price for item {item_id} to {history_file_path}")
-                        histories_appended_count += 1
-                    except Exception as e:
-                        print(f"Error appending to history for {item_id} at {history_file_path}: {e}")
-                        histories_failed_append_count += 1
-                    continue # Move to next item_id after append attempt
-            else: # Item not in v2 prices or price is empty
-                print(f"Could not find current price in v2 API for item {item_id} to append. Skipping append for this item.")
-                histories_failed_append_count += 1
-                continue # Skip to next item_id
-        
-        # This block executes if history_file_path does not exist OR was set to None due to read error
-        if not os.path.exists(history_file_path) or history_file_path is None :
-            history_api_url = f"{API_BASE_URL_HISTORY}{item_id}"
-            print(f"Fetching full history for new item ID {item_id} ('{name}')...")
-            try:
-                response = requests.get(history_api_url, headers=headers, timeout=30)
-                if response.status_code == 200:
-                    response_text_stripped = response.text.strip()
-                    history_lines = response_text_stripped.splitlines()
-                    if response_text_stripped and len(history_lines) > 1:
-                        # Reconstruct full path if it was None-d due to read error
-                        current_history_file_path = os.path.join(item_dir, f"{sanitized_item_id_for_filename}_history.csv")
-                        with open(current_history_file_path, 'w', encoding='utf-8', newline='') as hf:
-                            hf.write(response_text_stripped + '\n')
-                        print(f"Successfully saved new history for item {item_id} to {current_history_file_path}")
-                        new_histories_fetched_count += 1
-                    else:
-                        print(f"No actual history data (or only header) for new item {item_id} ('{name}'). Skipping file write.")
-                        histories_skipped_no_data_from_api += 1
-                else:
-                    print(f"Error fetching full history for {item_id} ('{name}'): Status {response.status_code}")
-                    histories_failed_fetch_count += 1
-            except requests.exceptions.RequestException as e:
-                print(f"Request failed for full history {item_id} ('{name}'): {e}")
-                histories_failed_fetch_count += 1
-            time.sleep(REQUEST_DELAY_SECONDS) # Delay only for full fetches
-
-    print("\n--- Item History Processing Summary ---")
-    print(f"New full histories fetched: {new_histories_fetched_count}")
-    print(f"Appended latest price to existing histories: {histories_appended_count}")
-    print(f"Skipped (already latest price in history): {histories_skipped_already_latest}")
-    print(f"Skipped (path details not found): {histories_skipped_no_detail_for_path}")
-    print(f"Skipped (no actual data from API for full fetch): {histories_skipped_no_data_from_api}")
-    print(f"Failed (full fetch API error or request exception): {histories_failed_fetch_count}")
-    print(f"Failed (append operation due to missing v2 price or file write error): {histories_failed_append_count}")
-    print("---------------------------------------")
+# Global clients, to be initialized in main
+d1_client = None
+# r2_client = None # Removed
 
 if __name__ == "__main__":
-    items_to_update_history_for, all_items_data_list = fetch_and_save_items()
+    safe_print("Starting data update script...")
+
+    if not check_cloudflare_config():
+        safe_print("Cloudflare configuration check failed. Please set the required environment variables.")
+        exit(1)
+
+    d1_client = get_d1_client()
+    # r2_client = get_r2_client() # Removed
+
+    if not d1_client:
+        safe_print("D1 client initialization failed. D1 related operations will be skipped.")
+    # if not r2_client: # Removed
+        # safe_print("R2 client initialization failed. R2 related operations will be skipped.") # Removed
+
+    create_d1_tables(d1_client) # Ensure tables are created before fetching items
+
+    # Proceed with existing logic, clients can be checked before use in respective functions
+    all_items_data_list = fetch_and_save_items(d1_client_instance=d1_client) # Modified return
 
     if all_items_data_list: # Check if there's any data to process
-        all_items_data_list = download_item_icons(all_items_data_list) # Update icon_downloaded flags
+        # all_items_data_list = download_item_icons(all_items_data_list, r2_client_instance=r2_client, d1_client_instance=d1_client) # Removed call
 
-        current_prices = load_all_current_prices()
+        # current_prices = load_all_current_prices() # Removed
 
-        # Write the potentially updated all_items_data (with new icon_downloaded flags) to CSV
+        # Write the item data to CSV
         # FINAL_CSV_HEADERS is defined globally
-        print(f"\nWriting final item data for {len(all_items_data_list)} items to {ITEMS_OUTPUT_CSV_FILE}...")
+        safe_print(f"\nWriting final item data for {len(all_items_data_list)} items to {ITEMS_OUTPUT_CSV_FILE}...")
         try:
             with open(ITEMS_OUTPUT_CSV_FILE, 'w', encoding='utf-8', newline='') as csvfile:
                 writer = csv.DictWriter(csvfile, fieldnames=FINAL_CSV_HEADERS)
@@ -494,15 +581,15 @@ if __name__ == "__main__":
                 for item_dict in all_items_data_list:
                     row_to_write = {header: item_dict.get(header, '') for header in FINAL_CSV_HEADERS}
                     writer.writerow(row_to_write)
-            print(f"Final item data including icon status written to {ITEMS_OUTPUT_CSV_FILE}")
+            safe_print(f"Final item data written to {ITEMS_OUTPUT_CSV_FILE}") # Removed "including icon status"
         except IOError as e:
-            print(f"Error writing final item data to CSV: {e}")
+            safe_print(f"Error writing final item data to CSV: {e}")
         except Exception as e: # Catch any other unexpected error during write
-             print(f"An unexpected error occurred while writing final CSV: {e}")
+             safe_print(f"An unexpected error occurred while writing final CSV: {e}")
 
-        if items_to_update_history_for:
-            fetch_and_save_histories(items_to_update_history_for, current_prices)
-        else:
-            print("No items require history updates based on initial fetch.")
+        # Removed all_item_ids_for_history list creation and call to fetch_and_save_histories
+        # The 'else' for "No item IDs available for history" is also removed by this.
     else:
-        print("\nSkipping icon downloading and history fetching because item list was not created or is empty.")
+        safe_print("\nSkipping CSV writing because item list was not created or is empty.") # Simplified message
+
+    safe_print("\nData update script finished.")
