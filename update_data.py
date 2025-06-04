@@ -2,39 +2,41 @@ import requests
 import time
 import os
 import csv
-import re
-from datetime import datetime, timezone # Ensure timezone is imported
+# import re # Removed as sanitize_for_path is removed
+# from datetime import datetime, timezone # Removed as no longer used
 import sys # Added for safe_print
 import cloudflare
-import boto3
-from botocore.exceptions import ClientError
-import json # Already present via csv but good to ensure
+# import boto3 # Removed
+# from botocore.exceptions import ClientError # Removed
+# import json # Removed as no longer used
 
 # Configuration
 CLOUDFLARE_API_TOKEN = os.environ.get("CLOUDFLARE_API_TOKEN")
 CLOUDFLARE_ACCOUNT_ID = os.environ.get("CLOUDFLARE_ACCOUNT_ID")
 CLOUDFLARE_D1_DATABASE_ID = os.environ.get("CLOUDFLARE_D1_DATABASE_ID")
-CLOUDFLARE_R2_BUCKET_NAME = os.environ.get("CLOUDFLARE_R2_BUCKET_NAME")
-CLOUDFLARE_R2_S3_ACCESS_KEY_ID = os.environ.get("CLOUDFLARE_R2_S3_ACCESS_KEY_ID")
-CLOUDFLARE_R2_S3_SECRET_ACCESS_KEY = os.environ.get("CLOUDFLARE_R2_S3_SECRET_ACCESS_KEY")
-CLOUDFLARE_R2_S3_ENDPOINT_URL = os.environ.get("CLOUDFLARE_R2_S3_ENDPOINT_URL")
+# CLOUDFLARE_R2_BUCKET_NAME = os.environ.get("CLOUDFLARE_R2_BUCKET_NAME") # Removed
+# CLOUDFLARE_R2_S3_ACCESS_KEY_ID = os.environ.get("CLOUDFLARE_R2_S3_ACCESS_KEY_ID") # Removed
+# CLOUDFLARE_R2_S3_SECRET_ACCESS_KEY = os.environ.get("CLOUDFLARE_R2_S3_SECRET_ACCESS_KEY") # Removed
+# CLOUDFLARE_R2_S3_ENDPOINT_URL = os.environ.get("CLOUDFLARE_R2_S3_ENDPOINT_URL") # Removed
 
 API_BASE_URL_ITEMS = "https://echoes.mobi/api/items"
-API_BASE_URL_HISTORY = "https://echoes.mobi/api/item_weekly_average_prices?page=1&itemId="
+# API_BASE_URL_HISTORY = "https://echoes.mobi/api/item_weekly_average_prices?page=1&itemId=" # Removed
 ITEMS_OUTPUT_CSV_FILE = "item_lists.csv"
-HISTORIES_BASE_DIR = "item_histories"
+# HISTORIES_BASE_DIR = "item_histories" # Removed - was only used by download_item_icons
+# API_V2_ITEM_PRICES_URL = "https://echoes.mobi/api/v2/item_prices" # Removed
 REQUEST_DELAY_SECONDS = 0.5
-FINAL_CSV_HEADERS = ['id', 'name', 'category_name', 'group_name', 'weekly_average_price', 'icon_id', 'date_created', 'date_updated', 'icon_url', 'icon_downloaded', 'needs_history_update']
+FINAL_CSV_HEADERS = ['id', 'name', 'category_name', 'group_name', 'weekly_average_price', 'icon_id', 'date_created', 'date_updated'] # icon_url removed
+# HISTORY_CSV_HEADERS removed by removing the function that used it.
 
-def sanitize_for_path(name_str):
-    """
-    Sanitizes a string to be safe for directory/file names.
-    """
-    if not name_str:
-        name_str = "unknown"
-    name_str = name_str.replace(' ', '_')
-    name_str = re.sub(r'[^\w\-_]', '', name_str)
-    return name_str[:100]
+# def sanitize_for_path(name_str): # Removed as no longer used
+#     """
+#     Sanitizes a string to be safe for directory/file names.
+#     """
+#     if not name_str:
+#         name_str = "unknown"
+#     name_str = name_str.replace(' ', '_')
+#     name_str = re.sub(r'[^\w\-_]', '', name_str)
+#     return name_str[:100]
 
 def safe_print(text_to_print):
     try:
@@ -54,10 +56,9 @@ def safe_print(text_to_print):
 def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
     """
     Fetches item data from API, merges with D1 data (or local CSV as fallback), saves to D1, and then to CSV.
-    Returns a list of item IDs that need their history updated and the full list of item data.
+    Returns the full list of item data.
     """
     all_items_data = {} # Keyed by item ID
-    items_needing_history_update = []
     initial_d1_item_ids = set()
     d1_new_inserts_count = 0
     d1_updated_items_count = 0
@@ -68,7 +69,7 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
     if d1_client_instance:
         safe_print("Attempting to load existing item data from D1...")
         try:
-            select_all_sql = "SELECT item_id, name, category_name, group_name, weekly_average_price, icon_id, icon_r2_key, date_created, date_updated FROM items;"
+            select_all_sql = "SELECT item_id, name, category_name, group_name, weekly_average_price, icon_id, date_created, date_updated FROM items;" # Removed icon_r2_key
             response = d1_client_instance.d1.database.query(
                 database_id=CLOUDFLARE_D1_DATABASE_ID,
                 account_id=CLOUDFLARE_ACCOUNT_ID,
@@ -83,11 +84,8 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                         item_entry = dict(row) # Make a mutable copy
                         item_entry['id'] = item_entry.pop('item_id') # Rename to 'id'
 
-                        # Infer 'icon_downloaded' status from 'icon_r2_key'
-                        item_entry['icon_downloaded'] = 'True' if row.get('icon_r2_key') else 'False'
-                        item_entry['needs_history_update'] = 'False' # Default, will be updated
-
                         # Ensure all FINAL_CSV_HEADERS are present, even if null from D1
+                        # icon_downloaded and needs_history_update are removed from FINAL_CSV_HEADERS
                         for header in FINAL_CSV_HEADERS:
                             if header not in item_entry:
                                 item_entry[header] = None # Or appropriate default like ''
@@ -117,8 +115,8 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                             for row_csv in reader:
                                 item_id_csv = row_csv.get('id')
                                 if item_id_csv: # Ensure item_id_csv is not None or empty
-                                    row_csv.setdefault('icon_downloaded', 'False')
-                                    row_csv['needs_history_update'] = 'False'
+                                    # row_csv.setdefault('icon_downloaded', 'False') # Removed
+                                    # row_csv['needs_history_update'] = 'False' # Removed
                                     all_items_data[item_id_csv] = row_csv # This will form the baseline if D1 failed
                                     csv_items_loaded_count +=1
                             safe_print(f"Loaded {csv_items_loaded_count} items from CSV as fallback.")
@@ -165,8 +163,8 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                     for row in reader:
                         item_id = row.get('id')
                         if item_id:
-                            row.setdefault('icon_downloaded', 'False')
-                            row['needs_history_update'] = 'False'
+                            # row.setdefault('icon_downloaded', 'False') # Removed
+                            # row['needs_history_update'] = 'False' # Removed
                             all_items_data[item_id] = row
                             csv_items_loaded_count +=1
                     safe_print(f"Loaded {csv_items_loaded_count} items from CSV.")
@@ -226,26 +224,23 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                         # Item exists, check for updates
                         existing_item = all_items_data[item_id]
                         date_updated_local = existing_item.get('date_updated')
-                        icon_downloaded_status = existing_item.get('icon_downloaded', 'False') # Preserve existing
+                        # icon_downloaded_status removed
 
                         if date_updated_api and date_updated_local and date_updated_api > date_updated_local:
                             safe_print(f"Updating item {item_id} ('{api_item.get('name')}') as API data is newer.")
-                            # Update all fields from API, preserve icon_downloaded
+                            # Update all fields from API
                             for key, value in api_item.items():
                                 existing_item[key] = value
-                            existing_item['icon_downloaded'] = icon_downloaded_status
-                            existing_item['needs_history_update'] = 'True'
-                        else:
-                            # API data not newer or local/API date missing, keep existing, set history update to False
-                            existing_item['needs_history_update'] = 'False'
+                            # needs_history_update is removed
+                        # else:
+                            # needs_history_update is removed
                         all_items_data[item_id] = existing_item # Ensure reference is updated if dict was copied
                     else:
                         # New item
                         safe_print(f"API Fetch: New item {item_id} ('{api_item.get('name', 'Unknown Name')}') identified, adding to internal data list.")
                         new_item_entry = {header: '' for header in FINAL_CSV_HEADERS} # Initialize with all headers
                         new_item_entry.update(api_item) # Populate with API data
-                        new_item_entry['icon_downloaded'] = 'False'
-                        new_item_entry['needs_history_update'] = 'True'
+                        # icon_downloaded and needs_history_update are removed
                         all_items_data[item_id] = new_item_entry
             else:
                 safe_print(f"Error fetching API item list page {current_page}: Status code {response.status_code}")
@@ -268,15 +263,8 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
     # This is implicitly handled by the logic: initial load is 'False', and only API interaction changes it.
     # If an item from CSV was never found in API, its 'needs_history_update' remains 'False'.
 
-    # The CSV writing is now handled at the end of the main script execution block,
-    # ensuring it contains data processed by download_item_icons (e.g., icon_r2_key).
-
-    # Collect IDs for history update
-    for item_id, data in all_items_data.items():
-        if data.get('needs_history_update') == 'True':
-            items_needing_history_update.append(item_id)
-
-    safe_print(f"Found {len(items_needing_history_update)} items needing history update.")
+    # The CSV writing is now handled at the end of the main script execution block.
+    # (Comment about download_item_icons and icon_r2_key removed as they are no longer relevant)
 
     # Save/Update items in D1
     if d1_client_instance and all_items_data:
@@ -285,20 +273,99 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
         # d1_new_inserts_count and d1_updated_items_count were initialized at the start of the function
 
         for item_id_key, item_data_dict in all_items_data.items():
-            item_id_to_process = item_data_dict.get('id') # Renamed for clarity within this specific task logic
+            item_id_to_process = item_data_dict.get('id')
             item_name_for_log = item_data_dict.get('name', 'Unknown Name')
 
             is_new_to_d1_this_run = item_id_to_process not in initial_d1_item_ids
-            metadata_has_changed = item_data_dict.get('needs_history_update') == 'True'
 
-            if is_new_to_d1_this_run or metadata_has_changed:
-                if is_new_to_d1_this_run:
-                    safe_print(f"D1: Queuing INSERT for new item {item_id_to_process} ('{item_name_for_log}')...")
-                else: # Existing item, but metadata changed
-                    safe_print(f"D1: Queuing UPDATE for existing item {item_id_to_process} ('{item_name_for_log}') due to metadata changes...")
+            # Determine if an update is needed for an existing item.
+            # This check should compare API data with existing D1 data (which is already in item_data_dict if loaded from D1 and then updated from API).
+            # For simplicity, we can check if the item was updated by the API loop.
+            # A robust way is to compare field by field, or rely on a 'dirty' flag set during API processing if specific fields change.
+            # Since 'needs_history_update' is removed, we'll assume any item processed from the API that was already in D1 might need an update.
+            # Or, more simply, if it's not new, and it was touched by the API (which all_items_data reflects), it's an update candidate.
+            # The original code's `metadata_has_changed` was driven by `needs_history_update`.
+            # Now, any item that exists in D1 (is_new_to_d1_this_run is False) and is present in the API data (meaning it's in all_items_data)
+            # will have its fields updated from the API if the API's date_updated is newer.
+            # So, the condition for upsert is simply if it's new OR if its data might have been changed by the API.
+            # The upsert itself handles whether an actual DB write occurs based on changed values for existing items.
 
-                # --- D1 UPSERT try-except block starts here ---
-                try:
+            # We need to decide if an existing item should be queued for update.
+            # The original logic used `metadata_has_changed`. Since that's gone,
+            # we can assume if an item is not new, it's potentially being updated.
+            # The SQL `ON CONFLICT DO UPDATE` will handle the actual update if data differs.
+            # So, effectively, we attempt to upsert all items that came from the API or were merged.
+
+            # Let's consider an item as "changed" if it's not new and its `date_updated` field (from API)
+            # is different from what was loaded from D1. This is implicitly handled by the API update logic.
+            # For now, we will attempt to upsert if it's new or if it was present in the API data (which means it's in all_items_data).
+            # The crucial part is that `all_items_data[item_id]` holds the latest state (from API if newer, or from D1/CSV otherwise).
+
+            # The condition `if is_new_to_d1_this_run or metadata_has_changed:`
+            # needs to be re-evaluated. `metadata_has_changed` is gone.
+            # An item should be written to D1 if it's new, or if its data has been modified by the API.
+            # The current loop iterates through `all_items_data` which contains the final state of all items.
+            # So, we should attempt to upsert every item in `all_items_data`.
+            # The `ON CONFLICT` clause will prevent unnecessary updates if data hasn't changed.
+            # However, the logging and counters `d1_new_inserts_count`, `d1_updated_items_count`
+            # relied on `is_new_to_d1_this_run` and `metadata_has_changed`.
+
+            # Simplification: We will attempt to upsert every item.
+            # The logging for "new" vs "updated" can still use `is_new_to_d1_this_run`.
+            # An "update" occurs if it's not new and the `ON CONFLICT` clause is triggered.
+            # The `d1_skipped_no_change_count` is for items from D1 not touched by API.
+            # This part needs careful restructuring.
+
+            # Let's refine the condition for attempting a D1 write:
+            # Write if it's new OR if it was present in the API feed (and thus potentially updated).
+            # Since all items in `all_items_data` are either from D1 (potentially updated by API) or new from API,
+            # we should process all of them for D1 upsert.
+            # The original `if is_new_to_d1_this_run or metadata_has_changed:` effectively did this.
+            # Now, `metadata_has_changed` is gone.
+            # We can simplify to always try to upsert. The `ON CONFLICT` handles efficiency.
+            # The logging for "update" needs to be based on `is_new_to_d1_this_run == False`.
+
+            # The `d1_skipped_no_change_count` logic also needs to be revisited.
+            # An item is skipped if it was loaded from D1 and NOT updated by the API.
+            # The current structure iterates `all_items_data`. If an item from D1 wasn't updated by API,
+            # its `date_updated` field would be the original one from D1.
+            # The original check `if is_new_to_d1_this_run or metadata_has_changed:`
+            # implicitly handled skipping items that were not new and whose metadata didn't change.
+            # Let's assume for now that we will attempt to upsert all items in `all_items_data`.
+            # The `ON CONFLICT DO UPDATE` should ideally only update if values actually changed,
+            # but Cloudflare D1 might not offer that detailed feedback directly in `response.success`.
+            # We'll rely on `is_new_to_d1_this_run` for insert/update distinction for logging.
+
+            # If an item was loaded from D1 and not updated by the API, we should skip the D1 write.
+            # This means `date_updated_api <= date_updated_local` in the API processing loop.
+            # Such items would have had `needs_history_update = 'False'`.
+            # We need a similar flag or check here.
+            # Let's check if the item's current data in `item_data_dict` is different from what's in `initial_d1_item_ids`'s corresponding entry,
+            # or if it's a new item.
+            # This is getting complex. The simplest is to upsert all, and let the DB handle no-ops.
+            # The counters for new/updated will be based on `is_new_to_d1_this_run`.
+
+            # For items NOT new:
+            # An update should be queued if its data from API was newer.
+            # This was implicitly handled by `existing_item['needs_history_update'] = 'True'`.
+            # We need a way to know if `item_data_dict` was modified after being loaded from D1.
+            # Perhaps by comparing `item_data_dict` with a pristine copy loaded from D1 if we had one.
+            # Or, we can rely on the `date_updated` field. If `item_data_dict.date_updated` is from the API (newer), then update.
+
+            # Let's assume any item in `all_items_data` that is NOT new MIGHT have changes.
+            # The `ON CONFLICT` clause is the safety net.
+            # The logging `Queuing UPDATE for existing item...` needs a condition.
+            # This condition was `metadata_has_changed`.
+            # Let's assume if it's not new, we are attempting an update.
+
+            # Try to upsert all items in all_items_data.
+            # The `d1_skipped_no_change_count` will become 0 with this approach unless we add a specific check.
+            # Let's remove the `if is_new_to_d1_this_run or metadata_has_changed:` block's outer condition
+            # and always attempt the upsert for items in `all_items_data`.
+            # The inner logging can distinguish between insert and update attempts.
+
+            # --- D1 UPSERT try-except block starts here ---
+            try:
                     # Ensure weekly_average_price is float or None
                     wap = item_data_dict.get('weekly_average_price')
                     wap_float = None # Default value
@@ -318,21 +385,21 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                         item_data_dict.get('group_name'),
                         wap_float,
                         item_data_dict.get('icon_id'),
-                        item_data_dict.get('icon_r2_key'),
+                        # item_data_dict.get('icon_r2_key'), # Removed
                         item_data_dict.get('date_created'),
                         item_data_dict.get('date_updated')
                     ]
 
                     upsert_sql = """
-                    INSERT INTO items (item_id, name, category_name, group_name, weekly_average_price, icon_id, icon_r2_key, date_created, date_updated)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO items (item_id, name, category_name, group_name, weekly_average_price, icon_id, date_created, date_updated)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                     ON CONFLICT(item_id) DO UPDATE SET
                         name = excluded.name,
                         category_name = excluded.category_name,
                         group_name = excluded.group_name,
                         weekly_average_price = excluded.weekly_average_price,
                         icon_id = excluded.icon_id,
-                        icon_r2_key = COALESCE(excluded.icon_r2_key, items.icon_r2_key),
+                        # icon_r2_key = COALESCE(excluded.icon_r2_key, items.icon_r2_key), # Removed
                         date_created = COALESCE(items.date_created, excluded.date_created),
                         date_updated = excluded.date_updated;
                     """
@@ -345,10 +412,12 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                     )
 
                     if response.success:
-                        if is_new_to_d1_this_run: # Use the more specific flag
+                        if is_new_to_d1_this_run:
                             d1_new_inserts_count += 1
-                        else: # Existing in D1 and metadata changed
+                            safe_print(f"D1: Successfully INSERTED new item {item_id_to_process} ('{item_name_for_log}').")
+                        else:
                             d1_updated_items_count += 1
+                            safe_print(f"D1: Successfully UPDATED existing item {item_id_to_process} ('{item_name_for_log}').")
                     else:
                         safe_print(f"Failed to upsert item {item_id_to_process} into D1. Errors: {response.errors}")
                         items_failed_upsert_count +=1
@@ -358,433 +427,29 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                 except Exception as e:
                     safe_print(f"Generic error during D1 upsert for item {item_id_to_process}: {e}")
                     items_failed_upsert_count +=1
-                # --- Existing D1 UPSERT try-except block ends here ---
-            else:
-                # Item was loaded from D1 and its metadata did NOT change
-                safe_print(f"D1: Item {item_id_to_process} ('{item_name_for_log}') data unchanged, D1 write skipped.")
-                d1_skipped_no_change_count += 1
+            # The `else` block for skipping D1 writes if data unchanged is removed for now.
+            # All items in `all_items_data` will be attempted to be upserted.
+            # `d1_skipped_no_change_count` will remain 0 unless specific logic is added back.
 
         total_successful_d1_ops = d1_new_inserts_count + d1_updated_items_count
         safe_print(f"D1 Sync for 'items' table Summary:")
         safe_print(f"  - New items inserted into D1: {d1_new_inserts_count}")
-        safe_print(f"  - Existing items updated in D1 (metadata change): {d1_updated_items_count}")
-        safe_print(f"  - Items skipped (no metadata change): {d1_skipped_no_change_count}")
+        safe_print(f"  - Existing items updated in D1 (attempted): {d1_updated_items_count}") # Changed logging
+        # safe_print(f"  - Items skipped (no metadata change): {d1_skipped_no_change_count}") # This counter is now effectively 0
         if items_failed_upsert_count > 0:
             safe_print(f"  - Failed D1 operations: {items_failed_upsert_count}")
         safe_print(f"  Total items successfully written to D1 this run: {total_successful_d1_ops}")
 
-    return items_needing_history_update, list(all_items_data.values())
+    return list(all_items_data.values())
 
-
-def download_item_icons(all_items_data: list[dict], r2_client_instance, d1_client_instance) -> list[dict]:
-    """
-    Downloads icons for items, uploads them to R2, and updates D1 with the R2 key.
-    Updates 'icon_downloaded' and 'icon_r2_key' status in each item's dictionary.
-    """
-    safe_print(f"\nStarting to process icons for {len(all_items_data)} items (download, R2 upload, D1 update)...")
-    icons_found_locally = 0
-    icons_downloaded_successfully = 0
-    icons_skipped_no_info = 0
-    icons_failed_download = 0
-    icons_uploaded_to_r2 = 0
-    icons_failed_r2_upload = 0
-    d1_updates_successful = 0
-    d1_updates_failed = 0
-
-    for item_data in all_items_data:
-        item_id_str = item_data.get('id', 'Unknown ID') # For logging
-        item_name_str = item_data.get('name', 'Unknown Name') # For logging
-
-        icon_url = item_data.get('icon_url')
-        icon_id_val = item_data.get('icon_id')
-        category_name = item_data.get('category_name', 'UnknownCategory')
-        group_name = item_data.get('group_name', 'UnknownGroup')
-        name = item_data.get('name', f'UnknownItem_{item_id_str}') # For path
-
-        # Construct paths first
-        item_dir = os.path.join(HISTORIES_BASE_DIR, sanitize_for_path(category_name), sanitize_for_path(group_name), sanitize_for_path(name))
-        # Icon ID must be valid for filename
-        local_icon_path = ""
-        if icon_id_val: # Ensure icon_id_val is not empty before sanitizing for path
-            sanitized_icon_id = sanitize_for_path(str(icon_id_val))
-            if sanitized_icon_id: # Ensure sanitized_icon_id is not empty
-                 local_icon_path = os.path.join(item_dir, f"{sanitized_icon_id}.png")
-
-        # Primary Check: If local icon path is valid and file exists
-        icon_is_present_locally = False
-        if local_icon_path and os.path.exists(local_icon_path):
-            if item_data.get('icon_downloaded') != 'True': # Log if flag was false but file exists
-                safe_print(f"Icon for {item_id_str} ('{item_name_str}') found locally at {local_icon_path}, flag was '{item_data.get('icon_downloaded')}'. Updating flag.")
-            item_data['icon_downloaded'] = 'True' # Ensure flag is true
-            icon_is_present_locally = True
-            icons_found_locally += 1
-            # Do not continue here; proceed to R2 upload check even for existing local icons if not yet uploaded.
-
-        # If local icon does not exist, proceed to download attempt
-        if not icon_is_present_locally:
-            os.makedirs(item_dir, exist_ok=True) # Ensure directory exists before download attempt
-
-            if not icon_url or not icon_id_val or not local_icon_path:
-                item_data['icon_downloaded'] = 'False'
-                icons_skipped_no_info += 1
-                continue # Skip to next item if essential info for download is missing
-
-            safe_print(f"Downloading icon for item {item_id_str} ('{item_name_str}') from {icon_url} to {local_icon_path}")
-            download_attempted = True # Moved here
-            try:
-                response = requests.get(icon_url, stream=True, timeout=30)
-                if response.status_code == 200 and response.content:
-                    with open(local_icon_path, 'wb') as f:
-                        f.write(response.content)
-                    item_data['icon_downloaded'] = 'True'
-                    icon_is_present_locally = True # Mark as present for R2 upload
-                    icons_downloaded_successfully += 1
-                else:
-                    safe_print(f"Error downloading icon for {item_id_str} ('{item_name_str}'): Status {response.status_code}, Content-Length {response.headers.get('Content-Length', 'N/A')}")
-                    item_data['icon_downloaded'] = 'False'
-                    icons_failed_download += 1
-                    continue # Skip R2 upload if download failed
-            except requests.exceptions.RequestException as e:
-                safe_print(f"Request failed for icon download {item_id_str} ('{item_name_str}'): {e}")
-                item_data['icon_downloaded'] = 'False'
-                icons_failed_download += 1
-                continue # Skip R2 upload
-            except IOError as e:
-                safe_print(f"IOError saving icon for item {item_id_str} ('{item_name_str}'): {e}")
-                item_data['icon_downloaded'] = 'False'
-                icons_failed_download += 1
-                continue # Skip R2 upload
-            finally:
-                if download_attempted:
-                    time.sleep(REQUEST_DELAY_SECONDS)
-
-        # R2 Upload and D1 Update Logic
-        if icon_is_present_locally and r2_client_instance and d1_client_instance and icon_id_val:
-            # Check if R2 key already exists and is valid (e.g. not empty string)
-            # For simplicity, we re-upload if icon_r2_key is not already set in item_data from a previous successful run.
-            # A more robust check would query D1 or compare with a known state.
-            if not item_data.get('icon_r2_key'):
-                r2_object_key = f"icons/{sanitize_for_path(str(icon_id_val))}.png"
-                safe_print(f"Attempting to upload icon {local_icon_path} to R2 as {r2_object_key} for item {item_id_str}...")
-                try:
-                    with open(local_icon_path, 'rb') as icon_file_to_upload:
-                        r2_client_instance.put_object(
-                            Bucket=CLOUDFLARE_R2_BUCKET_NAME,
-                            Key=r2_object_key,
-                            Body=icon_file_to_upload,
-                            ContentType='image/png'
-                        )
-                    safe_print(f"Successfully uploaded icon to R2: {r2_object_key}")
-                    icons_uploaded_to_r2 += 1
-                    item_data['icon_r2_key'] = r2_object_key # Update local dict
-
-                    # Update D1 with the R2 key
-                    safe_print(f"Updating D1 item {item_id_str} with R2 key: {r2_object_key}...")
-                    update_d1_sql = "UPDATE items SET icon_r2_key = ? WHERE item_id = ?;"
-                    d1_response = d1_client_instance.d1.database.query(
-                        database_id=CLOUDFLARE_D1_DATABASE_ID,
-                        account_id=CLOUDFLARE_ACCOUNT_ID,
-                        sql=update_d1_sql,
-                        params=[r2_object_key, item_id_str]
-                    )
-                    if d1_response.success:
-                        safe_print(f"D1 updated successfully for item {item_id_str}.")
-                        d1_updates_successful += 1
-                        item_data['icon_downloaded'] = 'True' # Mark as fully processed
-                        # Attempt to delete local icon file
-                        try:
-                            if local_icon_path and os.path.exists(local_icon_path):
-                                os.remove(local_icon_path)
-                                safe_print(f"Successfully deleted local icon: {local_icon_path}")
-                        except OSError as e_os:
-                            safe_print(f"Error deleting local icon {local_icon_path}: {e_os}")
-                    else:
-                        safe_print(f"Failed to update D1 for item {item_id_str}. Errors: {d1_response.errors}")
-                        d1_updates_failed += 1
-                        item_data['icon_downloaded'] = 'False' # Explicitly mark as not fully processed if D1 fails
-                except ClientError as e:
-                    safe_print(f"R2 ClientError uploading icon {r2_object_key} for item {item_id_str}: {e}")
-                    icons_failed_r2_upload += 1
-                    item_data['icon_downloaded'] = 'False'
-                except FileNotFoundError:
-                    safe_print(f"Error: Local icon file {local_icon_path} not found for R2 upload (item {item_id_str}). Should have been downloaded or found.")
-                    icons_failed_r2_upload += 1
-                    item_data['icon_downloaded'] = 'False'
-                except cloudflare.APIError as e:
-                    safe_print(f"D1 APIError updating icon_r2_key for item {item_id_str}: {e}")
-                    d1_updates_failed += 1
-                    item_data['icon_downloaded'] = 'False'
-                except Exception as e:
-                    safe_print(f"Generic error during R2 upload or D1 update for item {item_id_str}: {e}")
-                    icons_failed_r2_upload += 1
-                    item_data['icon_downloaded'] = 'False'
-            elif item_data.get('icon_r2_key'): # If key already exists
-                 item_data['icon_downloaded'] = 'True' # Ensure flag is true if R2 key is present
-                 # safe_print(f"Skipping R2 upload for item {item_id_str}, icon_r2_key '{item_data.get('icon_r2_key')}' already set.")
-
-        elif icon_is_present_locally and (not r2_client_instance or not d1_client_instance):
-            safe_print(f"Skipping R2/D1 update for item {item_id_str} because R2 or D1 client is not available.")
-            # Keep icon_downloaded as True if local file exists, but R2 key won't be set.
-            # Or set to False if 'downloaded' means fully processed to cloud. For now, let it reflect local state if cloud fails.
-
-
-        # Original download logic if icon_is_present_locally was false and download was attempted earlier
-        # This part is now integrated above to ensure R2 upload happens after successful download.
-        # The following lines are effectively replaced by the logic block above.
-        # if not icon_url or not icon_id_val or not local_icon_path: # Check all necessary components for download
-            # item_data['icon_downloaded'] = 'False'
-            # icons_skipped_no_info += 1
-            # continue # This was original logic, removed to integrate R2 upload
-
-    safe_print("\n--- Icon Processing Summary ---")
-    safe_print(f"Icons found locally (and flag potentially updated): {icons_found_locally}")
-    safe_print(f"Icons newly downloaded successfully: {icons_downloaded_successfully}")
-    safe_print(f"Skipped local download (missing URL/ID or invalid path): {icons_skipped_no_info}")
-    safe_print(f"Failed local download/save: {icons_failed_download}")
-    safe_print(f"Icons uploaded to R2: {icons_uploaded_to_r2}")
-    safe_print(f"Failed R2 uploads: {icons_failed_r2_upload}")
-    safe_print(f"D1 'icon_r2_key' updates successful: {d1_updates_successful}")
-    safe_print(f"D1 'icon_r2_key' updates failed: {d1_updates_failed}")
-    safe_print("-----------------------------")
-    return all_items_data
-
-API_V2_ITEM_PRICES_URL = "https://echoes.mobi/api/v2/item_prices"
-
-def load_all_current_prices() -> dict:
-    """
-    Fetches all current item prices from the v2 API endpoint.
-    Returns a dictionary mapping item_id to its price data.
-    """
-    safe_print(f"\nFetching all current item prices from {API_V2_ITEM_PRICES_URL}...")
-    current_prices_map = {}
-    headers = {'accept': 'text/csv'}
-
-    try:
-        response = requests.get(API_V2_ITEM_PRICES_URL, headers=headers, timeout=30)
-        if response.status_code == 200:
-            response_text_stripped = response.text.strip()
-            if not response_text_stripped:
-                safe_print("API response for current prices was empty.")
-                return current_prices_map
-
-            reader = csv.DictReader(response_text_stripped.splitlines())
-            # Expected headers: id,name,estimated_price,date_updated,category_name,group_name,icon_id
-            for row in reader:
-                item_id = row.get('id')
-                if item_id:
-                    current_prices_map[item_id] = {
-                        'estimated_price': row.get('estimated_price'),
-                        'date_updated': row.get('date_updated')
-                    }
-            safe_print(f"Successfully loaded {len(current_prices_map)} current item prices.")
-        else:
-            safe_print(f"Error fetching current prices: Status code {response.status_code}")
-            safe_print(f"Response content: {response.text[:200]}")
-    except requests.exceptions.RequestException as e:
-        safe_print(f"Request failed for current prices: {e}")
-    except csv.Error as e:
-        safe_print(f"CSV parsing error for current prices: {e}. Response text: {response.text[:500]}")
-    except Exception as e:
-        safe_print(f"An unexpected error occurred while loading current prices: {e}")
-
-    return current_prices_map
-
-def get_week_year_from_isodate(iso_date_string: str) -> tuple[str, str]:
-    """
-    Parses an ISO 8601 date string and returns its ISO week number and ISO year.
-    Handles timezone information like +00:00.
-    """
-    try:
-        if not isinstance(iso_date_string, str):
-            # Handle cases where date might be None or not a string
-            if iso_date_string is None:
-                raise ValueError("Input date string is None")
-            raise ValueError(f"Input must be a string, got {type(iso_date_string)}")
-
-        # datetime.fromisoformat handles "YYYY-MM-DDTHH:MM:SS+00:00" directly
-        # and correctly interprets the +00:00 as UTC.
-        dt_object = datetime.fromisoformat(iso_date_string)
-
-        # isocalendar() returns (ISO year, ISO week number, ISO weekday)
-        iso_year, iso_week, _ = dt_object.isocalendar()
-
-        # Format week number with leading zero if needed (e.g., "01", "02", ..., "52")
-        return (f"{iso_week:02d}", str(iso_year))
-    except ValueError as e:
-        safe_print(f"Error parsing date string '{iso_date_string}': {e}. Returning default week/year ('00', '0000').")
-        return ("00", "0000") # Fallback values
-    except Exception as e: # Catch any other unexpected errors
-        safe_print(f"An unexpected error occurred while parsing date '{iso_date_string}': {e}. Returning default week/year ('00', '0000').")
-        return ("00", "0000")
-
-HISTORY_CSV_HEADERS = ['id', 'item_id', 'price', 'week', 'year', 'date_created', 'date_updated']
-
-def fetch_and_save_histories(item_ids_to_process: list[str], all_current_prices_map: dict, d1_client_instance):
-    """
-    Fetches full history for new items or appends latest price for existing items in D1.
-    - item_ids_to_process: List of all item IDs to process.
-    - all_current_prices_map: Dictionary with current price data from /v2/item_prices.
-    """
-    safe_print(f"\nStarting to process D1 histories for {len(item_ids_to_process)} items...")
-    if not d1_client_instance:
-        safe_print("D1 client is not available. Skipping D1 history operations.")
-        return
-    if not item_ids_to_process:
-        safe_print("No item IDs provided for history processing.")
-        return
-
-    # Statistics
-    full_history_items_processed = 0
-    full_history_records_inserted_total = 0 # Renamed for clarity
-    full_history_api_failures = 0
-    full_history_d1_failures_total = 0 # Renamed for clarity
-    appended_latest_price_count = 0
-    append_failures_missing_data = 0
-    append_failures_d1 = 0
-    items_already_up_to_date = 0
-
-    api_headers = {'accept': 'text/csv'}
-
-    for item_id in item_ids_to_process:
-        latest_d1_date_updated_for_item = None
-        # max_date_from_full_history = None # This was for an intermediate step, not strictly needed here
-
-        try:
-            query_latest_sql = "SELECT MAX(date_updated) as latest_date FROM item_history WHERE item_id = ?;"
-            response_latest = d1_client_instance.d1.database.query(
-                database_id=CLOUDFLARE_D1_DATABASE_ID, account_id=CLOUDFLARE_ACCOUNT_ID,
-                sql=query_latest_sql, params=[item_id]
-            )
-            if response_latest.success and response_latest.result and response_latest.result[0].results:
-                latest_d1_date_updated_for_item = response_latest.result[0].results[0].get('latest_date')
-        except Exception as e:
-            safe_print(f"Error querying latest D1 history date for item {item_id}: {e}. Will attempt full backfill/append.")
-
-        if latest_d1_date_updated_for_item is None:
-            safe_print(f"No history found in D1 for item {item_id}. Attempting full history fetch...")
-            full_history_items_processed += 1
-            history_api_url = f"{API_BASE_URL_HISTORY}{item_id}"
-
-            try:
-                response = requests.get(history_api_url, headers=api_headers, timeout=30)
-                if response.status_code == 200:
-                    response_text_stripped = response.text.strip()
-                    if response_text_stripped:
-                        history_reader = csv.DictReader(response_text_stripped.splitlines())
-                        records_inserted_this_item = 0
-                        current_max_date_in_batch = None
-                        for row in history_reader:
-                            try:
-                                price_val = row.get('price')
-                                if price_val is None or price_val == '':
-                                    safe_print(f"Skipping history row for item {item_id} due to missing price: {row}")
-                                    continue
-                                price = float(price_val)
-
-                                week = row.get('week')
-                                year = row.get('year')
-                                date_created = row.get('date_created') # API's date_created for this history point
-                                date_updated = row.get('date_updated') # API's date_updated for this history point
-
-                                if not all([week, year, date_created, date_updated]):
-                                    safe_print(f"Skipping history row for item {item_id} due to missing week, year, or date fields: {row}")
-                                    continue
-
-                                insert_hist_sql = "INSERT INTO item_history (item_id, price, week, year, date_created, date_updated) VALUES (?, ?, ?, ?, ?, ?);"
-                                hist_params = [item_id, price, week, year, date_created, date_updated]
-
-                                hist_resp = d1_client_instance.d1.database.query(
-                                    database_id=CLOUDFLARE_D1_DATABASE_ID, account_id=CLOUDFLARE_ACCOUNT_ID,
-                                    sql=insert_hist_sql, params=hist_params
-                                )
-                                if hist_resp.success:
-                                    full_history_records_inserted_total += 1
-                                    records_inserted_this_item += 1
-                                    if current_max_date_in_batch is None or date_updated > current_max_date_in_batch:
-                                        current_max_date_in_batch = date_updated
-                                else:
-                                    safe_print(f"Failed to insert full history row for item {item_id}: {hist_resp.errors}")
-                                    full_history_d1_failures_total +=1
-                            except ValueError:
-                                safe_print(f"Skipping history row for item {item_id} due to invalid price: {row.get('price')}")
-                            except Exception as e_row:
-                                safe_print(f"Error processing/inserting history row for item {item_id}: {e_row} - Row: {row}")
-                                full_history_d1_failures_total +=1
-
-                        if records_inserted_this_item > 0:
-                            safe_print(f"Successfully inserted {records_inserted_this_item} full history records for item {item_id}.")
-                            if current_max_date_in_batch:
-                                latest_d1_date_updated_for_item = current_max_date_in_batch # Update with the latest from the batch
-                        else:
-                            safe_print(f"No valid history records found or inserted from API response for item {item_id}.")
-                    else:
-                        safe_print(f"Full history API response for item {item_id} was empty.")
-                else:
-                    safe_print(f"Error fetching full history for item {item_id}: Status {response.status_code}")
-                    full_history_api_failures += 1
-            except requests.exceptions.RequestException as e_req:
-                safe_print(f"Request failed for full history for item {item_id}: {e_req}")
-                full_history_api_failures += 1
-            except Exception as e_outer: # Catch other errors like CSV parsing issues
-                safe_print(f"Outer error processing full history for item {item_id}: {e_outer}")
-                full_history_api_failures +=1 # Count as API/processing failure
-
-            time.sleep(REQUEST_DELAY_SECONDS) # Delay after each full history API call, even if it failed
-
-        # This block now runs regardless of whether a full history backfill was attempted or if history already existed.
-        # It ensures the very latest price from all_current_prices_map is considered.
-        current_price_point = all_current_prices_map.get(item_id)
-        if current_price_point and current_price_point.get('estimated_price') is not None and current_price_point.get('estimated_price') != '':
-            api_price_str = current_price_point['estimated_price']
-            api_date_updated_from_v2 = current_price_point['date_updated'] # Date from /v2/item_prices
-
-            try:
-                api_price_float = float(api_price_str)
-
-                # Compare with latest_d1_date_updated_for_item (which might have been updated by full backfill)
-                if latest_d1_date_updated_for_item and api_date_updated_from_v2 <= latest_d1_date_updated_for_item:
-                    safe_print(f"Latest price for item {item_id} (date: {api_date_updated_from_v2}) from v2 API already reflected or older than D1 history. Skipping append.")
-                    if latest_d1_date_updated_for_item is not None: # Only count if there was a D1 record to compare against
-                        items_already_up_to_date +=1
-                else: # D1 history is older, or non-existent, or v2 price is newer
-                    derived_week, derived_year = get_week_year_from_isodate(api_date_updated_from_v2)
-                    insert_latest_sql = "INSERT INTO item_history (item_id, price, week, year, date_created, date_updated) VALUES (?, ?, ?, ?, ?, ?);"
-                    latest_params = [item_id, api_price_float, derived_week, derived_year, api_date_updated_from_v2, api_date_updated_from_v2]
-
-                    safe_print(f"Appending latest price (from v2 map) to D1 for item {item_id}, price: {api_price_float}, date: {api_date_updated_from_v2}")
-                    latest_resp = d1_client_instance.d1.database.query(
-                        database_id=CLOUDFLARE_D1_DATABASE_ID, account_id=CLOUDFLARE_ACCOUNT_ID,
-                        sql=insert_latest_sql, params=latest_params
-                    )
-                    if latest_resp.success:
-                        appended_latest_price_count += 1
-                    else:
-                        safe_print(f"Failed to append latest price (from v2 map) for item {item_id} to D1: {latest_resp.errors}")
-                        append_failures_d1 += 1
-            except ValueError:
-                safe_print(f"Error converting current price '{api_price_str}' (from v2 map) to float for item {item_id} during append. Skipping.")
-                append_failures_missing_data +=1
-            except Exception as e_append:
-                safe_print(f"Generic error during append logic (from v2 map) for item {item_id}: {e_append}")
-                append_failures_d1 +=1
-        else:
-            safe_print(f"No current price data in all_current_prices_map for item {item_id} to consider for append.")
-            # append_failures_missing_data +=1 # Not necessarily a failure if it was backfilled and this map is just for more recent
-
-        time.sleep(REQUEST_DELAY_SECONDS / 5) # Shorter delay between processing each item
-
-    safe_print("\n--- D1 Item History Processing Summary ---")
-    safe_print(f"Items processed for full history backfill (attempted): {full_history_items_processed}")
-    safe_print(f"Total records inserted from full history fetches: {full_history_records_inserted_total}")
-    safe_print(f"Full history API fetch failures: {full_history_api_failures}")
-    safe_print(f"Full history D1 insert failures (individual records): {full_history_d1_failures_total}")
-    safe_print(f"Latest price entries successfully appended to D1 (from v2 map): {appended_latest_price_count}")
-    safe_print(f"Items skipped (latest v2 price already up-to-date in D1): {items_already_up_to_date}")
-    safe_print(f"Append failures (missing data or D1 error for v2 price): {append_failures_d1 + append_failures_missing_data}")
-    safe_print("---------------------------------------------")
+# Removed download_item_icons function entirely
+# Removed load_all_current_prices function entirely
+# Removed get_week_year_from_isodate function entirely
+# Removed HISTORY_CSV_HEADERS global variable
+# Removed fetch_and_save_histories function entirely
 
 def check_cloudflare_config():
-    global CLOUDFLARE_R2_S3_ENDPOINT_URL # Allow modification of global
+    # global CLOUDFLARE_R2_S3_ENDPOINT_URL # Removed as CLOUDFLARE_R2_S3_ENDPOINT_URL is no longer used
     missing_vars = []
     if not CLOUDFLARE_API_TOKEN:
         missing_vars.append("CLOUDFLARE_API_TOKEN")
@@ -792,19 +457,11 @@ def check_cloudflare_config():
         missing_vars.append("CLOUDFLARE_ACCOUNT_ID")
     if not CLOUDFLARE_D1_DATABASE_ID:
         missing_vars.append("CLOUDFLARE_D1_DATABASE_ID")
-    if not CLOUDFLARE_R2_BUCKET_NAME:
-        missing_vars.append("CLOUDFLARE_R2_BUCKET_NAME")
-    if not CLOUDFLARE_R2_S3_ACCESS_KEY_ID:
-        missing_vars.append("CLOUDFLARE_R2_S3_ACCESS_KEY_ID")
-    if not CLOUDFLARE_R2_S3_SECRET_ACCESS_KEY:
-        missing_vars.append("CLOUDFLARE_R2_S3_SECRET_ACCESS_KEY")
-
-    if not CLOUDFLARE_R2_S3_ENDPOINT_URL:
-        if CLOUDFLARE_ACCOUNT_ID:
-            CLOUDFLARE_R2_S3_ENDPOINT_URL = f"https://{CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com"
-            safe_print(f"NOTE: CLOUDFLARE_R2_S3_ENDPOINT_URL was not set, constructed: {CLOUDFLARE_R2_S3_ENDPOINT_URL}")
-        else:
-            missing_vars.append("CLOUDFLARE_R2_S3_ENDPOINT_URL (and CLOUDFLARE_ACCOUNT_ID to construct it)")
+    # CLOUDFLARE_R2_BUCKET_NAME check removed
+    # CLOUDFLARE_R2_S3_ACCESS_KEY_ID check removed
+    # CLOUDFLARE_R2_S3_SECRET_ACCESS_KEY check removed
+    # CLOUDFLARE_R2_S3_ENDPOINT_URL check removed
+    # Logic for constructing CLOUDFLARE_R2_S3_ENDPOINT_URL removed
 
     if missing_vars:
         safe_print("Error: The following Cloudflare environment variables are not set or derivable:")
@@ -816,7 +473,7 @@ def check_cloudflare_config():
 
 def create_d1_tables(d1_client_instance):
     """
-    Creates the 'items' and 'item_history' tables in the D1 database if they don't already exist.
+    Creates the 'items' table in the D1 database if it doesn't already exist.
     """
     if not d1_client_instance:
         safe_print("D1 client is not available. Skipping table creation.")
@@ -832,26 +489,15 @@ def create_d1_tables(d1_client_instance):
         group_name TEXT,
         weekly_average_price REAL,
         icon_id TEXT,
-        icon_r2_key TEXT,
+        # icon_r2_key TEXT, # Removed
         date_created TEXT,
         date_updated TEXT
     );
     """
-    item_history_table_sql = """
-    CREATE TABLE IF NOT EXISTS item_history (
-        history_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        item_id TEXT,
-        price REAL,
-        week TEXT,
-        year TEXT,
-        date_created TEXT,
-        date_updated TEXT,
-        FOREIGN KEY(item_id) REFERENCES items(item_id)
-    );
-    """
+    # item_history_table_sql removed
     tables_to_create = {
-        "items": items_table_sql,
-        "item_history": item_history_table_sql
+        "items": items_table_sql
+        # "item_history" entry removed
     }
 
     success_all = True
@@ -894,33 +540,11 @@ def get_d1_client():
         safe_print(f"Error initializing Cloudflare D1 client: {e}")
         return None
 
-def get_r2_client():
-    safe_print("\nInitializing Cloudflare R2 client (Boto3 S3)...")
-    if not all([CLOUDFLARE_R2_S3_ENDPOINT_URL, CLOUDFLARE_R2_S3_ACCESS_KEY_ID, CLOUDFLARE_R2_S3_SECRET_ACCESS_KEY]):
-        safe_print("Error: Missing one or more R2 S3 configuration variables. Cannot initialize R2 client.")
-        safe_print(f"  Endpoint URL set: {'Yes' if CLOUDFLARE_R2_S3_ENDPOINT_URL else 'No'}")
-        safe_print(f"  Access Key ID set: {'Yes' if CLOUDFLARE_R2_S3_ACCESS_KEY_ID else 'No'}")
-        safe_print(f"  Secret Access Key set: {'Yes' if CLOUDFLARE_R2_S3_SECRET_ACCESS_KEY else 'No'}")
-        return None
-    try:
-        client = boto3.client(
-            's3',
-            endpoint_url=CLOUDFLARE_R2_S3_ENDPOINT_URL,
-            aws_access_key_id=CLOUDFLARE_R2_S3_ACCESS_KEY_ID,
-            aws_secret_access_key=CLOUDFLARE_R2_S3_SECRET_ACCESS_KEY,
-        )
-        safe_print("Cloudflare R2 S3 client initialized successfully.")
-        return client
-    except ClientError as e:
-        safe_print(f"Boto3 ClientError initializing R2 S3 client: {e}")
-        return None
-    except Exception as e:
-        safe_print(f"Generic error initializing R2 S3 client: {e}")
-        return None
+# Removed get_r2_client function
 
 # Global clients, to be initialized in main
 d1_client = None
-r2_client = None
+# r2_client = None # Removed
 
 if __name__ == "__main__":
     safe_print("Starting data update script...")
@@ -930,24 +554,24 @@ if __name__ == "__main__":
         exit(1)
 
     d1_client = get_d1_client()
-    r2_client = get_r2_client()
+    # r2_client = get_r2_client() # Removed
 
     if not d1_client:
         safe_print("D1 client initialization failed. D1 related operations will be skipped.")
-    if not r2_client:
-        safe_print("R2 client initialization failed. R2 related operations will be skipped.")
+    # if not r2_client: # Removed
+        # safe_print("R2 client initialization failed. R2 related operations will be skipped.") # Removed
 
     create_d1_tables(d1_client) # Ensure tables are created before fetching items
 
     # Proceed with existing logic, clients can be checked before use in respective functions
-    items_to_update_history_for, all_items_data_list = fetch_and_save_items(d1_client_instance=d1_client)
+    all_items_data_list = fetch_and_save_items(d1_client_instance=d1_client) # Modified return
 
     if all_items_data_list: # Check if there's any data to process
-        all_items_data_list = download_item_icons(all_items_data_list, r2_client_instance=r2_client, d1_client_instance=d1_client)
+        # all_items_data_list = download_item_icons(all_items_data_list, r2_client_instance=r2_client, d1_client_instance=d1_client) # Removed call
 
-        current_prices = load_all_current_prices()
+        # current_prices = load_all_current_prices() # Removed
 
-        # Write the potentially updated all_items_data (with new icon_downloaded flags) to CSV
+        # Write the item data to CSV
         # FINAL_CSV_HEADERS is defined globally
         safe_print(f"\nWriting final item data for {len(all_items_data_list)} items to {ITEMS_OUTPUT_CSV_FILE}...")
         try:
@@ -957,19 +581,15 @@ if __name__ == "__main__":
                 for item_dict in all_items_data_list:
                     row_to_write = {header: item_dict.get(header, '') for header in FINAL_CSV_HEADERS}
                     writer.writerow(row_to_write)
-            safe_print(f"Final item data including icon status written to {ITEMS_OUTPUT_CSV_FILE}")
+            safe_print(f"Final item data written to {ITEMS_OUTPUT_CSV_FILE}") # Removed "including icon status"
         except IOError as e:
             safe_print(f"Error writing final item data to CSV: {e}")
         except Exception as e: # Catch any other unexpected error during write
              safe_print(f"An unexpected error occurred while writing final CSV: {e}")
 
-
-        all_item_ids_for_history = [item['id'] for item in all_items_data_list if item.get('id')]
-        if all_item_ids_for_history: # Check if there are any IDs to process
-            fetch_and_save_histories(all_item_ids_for_history, current_prices, d1_client_instance=d1_client)
-        else:
-            safe_print("No item IDs available to process for history updates.")
+        # Removed all_item_ids_for_history list creation and call to fetch_and_save_histories
+        # The 'else' for "No item IDs available for history" is also removed by this.
     else:
-        safe_print("\nSkipping icon downloading and history fetching because item list was not created or is empty.")
+        safe_print("\nSkipping CSV writing because item list was not created or is empty.") # Simplified message
 
     safe_print("\nData update script finished.")
