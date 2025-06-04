@@ -301,47 +301,48 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                 try:
                     # Ensure weekly_average_price is float or None
                     wap = item_data_dict.get('weekly_average_price')
-                if wap is not None and wap != '':
-                    try:
-                        wap_float = float(wap)
-                    except ValueError:
-                        safe_print(f"Warning: Could not convert weekly_average_price '{wap}' to float for item {item_id_key}. Setting to NULL.")
-                        wap_float = None
-                else:
-                    wap_float = None
+                    wap_float = None # Default value
+                    if wap is not None and wap != '':
+                        try:
+                            wap_float = float(wap)
+                        except ValueError:
+                            safe_print(f"Warning: Could not convert weekly_average_price '{wap}' to float for item {item_id_key}. Setting to NULL.")
+                            # wap_float remains None
+                    # else: # Redundant, wap_float is already None
+                        # wap_float = None
 
-                params = [
-                    item_data_dict.get('id'),
-                    item_data_dict.get('name'),
-                    item_data_dict.get('category_name'),
-                    item_data_dict.get('group_name'),
-                    wap_float,
-                    item_data_dict.get('icon_id'),
-                    item_data_dict.get('icon_r2_key'),
-                    item_data_dict.get('date_created'),
-                    item_data_dict.get('date_updated')
-                ]
+                    params = [
+                        item_data_dict.get('id'),
+                        item_data_dict.get('name'),
+                        item_data_dict.get('category_name'),
+                        item_data_dict.get('group_name'),
+                        wap_float,
+                        item_data_dict.get('icon_id'),
+                        item_data_dict.get('icon_r2_key'),
+                        item_data_dict.get('date_created'),
+                        item_data_dict.get('date_updated')
+                    ]
 
-                upsert_sql = """
-                INSERT INTO items (item_id, name, category_name, group_name, weekly_average_price, icon_id, icon_r2_key, date_created, date_updated)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT(item_id) DO UPDATE SET
-                    name = excluded.name,
-                    category_name = excluded.category_name,
-                    group_name = excluded.group_name,
-                    weekly_average_price = excluded.weekly_average_price,
-                    icon_id = excluded.icon_id,
-                    icon_r2_key = COALESCE(excluded.icon_r2_key, items.icon_r2_key),
-                    date_created = COALESCE(items.date_created, excluded.date_created),
-                    date_updated = excluded.date_updated;
-                """
+                    upsert_sql = """
+                    INSERT INTO items (item_id, name, category_name, group_name, weekly_average_price, icon_id, icon_r2_key, date_created, date_updated)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(item_id) DO UPDATE SET
+                        name = excluded.name,
+                        category_name = excluded.category_name,
+                        group_name = excluded.group_name,
+                        weekly_average_price = excluded.weekly_average_price,
+                        icon_id = excluded.icon_id,
+                        icon_r2_key = COALESCE(excluded.icon_r2_key, items.icon_r2_key),
+                        date_created = COALESCE(items.date_created, excluded.date_created),
+                        date_updated = excluded.date_updated;
+                    """
 
-                response = d1_client_instance.d1.database.query(
-                    database_id=CLOUDFLARE_D1_DATABASE_ID,
-                    account_id=CLOUDFLARE_ACCOUNT_ID,
-                    sql=upsert_sql,
-                    params=params
-                )
+                    response = d1_client_instance.d1.database.query(
+                        database_id=CLOUDFLARE_D1_DATABASE_ID,
+                        account_id=CLOUDFLARE_ACCOUNT_ID,
+                        sql=upsert_sql,
+                        params=params
+                    )
 
                     if response.success:
                         if is_new_to_d1_this_run: # Use the more specific flag
