@@ -61,7 +61,7 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
     initial_d1_item_ids = set()
     d1_new_inserts_count = 0
     d1_updated_items_count = 0
-    # items_failed_upsert_count is initialized later, before its relevant loop
+    # items_failed_upsert_count is initialized later, just before the D1 upsert loop
 
     # Prioritize loading from D1
     if d1_client_instance:
@@ -91,12 +91,16 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                             if header not in item_entry:
                                 item_entry[header] = None # Or appropriate default like ''
 
+                        item_id_from_d1 = item_entry.get('id') # Use 'id' as it's now the key
+                        item_name_for_log = item_entry.get('name', 'Unknown Name')
+                        safe_print(f"D1 Load: Loaded item {item_id_from_d1} ('{item_name_for_log}') from D1.")
                         all_items_data[item_id] = item_entry
-                if all_items_data: # Check if any items were actually loaded
-                    initial_d1_item_ids = set(all_items_data.keys())
-                    safe_print(f"Successfully loaded {len(initial_d1_item_ids)} items from D1. Their IDs are now tracked for insert/update distinction.")
+
+                if all_items_data: # Check if any items were actually loaded from D1
+                    initial_d1_item_ids = set(all_items_data.keys()) # Populate AFTER D1 load loop
+                    safe_print(f"Successfully loaded a total of {len(initial_d1_item_ids)} items from D1. Their IDs are now tracked for insert/update distinction.")
                 else: # D1 query succeeded but no items were in the DB
-                    safe_print("No existing items found in D1 database via initial query.")
+                    safe_print("No existing items found in D1 database via initial query.") # This is correct if all_items_data is empty after loop
             else: # D1 query failed or returned no results structure
                 if not response.success:
                     safe_print(f"D1 query to load items failed. Errors: {response.errors}")
@@ -236,7 +240,7 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                         all_items_data[item_id] = existing_item # Ensure reference is updated if dict was copied
                     else:
                         # New item
-                        safe_print(f"Adding new item {item_id} ('{api_item.get('name')}').")
+                        safe_print(f"API Fetch: New item {item_id} ('{api_item.get('name', 'Unknown Name')}') identified, adding to internal data list.")
                         new_item_entry = {header: '' for header in FINAL_CSV_HEADERS} # Initialize with all headers
                         new_item_entry.update(api_item) # Populate with API data
                         new_item_entry['icon_downloaded'] = 'False'
@@ -276,8 +280,7 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
     # Save/Update items in D1
     if d1_client_instance and all_items_data:
         safe_print(f"\nUpserting {len(all_items_data)} items into D1 database...")
-        # items_upserted_count = 0 # Replaced by d1_new_inserts_count and d1_updated_items_count
-        items_failed_upsert_count = 0
+        items_failed_upsert_count = 0 # Initialize here, as it's specific to this loop
         # d1_new_inserts_count and d1_updated_items_count were initialized at the start of the function
 
         for item_id_key, item_data_dict in all_items_data.items():
@@ -340,13 +343,13 @@ def fetch_and_save_items(d1_client_instance=None): # Added d1_client_instance
                     else:
                         d1_new_inserts_count += 1
                 else:
-                    safe_print(f"Failed to upsert item {item_id_key} into D1. Errors: {response.errors}")
+                    safe_print(f"Failed to upsert item {item_id_key} into D1. Errors: {response.errors}") # item_id_key is correct here as it's the dict key
                     items_failed_upsert_count +=1
             except cloudflare.APIError as e:
-                safe_print(f"D1 APIError during upsert for item {item_id_key}: {e}")
+                safe_print(f"D1 APIError during upsert for item {item_id_key}: {e}") # item_id_key is correct here
                 items_failed_upsert_count +=1
             except Exception as e:
-                safe_print(f"Generic error during D1 upsert for item {item_id_key}: {e}")
+                safe_print(f"Generic error during D1 upsert for item {item_id_key}: {e}") # item_id_key is correct here
                 items_failed_upsert_count +=1
 
         total_successful_d1_ops = d1_new_inserts_count + d1_updated_items_count
