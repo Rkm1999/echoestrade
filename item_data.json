@@ -2927,6 +2927,10 @@
                 "history_path": "item_histories/Implants/Implant_Advanced_Unit/Aerospace_Tactics_Mobility_Reinforcement_v40/16400015041_history.csv",
                 "icon_path": ""
             },
+            "Aerospace_Tactics_Precision_Enhancement_v40": {
+                "history_path": "item_histories/Implants/Implant_Advanced_Unit/Aerospace_Tactics_Precision_Enhancement_v40/16400015141_history.csv",
+                "icon_path": ""
+            },
             "Artillery_Cover_Ammunition_Reinforcement_v10": {
                 "history_path": "item_histories/Implants/Implant_Advanced_Unit/Artillery_Cover_Ammunition_Reinforcement_v10/16400014011_history.csv",
                 "icon_path": ""
@@ -6413,6 +6417,10 @@
                 "history_path": "item_histories/Materials/Experiment_Data/Cannon_Experiment_Data/41900000002_history.csv",
                 "icon_path": "item_histories/Materials/Experiment_Data/Cannon_Experiment_Data/41900900002.png"
             },
+            "Capital_Ship_Rigging_Experiment_Data": {
+                "history_path": "item_histories/Materials/Experiment_Data/Capital_Ship_Rigging_Experiment_Data/41900900001_history.csv",
+                "icon_path": "item_histories/Materials/Experiment_Data/Capital_Ship_Rigging_Experiment_Data/41900000016.png"
+            },
             "Capital_Ship_Upgrade_Experiment_Data": {
                 "history_path": "item_histories/Materials/Experiment_Data/Capital_Ship_Upgrade_Experiment_Data/41900000016_history.csv",
                 "icon_path": "item_histories/Materials/Experiment_Data/Capital_Ship_Upgrade_Experiment_Data/41900000016.png"
@@ -7499,6 +7507,10 @@
                 "history_path": "item_histories/Membrane/Membrane/Kestrel_Breeze_II_Core/81000570020_history.csv",
                 "icon_path": "item_histories/Membrane/Membrane/Kestrel_Breeze_II_Core/81000000000.png"
             },
+            "Kestrel_Guristas_Veteran_Core": {
+                "history_path": "item_histories/Membrane/Membrane/Kestrel_Guristas_Veteran_Core/81000280020_history.csv",
+                "icon_path": "item_histories/Membrane/Membrane/Kestrel_Guristas_Veteran_Core/81000000001.png"
+            },
             "Kestrel_Monsoon_II_Core": {
                 "history_path": "item_histories/Membrane/Membrane/Kestrel_Monsoon_II_Core/81000690020_history.csv",
                 "icon_path": "item_histories/Membrane/Membrane/Kestrel_Monsoon_II_Core/81000000001.png"
@@ -8096,6 +8108,10 @@
             "Bipolar_Lightweight_Ship_Hangar_Modification_III": {
                 "history_path": "item_histories/Module/Advanced_Engineering_Rigs/Bipolar_Lightweight_Ship_Hangar_Modification_III/11727020013_history.csv",
                 "icon_path": "item_histories/Module/Advanced_Engineering_Rigs/Bipolar_Lightweight_Ship_Hangar_Modification_III/11727020004.png"
+            },
+            "Bipolar_Lightweight_Ship_Hangar_Modification_IV": {
+                "history_path": "item_histories/Module/Advanced_Engineering_Rigs/Bipolar_Lightweight_Ship_Hangar_Modification_IV/11727020014_history.csv",
+                "icon_path": "item_histories/Module/Advanced_Engineering_Rigs/Bipolar_Lightweight_Ship_Hangar_Modification_IV/11727020006.png"
             },
             "Fighter_Bay_Hangar_Refactoring_I": {
                 "history_path": "item_histories/Module/Advanced_Engineering_Rigs/Fighter_Bay_Hangar_Refactoring_I/11727010021_history.csv",
@@ -9361,6 +9377,10 @@
                 "history_path": "item_histories/Module/Cannon_Rigs/Capital_Cannon_Collision_Accelerator_I/11704040006_history.csv",
                 "icon_path": "item_histories/Module/Cannon_Rigs/Capital_Cannon_Collision_Accelerator_I/11704100000.png"
             },
+            "Capital_Cannon_Collision_Accelerator_II": {
+                "history_path": "item_histories/Module/Cannon_Rigs/Capital_Cannon_Collision_Accelerator_II/11704040008_history.csv",
+                "icon_path": "item_histories/Module/Cannon_Rigs/Capital_Cannon_Collision_Accelerator_II/11704100001.png"
+            },
             "Capital_Cannon_Metastasis_Adjuster_I": {
                 "history_path": "item_histories/Module/Cannon_Rigs/Capital_Cannon_Metastasis_Adjuster_I/11704070006_history.csv",
                 "icon_path": "item_histories/Module/Cannon_Rigs/Capital_Cannon_Metastasis_Adjuster_I/11704100000.png"
@@ -9971,6 +9991,10 @@
                 "history_path": "item_histories/Module/Drone_Rigs/Fighter_Firepower_Booster_I/11719040006_history.csv",
                 "icon_path": "item_histories/Module/Drone_Rigs/Fighter_Firepower_Booster_I/11719100000.png"
             },
+            "Fighter_Firepower_Booster_II": {
+                "history_path": "item_histories/Module/Drone_Rigs/Fighter_Firepower_Booster_II/11719040008_history.csv",
+                "icon_path": "item_histories/Module/Drone_Rigs/Fighter_Firepower_Booster_II/11719100001.png"
+            },
             "Fighter_Flight_Accelerator_I": {
                 "history_path": "item_histories/Module/Drone_Rigs/Fighter_Flight_Accelerator_I/11719110006_history.csv",
                 "icon_path": "item_histories/Module/Drone_Rigs/Fighter_Flight_Accelerator_I/11719100000.png"
@@ -9990,6 +10014,10 @@
             "Lightweight_Ship_Firepower_Booster_I": {
                 "history_path": "item_histories/Module/Drone_Rigs/Lightweight_Ship_Firepower_Booster_I/11719130006_history.csv",
                 "icon_path": "item_histories/Module/Drone_Rigs/Lightweight_Ship_Firepower_Booster_I/11719080001.png"
+            },
+            "Lightweight_Ship_Firepower_Booster_II": {
+                "history_path": "item_histories/Module/Drone_Rigs/Lightweight_Ship_Firepower_Booster_II/11719130008_history.csv",
+                "icon_path": "item_histories/Module/Drone_Rigs/Lightweight_Ship_Firepower_Booster_II/11719080002.png"
             },
             "Lightweight_Ship_Flight_Accelerator_I": {
                 "history_path": "item_histories/Module/Drone_Rigs/Lightweight_Ship_Flight_Accelerator_I/11719160006_history.csv",
@@ -10713,6 +10741,10 @@
                 "history_path": "item_histories/Module/Integrated_Combat_Rig/Enhance_3P_Combat_Integrated_Module/11720010006_history.csv",
                 "icon_path": "item_histories/Module/Integrated_Combat_Rig/Enhance_3P_Combat_Integrated_Module/11720000005.png"
             },
+            "Enhance_4P_Combat_Integrated_Module": {
+                "history_path": "item_histories/Module/Integrated_Combat_Rig/Enhance_4P_Combat_Integrated_Module/11720020006_history.csv",
+                "icon_path": "item_histories/Module/Integrated_Combat_Rig/Enhance_4P_Combat_Integrated_Module/11720000008.png"
+            },
             "Frequency-reducing_2P_Combat_Integrated_Module": {
                 "history_path": "item_histories/Module/Integrated_Combat_Rig/Frequency-reducing_2P_Combat_Integrated_Module/11720000002_history.csv",
                 "icon_path": "item_histories/Module/Integrated_Combat_Rig/Frequency-reducing_2P_Combat_Integrated_Module/11720000000.png"
@@ -10746,6 +10778,10 @@
             "Enhance_3P_Engineering_Integrated_Module": {
                 "history_path": "item_histories/Module/Integrated_Engineering_Rig/Enhance_3P_Engineering_Integrated_Module/11721010006_history.csv",
                 "icon_path": "item_histories/Module/Integrated_Engineering_Rig/Enhance_3P_Engineering_Integrated_Module/11721000005.png"
+            },
+            "Enhance_4P_Engineering_Integrated_Module": {
+                "history_path": "item_histories/Module/Integrated_Engineering_Rig/Enhance_4P_Engineering_Integrated_Module/11721020006_history.csv",
+                "icon_path": "item_histories/Module/Integrated_Engineering_Rig/Enhance_4P_Engineering_Integrated_Module/11721000008.png"
             },
             "Frequency-reducing_2P_Engineering_Integrated_Module": {
                 "history_path": "item_histories/Module/Integrated_Engineering_Rig/Frequency-reducing_2P_Engineering_Integrated_Module/11721000002_history.csv",
@@ -11281,6 +11317,10 @@
                 "history_path": "item_histories/Module/Laser_Rigs/Capital_Laser_Collision_Accelerator_I/11702050006_history.csv",
                 "icon_path": "item_histories/Module/Laser_Rigs/Capital_Laser_Collision_Accelerator_I/11702100000.png"
             },
+            "Capital_Laser_Collision_Accelerator_II": {
+                "history_path": "item_histories/Module/Laser_Rigs/Capital_Laser_Collision_Accelerator_II/11702050008_history.csv",
+                "icon_path": "item_histories/Module/Laser_Rigs/Capital_Laser_Collision_Accelerator_II/11702100001.png"
+            },
             "Capital_Laser_Discharge_Elutriation_I": {
                 "history_path": "item_histories/Module/Laser_Rigs/Capital_Laser_Discharge_Elutriation_I/11702070006_history.csv",
                 "icon_path": "item_histories/Module/Laser_Rigs/Capital_Laser_Discharge_Elutriation_I/11702100000.png"
@@ -11727,6 +11767,10 @@
                 "history_path": "item_histories/Module/Missile_Launcher_Rigs/Capital_Warhead_Calefaction_Catalyst_I/11706070006_history.csv",
                 "icon_path": "item_histories/Module/Missile_Launcher_Rigs/Capital_Warhead_Calefaction_Catalyst_I/11706100000.png"
             },
+            "Capital_Warhead_Calefaction_Catalyst_II": {
+                "history_path": "item_histories/Module/Missile_Launcher_Rigs/Capital_Warhead_Calefaction_Catalyst_II/11706070008_history.csv",
+                "icon_path": "item_histories/Module/Missile_Launcher_Rigs/Capital_Warhead_Calefaction_Catalyst_II/11706100001.png"
+            },
             "Capital_Warhead_Flare_Catalyst_I": {
                 "history_path": "item_histories/Module/Missile_Launcher_Rigs/Capital_Warhead_Flare_Catalyst_I/11706060006_history.csv",
                 "icon_path": "item_histories/Module/Missile_Launcher_Rigs/Capital_Warhead_Flare_Catalyst_I/11706100000.png"
@@ -11894,6 +11938,10 @@
             "Capital_Auxiliary_Thrusters_I": {
                 "history_path": "item_histories/Module/Navigation_Rig/Capital_Auxiliary_Thrusters_I/11710080006_history.csv",
                 "icon_path": "item_histories/Module/Navigation_Rig/Capital_Auxiliary_Thrusters_I/11710100000.png"
+            },
+            "Capital_Auxiliary_Thrusters_II": {
+                "history_path": "item_histories/Module/Navigation_Rig/Capital_Auxiliary_Thrusters_II/11710080008_history.csv",
+                "icon_path": "item_histories/Module/Navigation_Rig/Capital_Auxiliary_Thrusters_II/11710100001.png"
             },
             "Capital_Cargohold_Optimization_I": {
                 "history_path": "item_histories/Module/Navigation_Rig/Capital_Cargohold_Optimization_I/11710100006_history.csv",
@@ -12309,6 +12357,10 @@
                 "history_path": "item_histories/Module/Propulsion_Module/Scout_Small_Microwarpdrive/11304000021_history.csv",
                 "icon_path": "item_histories/Module/Propulsion_Module/Scout_Small_Microwarpdrive/130500101.png"
             },
+            "Shadow_Serpentis_Medium_Afterburners": {
+                "history_path": "item_histories/Module/Propulsion_Module/Shadow_Serpentis_Medium_Afterburners/11304600017_history.csv",
+                "icon_path": "item_histories/Module/Propulsion_Module/Shadow_Serpentis_Medium_Afterburners/130500001.png"
+            },
             "Shadow_Serpentis_Small_Afterburner": {
                 "history_path": "item_histories/Module/Propulsion_Module/Shadow_Serpentis_Small_Afterburner/11304500017_history.csv",
                 "icon_path": "item_histories/Module/Propulsion_Module/Shadow_Serpentis_Small_Afterburner/130500001.png"
@@ -12643,6 +12695,10 @@
                 "history_path": "item_histories/Module/Railgun_Rigs/Algid_Railgun_Administrations_Unit_III/11700040006_history.csv",
                 "icon_path": "item_histories/Module/Railgun_Rigs/Algid_Railgun_Administrations_Unit_III/11700000002.png"
             },
+            "Algid_Railgun_Administrations_Unit_IV": {
+                "history_path": "item_histories/Module/Railgun_Rigs/Algid_Railgun_Administrations_Unit_IV/11700040008_history.csv",
+                "icon_path": "item_histories/Module/Railgun_Rigs/Algid_Railgun_Administrations_Unit_IV/11700000003.png"
+            },
             "Capital_Algid_Railgun_Administrations_Unit_I": {
                 "history_path": "item_histories/Module/Railgun_Rigs/Capital_Algid_Railgun_Administrations_Unit_I/11700090006_history.csv",
                 "icon_path": "item_histories/Module/Railgun_Rigs/Capital_Algid_Railgun_Administrations_Unit_I/11700100000.png"
@@ -12658,6 +12714,10 @@
             "Capital_Railgun_Collision_Accelerator_I": {
                 "history_path": "item_histories/Module/Railgun_Rigs/Capital_Railgun_Collision_Accelerator_I/11700050006_history.csv",
                 "icon_path": "item_histories/Module/Railgun_Rigs/Capital_Railgun_Collision_Accelerator_I/11700100000.png"
+            },
+            "Capital_Railgun_Collision_Accelerator_II": {
+                "history_path": "item_histories/Module/Railgun_Rigs/Capital_Railgun_Collision_Accelerator_II/11700050008_history.csv",
+                "icon_path": "item_histories/Module/Railgun_Rigs/Capital_Railgun_Collision_Accelerator_II/11700100001.png"
             },
             "Capital_Railgun_Discharge_Elutriation_I": {
                 "history_path": "item_histories/Module/Railgun_Rigs/Capital_Railgun_Discharge_Elutriation_I/11700070006_history.csv",
@@ -13208,6 +13268,10 @@
             "Exhumer_Drone_Efficiency_Upgrade_I": {
                 "history_path": "item_histories/Module/Rig_Mining/Exhumer_Drone_Efficiency_Upgrade_I/11717120006_history.csv",
                 "icon_path": "item_histories/Module/Rig_Mining/Exhumer_Drone_Efficiency_Upgrade_I/11717040002.png"
+            },
+            "Exhumer_Drone_Efficiency_Upgrade_II": {
+                "history_path": "item_histories/Module/Rig_Mining/Exhumer_Drone_Efficiency_Upgrade_II/11717120008_history.csv",
+                "icon_path": "item_histories/Module/Rig_Mining/Exhumer_Drone_Efficiency_Upgrade_II/11717040004.png"
             },
             "Miner_Algid_Optimizer_I": {
                 "history_path": "item_histories/Module/Rig_Mining/Miner_Algid_Optimizer_I/11717030002_history.csv",
@@ -14414,6 +14478,26 @@
                 "icon_path": "item_histories/Module/Tactical_Module/Sniper_Tactical_Module/11568000005.png"
             }
         },
+        "Target_Cargo_Analyzer": {
+            "Experimental_Target_Cargo_Analyzer": {
+                "history_path": "item_histories/Module/Target_Cargo_Analyzer/Experimental_Target_Cargo_Analyzer/11050000000_history.csv",
+                "icon_path": "item_histories/Module/Target_Cargo_Analyzer/Experimental_Target_Cargo_Analyzer/11050000000.png"
+            },
+            "Scholar_Target_Cargo_Analyzer": {
+                "history_path": "item_histories/Module/Target_Cargo_Analyzer/Scholar_Target_Cargo_Analyzer/11050000001_history.csv",
+                "icon_path": "item_histories/Module/Target_Cargo_Analyzer/Scholar_Target_Cargo_Analyzer/11050000000.png"
+            }
+        },
+        "Target_Module_Analyzer": {
+            "Experimental_Target_Module_Analyzer": {
+                "history_path": "item_histories/Module/Target_Module_Analyzer/Experimental_Target_Module_Analyzer/11049000000_history.csv",
+                "icon_path": "item_histories/Module/Target_Module_Analyzer/Experimental_Target_Module_Analyzer/11049000000.png"
+            },
+            "Scholar_Target_Module_Analyzer": {
+                "history_path": "item_histories/Module/Target_Module_Analyzer/Scholar_Target_Module_Analyzer/11049000001_history.csv",
+                "icon_path": "item_histories/Module/Target_Module_Analyzer/Scholar_Target_Module_Analyzer/11049000000.png"
+            }
+        },
         "Target_Painting_Modules": {
             "Domination_Target_Painting_Modules": {
                 "history_path": "item_histories/Module/Target_Painting_Modules/Domination_Target_Painting_Modules/11330000017_history.csv",
@@ -14446,6 +14530,16 @@
             "Republic_Fleet_Target_Painting_Modules": {
                 "history_path": "item_histories/Module/Target_Painting_Modules/Republic_Fleet_Target_Painting_Modules/11330000013_history.csv",
                 "icon_path": "item_histories/Module/Target_Painting_Modules/Republic_Fleet_Target_Painting_Modules/11330000000.png"
+            }
+        },
+        "Target_Structure_Analyzer": {
+            "Experimental_Target_Structure_Analyzer": {
+                "history_path": "item_histories/Module/Target_Structure_Analyzer/Experimental_Target_Structure_Analyzer/11051000000_history.csv",
+                "icon_path": "item_histories/Module/Target_Structure_Analyzer/Experimental_Target_Structure_Analyzer/11051000000.png"
+            },
+            "Scholar_Target_Structure_Analyzer": {
+                "history_path": "item_histories/Module/Target_Structure_Analyzer/Scholar_Target_Structure_Analyzer/11051000001_history.csv",
+                "icon_path": "item_histories/Module/Target_Structure_Analyzer/Scholar_Target_Structure_Analyzer/11051000000.png"
             }
         },
         "test\u8d85\u5927\u578b\u5feb\u901f\u5bfc\u5f39\u53d1\u5c04\u5668": {
@@ -16523,6 +16617,10 @@
                 "history_path": "item_histories/Module_Blueprint/test\u6539\u88c5\u4ef6\u6838\u5fc3\u84dd\u56fe/Ship_Hold_Optimization_III_Blueprint/61711090006_history.csv",
                 "icon_path": "item_histories/Module_Blueprint/test\u6539\u88c5\u4ef6\u6838\u5fc3\u84dd\u56fe/Ship_Hold_Optimization_III_Blueprint/11711090002.png"
             },
+            "Ship_Hold_Optimization_II_Blueprint": {
+                "history_path": "item_histories/Module_Blueprint/test\u6539\u88c5\u4ef6\u6838\u5fc3\u84dd\u56fe/Ship_Hold_Optimization_II_Blueprint/61711090004_history.csv",
+                "icon_path": "item_histories/Module_Blueprint/test\u6539\u88c5\u4ef6\u6838\u5fc3\u84dd\u56fe/Ship_Hold_Optimization_II_Blueprint/11711090001.png"
+            },
             "Ship_Hold_Optimization_I_Blueprint": {
                 "history_path": "item_histories/Module_Blueprint/test\u6539\u88c5\u4ef6\u6838\u5fc3\u84dd\u56fe/Ship_Hold_Optimization_I_Blueprint/61711090002_history.csv",
                 "icon_path": "item_histories/Module_Blueprint/test\u6539\u88c5\u4ef6\u6838\u5fc3\u84dd\u56fe/Ship_Hold_Optimization_I_Blueprint/11711090000.png"
@@ -16944,6 +17042,18 @@
             "Railgun_Discharge_Elutriation_I_Blueprint": {
                 "history_path": "item_histories/Module_Blueprint/unknown/Railgun_Discharge_Elutriation_I_Blueprint/61700020002_history.csv",
                 "icon_path": "item_histories/Module_Blueprint/unknown/Railgun_Discharge_Elutriation_I_Blueprint/11700000000.png"
+            },
+            "Sisters_of_EVE_Blueprint_for_Target_Cargo_Analyzer": {
+                "history_path": "item_histories/Module_Blueprint/unknown/Sisters_of_EVE_Blueprint_for_Target_Cargo_Analyzer/61999050002_history.csv",
+                "icon_path": "item_histories/Module_Blueprint/unknown/Sisters_of_EVE_Blueprint_for_Target_Cargo_Analyzer/11050000000.png"
+            },
+            "Sisters_of_EVE_Blueprint_for_Target_Module_Analyzer": {
+                "history_path": "item_histories/Module_Blueprint/unknown/Sisters_of_EVE_Blueprint_for_Target_Module_Analyzer/61999049002_history.csv",
+                "icon_path": "item_histories/Module_Blueprint/unknown/Sisters_of_EVE_Blueprint_for_Target_Module_Analyzer/11049000000.png"
+            },
+            "Sisters_of_EVE_Blueprint_for_Target_Structure_Analyzer": {
+                "history_path": "item_histories/Module_Blueprint/unknown/Sisters_of_EVE_Blueprint_for_Target_Structure_Analyzer/61999051002_history.csv",
+                "icon_path": "item_histories/Module_Blueprint/unknown/Sisters_of_EVE_Blueprint_for_Target_Structure_Analyzer/11051000000.png"
             },
             "Stormchaser_Narrow_Resonance_Scanner_Blueprint": {
                 "history_path": "item_histories/Module_Blueprint/unknown/Stormchaser_Narrow_Resonance_Scanner_Blueprint/61999000101_history.csv",
@@ -19954,6 +20064,10 @@
             "Hel_Blueprint": {
                 "history_path": "item_histories/Ship_Blueprints/Supercarrier_Blueprints/Hel_Blueprint/60801000201_history.csv",
                 "icon_path": "item_histories/Ship_Blueprints/Supercarrier_Blueprints/Hel_Blueprint/10801000201.png"
+            },
+            "Nyx_Blueprint": {
+                "history_path": "item_histories/Ship_Blueprints/Supercarrier_Blueprints/Nyx_Blueprint/60801000401_history.csv",
+                "icon_path": "item_histories/Ship_Blueprints/Supercarrier_Blueprints/Nyx_Blueprint/10801000401.png"
             }
         },
         "test\u65d7\u8230\u84dd\u56fe": {
@@ -20618,6 +20732,10 @@
             "Drake_Sunset_SKINpermanent": {
                 "history_path": "item_histories/SKIN/SKIN/Drake_Sunset_SKINpermanent/80521801670_history.csv",
                 "icon_path": "item_histories/SKIN/SKIN/Drake_Sunset_SKINpermanent/80100000012.png"
+            },
+            "Dramiel_Rosethorn_SKIN_Permanent": {
+                "history_path": "item_histories/SKIN/SKIN/Dramiel_Rosethorn_SKIN_Permanent/80507102640_history.csv",
+                "icon_path": "item_histories/SKIN/SKIN/Dramiel_Rosethorn_SKIN_Permanent/80100000038.png"
             },
             "Executioner_II_Interceptor_Star_Beat_Iristar_the_Diva_SKINpermanent": {
                 "history_path": "item_histories/SKIN/SKIN/Executioner_II_Interceptor_Star_Beat_Iristar_the_Diva_SKINpermanent/80555802950_history.csv",
@@ -23190,6 +23308,10 @@
             "Structure_Hangar_Array": {
                 "history_path": "item_histories/unknown/Station_Components/Structure_Hangar_Array/27000000001_history.csv",
                 "icon_path": "item_histories/unknown/Station_Components/Structure_Hangar_Array/27000000001.png"
+            },
+            "Structure_Integrated_Network": {
+                "history_path": "item_histories/unknown/Station_Components/Structure_Integrated_Network/27000000016_history.csv",
+                "icon_path": "item_histories/unknown/Station_Components/Structure_Integrated_Network/27000000016.png"
             },
             "Structure_Laboratory": {
                 "history_path": "item_histories/unknown/Station_Components/Structure_Laboratory/27000000003_history.csv",
