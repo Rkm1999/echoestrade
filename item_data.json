@@ -1301,6 +1301,10 @@
                 "history_path": "item_histories/Drones/Light_Fighter/Augmented__Pulsar_Heavy/14600150022_history.csv",
                 "icon_path": "item_histories/Drones/Light_Fighter/Augmented__Pulsar_Heavy/14600150013.png"
             },
+            "Augmented__Sextant_Sentinel": {
+                "history_path": "item_histories/Drones/Light_Fighter/Augmented__Sextant_Sentinel/14600060022_history.csv",
+                "icon_path": "item_histories/Drones/Light_Fighter/Augmented__Sextant_Sentinel/14600060013.png"
+            },
             "Basic_Red-tailed_Hawk": {
                 "history_path": "item_histories/Drones/Light_Fighter/Basic_Red-tailed_Hawk/14600140012_history.csv",
                 "icon_path": "item_histories/Drones/Light_Fighter/Basic_Red-tailed_Hawk/15100000140.png"
@@ -2197,6 +2201,10 @@
                 "history_path": "item_histories/Drone_Blueprints/Light_Battlecruiser/Lightweight_Brutix_Blueprint/64730010410_history.csv",
                 "icon_path": "item_histories/Drone_Blueprints/Light_Battlecruiser/Lightweight_Brutix_Blueprint/14730000410.png"
             },
+            "Lightweight_Drake_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Light_Battlecruiser/Lightweight_Drake_Blueprint/64730010110_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Light_Battlecruiser/Lightweight_Drake_Blueprint/14730000110.png"
+            },
             "Lightweight_Harbinger_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Battlecruiser/Lightweight_Harbinger_Blueprint/64730010310_history.csv",
                 "icon_path": "item_histories/Drone_Blueprints/Light_Battlecruiser/Lightweight_Harbinger_Blueprint/14730000310.png"
@@ -2223,9 +2231,17 @@
             }
         },
         "Light_Cruiser": {
+            "Lightweight_Arbitrator_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Light_Cruiser/Lightweight_Arbitrator_Blueprint/64720010310_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Light_Cruiser/Lightweight_Arbitrator_Blueprint/14720000310.png"
+            },
             "Lightweight_Bellicose_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Cruiser/Lightweight_Bellicose_Blueprint/64720010210_history.csv",
                 "icon_path": "item_histories/Drone_Blueprints/Light_Cruiser/Lightweight_Bellicose_Blueprint/14720000210.png"
+            },
+            "Lightweight_Blackbird_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Light_Cruiser/Lightweight_Blackbird_Blueprint/64720010110_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Light_Cruiser/Lightweight_Blackbird_Blueprint/14720000110.png"
             },
             "Lightweight_Caracal_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Cruiser/Lightweight_Caracal_Blueprint/64720020110_history.csv",
@@ -3075,6 +3091,10 @@
                 "history_path": "item_histories/Implants/Implant_Advanced_Unit/Barrage_Repression_Shooting_Enhancement_v20/16400002121_history.csv",
                 "icon_path": ""
             },
+            "Barrage_Repression_Shooting_Enhancement_v40": {
+                "history_path": "item_histories/Implants/Implant_Advanced_Unit/Barrage_Repression_Shooting_Enhancement_v40/16400002141_history.csv",
+                "icon_path": ""
+            },
             "Bombard_Tactics_Defense_Enhancement_v10": {
                 "history_path": "item_histories/Implants/Implant_Advanced_Unit/Bombard_Tactics_Defense_Enhancement_v10/16400008011_history.csv",
                 "icon_path": ""
@@ -3149,6 +3169,10 @@
             },
             "Pulse_Crystal_Capacitor_Reinforcement_v30": {
                 "history_path": "item_histories/Implants/Implant_Advanced_Unit/Pulse_Crystal_Capacitor_Reinforcement_v30/16400001131_history.csv",
+                "icon_path": ""
+            },
+            "Pulse_Crystal_Capacitor_Reinforcement_v40": {
+                "history_path": "item_histories/Implants/Implant_Advanced_Unit/Pulse_Crystal_Capacitor_Reinforcement_v40/16400001141_history.csv",
                 "icon_path": ""
             },
             "Pulse_Crystal_Flight_Time_Reinforcement_v10": {
@@ -4465,6 +4489,10 @@
             },
             "Fighter_Microwarpdrive_Guide_Output_Boost_v90": {
                 "history_path": "item_histories/Implants/Implant_General_Units/Fighter_Microwarpdrive_Guide_Output_Boost_v90/16500056091_history.csv",
+                "icon_path": ""
+            },
+            "General_Fire-control_System_Damage_Upgrade_v10": {
+                "history_path": "item_histories/Implants/Implant_General_Units/General_Fire-control_System_Damage_Upgrade_v10/16500062011_history.csv",
                 "icon_path": ""
             },
             "General_Fire-control_System_Damage_Upgrade_v100": {
@@ -6265,6 +6293,10 @@
                 "history_path": "item_histories/Implants/Tactical_Defense/Tactical_Defense_Advanced/16016000004_history.csv",
                 "icon_path": "item_histories/Implants/Tactical_Defense/Tactical_Defense_Advanced/16016000001.png"
             },
+            "Tactical_Defense_Basic": {
+                "history_path": "item_histories/Implants/Tactical_Defense/Tactical_Defense_Basic/16016000002_history.csv",
+                "icon_path": "item_histories/Implants/Tactical_Defense/Tactical_Defense_Basic/16016000001.png"
+            },
             "Tactical_Defense_Experimental": {
                 "history_path": "item_histories/Implants/Tactical_Defense/Tactical_Defense_Experimental/16016000001_history.csv",
                 "icon_path": "item_histories/Implants/Tactical_Defense/Tactical_Defense_Experimental/16016000001.png"
@@ -6349,6 +6381,10 @@
             }
         },
         "test\u8111\u690d\u5165\u4f53\u84dd\u56fe": {
+            "Basic_Aerospace_Tactics_Blueprint": {
+                "history_path": "item_histories/Implant_Blueprints/test\u8111\u690d\u5165\u4f53\u84dd\u56fe/Basic_Aerospace_Tactics_Blueprint/66000000061_history.csv",
+                "icon_path": "item_histories/Implant_Blueprints/test\u8111\u690d\u5165\u4f53\u84dd\u56fe/Basic_Aerospace_Tactics_Blueprint/16015000001.png"
+            },
             "Basic_Artillery_Cover_Blueprint": {
                 "history_path": "item_histories/Implant_Blueprints/test\u8111\u690d\u5165\u4f53\u84dd\u56fe/Basic_Artillery_Cover_Blueprint/66000000057_history.csv",
                 "icon_path": "item_histories/Implant_Blueprints/test\u8111\u690d\u5165\u4f53\u84dd\u56fe/Basic_Artillery_Cover_Blueprint/16014000001.png"
@@ -6380,6 +6416,10 @@
             "Experimental_Support_Projection_Blueprint": {
                 "history_path": "item_histories/Implant_Blueprints/test\u8111\u690d\u5165\u4f53\u84dd\u56fe/Experimental_Support_Projection_Blueprint/66000000024_history.csv",
                 "icon_path": ""
+            },
+            "Experimental_Tactical_Defense_Blueprint": {
+                "history_path": "item_histories/Implant_Blueprints/test\u8111\u690d\u5165\u4f53\u84dd\u56fe/Experimental_Tactical_Defense_Blueprint/66000000064_history.csv",
+                "icon_path": "item_histories/Implant_Blueprints/test\u8111\u690d\u5165\u4f53\u84dd\u56fe/Experimental_Tactical_Defense_Blueprint/16016000001.png"
             }
         }
     },
@@ -8972,6 +9012,10 @@
             "Capital_Remote_Armor_Repairer_Enhancer_I": {
                 "history_path": "item_histories/Module/Armor_Rigs/Capital_Remote_Armor_Repairer_Enhancer_I/11708230006_history.csv",
                 "icon_path": "item_histories/Module/Armor_Rigs/Capital_Remote_Armor_Repairer_Enhancer_I/11708000000.png"
+            },
+            "Capital_Remote_Armor_Repairer_Stabilizer_I": {
+                "history_path": "item_histories/Module/Armor_Rigs/Capital_Remote_Armor_Repairer_Stabilizer_I/11708200006_history.csv",
+                "icon_path": "item_histories/Module/Armor_Rigs/Capital_Remote_Armor_Repairer_Stabilizer_I/11708000000.png"
             },
             "Capital_Repair_Augmenter_I": {
                 "history_path": "item_histories/Module/Armor_Rigs/Capital_Repair_Augmenter_I/11708100006_history.csv",
@@ -21813,6 +21857,10 @@
                 "history_path": "item_histories/SKIN/SKIN/Stabber_II_Sunset_SKINpermanent/80522003140_history.csv",
                 "icon_path": "item_histories/SKIN/SKIN/Stabber_II_Sunset_SKINpermanent/80100000012.png"
             },
+            "Stabber_Late_Night_SKINpermanent": {
+                "history_path": "item_histories/SKIN/SKIN/Stabber_Late_Night_SKINpermanent/80519600680_history.csv",
+                "icon_path": "item_histories/SKIN/SKIN/Stabber_Late_Night_SKINpermanent/80100000116.png"
+            },
             "Stabber_Sniper_Bull_SKINpermanent": {
                 "history_path": "item_histories/SKIN/SKIN/Stabber_Sniper_Bull_SKINpermanent/80525501600_history.csv",
                 "icon_path": "item_histories/SKIN/SKIN/Stabber_Sniper_Bull_SKINpermanent/80525500680.png"
@@ -23512,6 +23560,10 @@
             "Structure_Construction_Parts": {
                 "history_path": "item_histories/unknown/Station_Components/Structure_Construction_Parts/27000000000_history.csv",
                 "icon_path": "item_histories/unknown/Station_Components/Structure_Construction_Parts/27000000000.png"
+            },
+            "Structure_Core_Stabilizer": {
+                "history_path": "item_histories/unknown/Station_Components/Structure_Core_Stabilizer/27000000015_history.csv",
+                "icon_path": "item_histories/unknown/Station_Components/Structure_Core_Stabilizer/27000000015.png"
             },
             "Structure_Docking_Bay": {
                 "history_path": "item_histories/unknown/Station_Components/Structure_Docking_Bay/27000000007_history.csv",
