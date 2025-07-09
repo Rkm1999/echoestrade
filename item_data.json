@@ -1099,9 +1099,21 @@
             }
         },
         "Light_Battlecruiser": {
+            "Lightweight_Drake": {
+                "history_path": "item_histories/Drones/Light_Battlecruiser/Lightweight_Drake/14730010110_history.csv",
+                "icon_path": "item_histories/Drones/Light_Battlecruiser/Lightweight_Drake/14730000110.png"
+            },
             "Lightweight_Hurricane": {
                 "history_path": "item_histories/Drones/Light_Battlecruiser/Lightweight_Hurricane/14730010210_history.csv",
                 "icon_path": "item_histories/Drones/Light_Battlecruiser/Lightweight_Hurricane/14730000210.png"
+            },
+            "Lightweight_Talos": {
+                "history_path": "item_histories/Drones/Light_Battlecruiser/Lightweight_Talos/14730020410_history.csv",
+                "icon_path": "item_histories/Drones/Light_Battlecruiser/Lightweight_Talos/14730001410.png"
+            },
+            "Lightweight_Tornado": {
+                "history_path": "item_histories/Drones/Light_Battlecruiser/Lightweight_Tornado/14730020210_history.csv",
+                "icon_path": "item_histories/Drones/Light_Battlecruiser/Lightweight_Tornado/14730001210.png"
             }
         },
         "Light_Cruiser": {
@@ -3091,6 +3103,10 @@
                 "history_path": "item_histories/Implants/Implant_Advanced_Unit/Barrage_Repression_Shooting_Enhancement_v20/16400002121_history.csv",
                 "icon_path": ""
             },
+            "Barrage_Repression_Shooting_Enhancement_v30": {
+                "history_path": "item_histories/Implants/Implant_Advanced_Unit/Barrage_Repression_Shooting_Enhancement_v30/16400002131_history.csv",
+                "icon_path": ""
+            },
             "Barrage_Repression_Shooting_Enhancement_v40": {
                 "history_path": "item_histories/Implants/Implant_Advanced_Unit/Barrage_Repression_Shooting_Enhancement_v40/16400002141_history.csv",
                 "icon_path": ""
@@ -3143,6 +3159,10 @@
                 "history_path": "item_histories/Implants/Implant_Advanced_Unit/High_Power_Coil_Power_Reinforcement_v40/16400003041_history.csv",
                 "icon_path": ""
             },
+            "Kinetic_Burst_Precision_Enhancement_v40": {
+                "history_path": "item_histories/Implants/Implant_Advanced_Unit/Kinetic_Burst_Precision_Enhancement_v40/16400018041_history.csv",
+                "icon_path": ""
+            },
             "Mining_Enhancement_Efficiency_Reinforcement_v10": {
                 "history_path": "item_histories/Implants/Implant_Advanced_Unit/Mining_Enhancement_Efficiency_Reinforcement_v10/16400013011_history.csv",
                 "icon_path": ""
@@ -3157,6 +3177,10 @@
             },
             "Mining_Enhancement_Efficiency_Reinforcement_v40": {
                 "history_path": "item_histories/Implants/Implant_Advanced_Unit/Mining_Enhancement_Efficiency_Reinforcement_v40/16400013041_history.csv",
+                "icon_path": ""
+            },
+            "Multifrequency_Crystal_Flight_Time_Reinforcement_v40": {
+                "history_path": "item_histories/Implants/Implant_Advanced_Unit/Multifrequency_Crystal_Flight_Time_Reinforcement_v40/16400017041_history.csv",
                 "icon_path": ""
             },
             "Pulse_Crystal_Capacitor_Reinforcement_v10": {
@@ -3281,6 +3305,10 @@
             },
             "Thermal_Circulation_Power_Control_Reinforcement_v30": {
                 "history_path": "item_histories/Implants/Implant_Advanced_Unit/Thermal_Circulation_Power_Control_Reinforcement_v30/16400004131_history.csv",
+                "icon_path": ""
+            },
+            "Thermal_Circulation_Power_Control_Reinforcement_v40": {
+                "history_path": "item_histories/Implants/Implant_Advanced_Unit/Thermal_Circulation_Power_Control_Reinforcement_v40/16400004141_history.csv",
                 "icon_path": ""
             },
             "Thermal_Circulation_Temperature_Control_Reinforcement_v10": {
@@ -6393,6 +6421,10 @@
                 "history_path": "item_histories/Implant_Blueprints/test\u8111\u690d\u5165\u4f53\u84dd\u56fe/Basic_Focused_Crystal_Blueprint/66000000001_history.csv",
                 "icon_path": ""
             },
+            "Basic_Tactical_Defense_Blueprint": {
+                "history_path": "item_histories/Implant_Blueprints/test\u8111\u690d\u5165\u4f53\u84dd\u56fe/Basic_Tactical_Defense_Blueprint/66000000065_history.csv",
+                "icon_path": "item_histories/Implant_Blueprints/test\u8111\u690d\u5165\u4f53\u84dd\u56fe/Basic_Tactical_Defense_Blueprint/16016000001.png"
+            },
             "Experimental_Aerospace_Tactics_Blueprint": {
                 "history_path": "item_histories/Implant_Blueprints/test\u8111\u690d\u5165\u4f53\u84dd\u56fe/Experimental_Aerospace_Tactics_Blueprint/66000000060_history.csv",
                 "icon_path": "item_histories/Implant_Blueprints/test\u8111\u690d\u5165\u4f53\u84dd\u56fe/Experimental_Aerospace_Tactics_Blueprint/16015000001.png"
@@ -8759,6 +8791,10 @@
                 "history_path": "item_histories/Module/Armor_Repair_Unit/Corpum_C-Type_Medium_Armor_Repairers/11503100024_history.csv",
                 "icon_path": "item_histories/Module/Armor_Repair_Unit/Corpum_C-Type_Medium_Armor_Repairers/130040001.png"
             },
+            "Corpus_A-Type_Capital_Armor_Repairers": {
+                "history_path": "item_histories/Module/Armor_Repair_Unit/Corpus_A-Type_Capital_Armor_Repairers/11503300032_history.csv",
+                "icon_path": "item_histories/Module/Armor_Repair_Unit/Corpus_A-Type_Capital_Armor_Repairers/130040101.png"
+            },
             "Corpus_B-Type_Capital_Armor_Repairers": {
                 "history_path": "item_histories/Module/Armor_Repair_Unit/Corpus_B-Type_Capital_Armor_Repairers/11503300028_history.csv",
                 "icon_path": "item_histories/Module/Armor_Repair_Unit/Corpus_B-Type_Capital_Armor_Repairers/130040101.png"
@@ -9598,6 +9634,10 @@
             "Domination_Small_Capacitor_Battery": {
                 "history_path": "item_histories/Module/Capacitor_Batteries/Domination_Small_Capacitor_Battery/11309100017_history.csv",
                 "icon_path": "item_histories/Module/Capacitor_Batteries/Domination_Small_Capacitor_Battery/11309100000.png"
+            },
+            "Gistii_A-Type_Small_Capacitor_Battery": {
+                "history_path": "item_histories/Module/Capacitor_Batteries/Gistii_A-Type_Small_Capacitor_Battery/11309100032_history.csv",
+                "icon_path": "item_histories/Module/Capacitor_Batteries/Gistii_A-Type_Small_Capacitor_Battery/11309100000.png"
             },
             "Gistii_B-Type_Small_Capacitor_Battery": {
                 "history_path": "item_histories/Module/Capacitor_Batteries/Gistii_B-Type_Small_Capacitor_Battery/11309100028_history.csv",
@@ -11513,6 +11553,10 @@
                 "history_path": "item_histories/Module/Laser_Rigs/Capital_Laser_Burst_Aerator_I/11702080006_history.csv",
                 "icon_path": "item_histories/Module/Laser_Rigs/Capital_Laser_Burst_Aerator_I/11702100000.png"
             },
+            "Capital_Laser_Burst_Aerator_II": {
+                "history_path": "item_histories/Module/Laser_Rigs/Capital_Laser_Burst_Aerator_II/11702080008_history.csv",
+                "icon_path": "item_histories/Module/Laser_Rigs/Capital_Laser_Burst_Aerator_II/11702100001.png"
+            },
             "Capital_Laser_Collision_Accelerator_I": {
                 "history_path": "item_histories/Module/Laser_Rigs/Capital_Laser_Collision_Accelerator_I/11702050006_history.csv",
                 "icon_path": "item_histories/Module/Laser_Rigs/Capital_Laser_Collision_Accelerator_I/11702100000.png"
@@ -12174,6 +12218,10 @@
             "Capital_Polycarbon_Engine_Housing_I": {
                 "history_path": "item_histories/Module/Navigation_Rig/Capital_Polycarbon_Engine_Housing_I/11710090006_history.csv",
                 "icon_path": "item_histories/Module/Navigation_Rig/Capital_Polycarbon_Engine_Housing_I/11710100000.png"
+            },
+            "Capital_Polycarbon_Engine_Housing_II": {
+                "history_path": "item_histories/Module/Navigation_Rig/Capital_Polycarbon_Engine_Housing_II/11710090008_history.csv",
+                "icon_path": "item_histories/Module/Navigation_Rig/Capital_Polycarbon_Engine_Housing_II/11710100001.png"
             },
             "Capital_Warp_Core_Optimizer_I": {
                 "history_path": "item_histories/Module/Navigation_Rig/Capital_Warp_Core_Optimizer_I/11710120006_history.csv",
@@ -14775,6 +14823,10 @@
                 "history_path": "item_histories/Module/test\u8d85\u5927\u578b\u5feb\u901f\u5bfc\u5f39\u53d1\u5c04\u5668/MK9_Barreled_Capital_Missile_Launcher_Torpedoes/11021000010_history.csv",
                 "icon_path": "item_histories/Module/test\u8d85\u5927\u578b\u5feb\u901f\u5bfc\u5f39\u53d1\u5c04\u5668/MK9_Barreled_Capital_Missile_Launcher_Torpedoes/11021000000.png"
             },
+            "Pith_B-Type_Barreled_Capital_Missile_Launcher_Torpedoes": {
+                "history_path": "item_histories/Module/test\u8d85\u5927\u578b\u5feb\u901f\u5bfc\u5f39\u53d1\u5c04\u5668/Pith_B-Type_Barreled_Capital_Missile_Launcher_Torpedoes/11021000028_history.csv",
+                "icon_path": "item_histories/Module/test\u8d85\u5927\u578b\u5feb\u901f\u5bfc\u5f39\u53d1\u5c04\u5668/Pith_B-Type_Barreled_Capital_Missile_Launcher_Torpedoes/11021000000.png"
+            },
             "Pith_C-Type_Barreled_Capital_Missile_Launcher_Torpedoes": {
                 "history_path": "item_histories/Module/test\u8d85\u5927\u578b\u5feb\u901f\u5bfc\u5f39\u53d1\u5c04\u5668/Pith_C-Type_Barreled_Capital_Missile_Launcher_Torpedoes/11021000024_history.csv",
                 "icon_path": "item_histories/Module/test\u8d85\u5927\u578b\u5feb\u901f\u5bfc\u5f39\u53d1\u5c04\u5668/Pith_C-Type_Barreled_Capital_Missile_Launcher_Torpedoes/11021000000.png"
@@ -17211,6 +17263,10 @@
                 "history_path": "item_histories/Module_Blueprint/unknown/Nullify_Quantum_Entanglement_Generator_Blueprint/61999000400_history.csv",
                 "icon_path": "item_histories/Module_Blueprint/unknown/Nullify_Quantum_Entanglement_Generator_Blueprint/11052000000.png"
             },
+            "Prototype_Capital_Micro_Jump_Drive_Blueprint": {
+                "history_path": "item_histories/Module_Blueprint/unknown/Prototype_Capital_Micro_Jump_Drive_Blueprint/61999000610_history.csv",
+                "icon_path": "item_histories/Module_Blueprint/unknown/Prototype_Capital_Micro_Jump_Drive_Blueprint/11374100000.png"
+            },
             "Prototype_Capital_Micro_Jump_Drive_Field_Generator_Blueprint": {
                 "history_path": "item_histories/Module_Blueprint/unknown/Prototype_Capital_Micro_Jump_Drive_Field_Generator_Blueprint/61999000710_history.csv",
                 "icon_path": "item_histories/Module_Blueprint/unknown/Prototype_Capital_Micro_Jump_Drive_Field_Generator_Blueprint/11375100000.png"
@@ -17464,6 +17520,12 @@
         }
     },
     "Ship": {
+        "Carriers": {
+            "Shanhai": {
+                "history_path": "item_histories/Ship/Carriers/Shanhai/10702000502_history.csv",
+                "icon_path": "item_histories/Ship/Carriers/Shanhai/10702000502.png"
+            }
+        },
         "Force_Auxiliaries": {
             "Hui-Yue": {
                 "history_path": "item_histories/Ship/Force_Auxiliaries/Hui-Yue/10703000502_history.csv",
@@ -20901,6 +20963,10 @@
                 "history_path": "item_histories/SKIN/SKIN/Daredevil_Snowfield_Adventure_SKINpermanent/80506102650_history.csv",
                 "icon_path": "item_histories/SKIN/SKIN/Daredevil_Snowfield_Adventure_SKINpermanent/80100000032.png"
             },
+            "Dominix_Rosethorn_SKIN_Permanent": {
+                "history_path": "item_histories/SKIN/SKIN/Dominix_Rosethorn_SKIN_Permanent/80506602150_history.csv",
+                "icon_path": "item_histories/SKIN/SKIN/Dominix_Rosethorn_SKIN_Permanent/80100000038.png"
+            },
             "Dragoon_Assault_Yoiul_Envoy_SKINpermanent": {
                 "history_path": "item_histories/SKIN/SKIN/Dragoon_Assault_Yoiul_Envoy_SKINpermanent/80503701230_history.csv",
                 "icon_path": "item_histories/SKIN/SKIN/Dragoon_Assault_Yoiul_Envoy_SKINpermanent/80100000031.png"
@@ -21605,6 +21671,10 @@
                 "history_path": "item_histories/SKIN/SKIN/Prophecy_Command_Sunset_SKINpermanent/80521701770_history.csv",
                 "icon_path": "item_histories/SKIN/SKIN/Prophecy_Command_Sunset_SKINpermanent/80100000012.png"
             },
+            "Prophecy_Command_Tiger_SKINpermanent": {
+                "history_path": "item_histories/SKIN/SKIN/Prophecy_Command_Tiger_SKINpermanent/80532201770_history.csv",
+                "icon_path": "item_histories/SKIN/SKIN/Prophecy_Command_Tiger_SKINpermanent/80526501390.png"
+            },
             "Prophecy_Dawn_SKIN_Permanent": {
                 "history_path": "item_histories/SKIN/SKIN/Prophecy_Dawn_SKIN_Permanent/80508201390_history.csv",
                 "icon_path": "item_histories/SKIN/SKIN/Prophecy_Dawn_SKIN_Permanent/80100000043.png"
@@ -21981,6 +22051,10 @@
                 "history_path": "item_histories/SKIN/SKIN/Thorax_Interdictor_Prayer_SKINpermanent/80533903240_history.csv",
                 "icon_path": "item_histories/SKIN/SKIN/Thorax_Interdictor_Prayer_SKINpermanent/90533901010.png"
             },
+            "Thorax_Prayer_SKINpermanent": {
+                "history_path": "item_histories/SKIN/SKIN/Thorax_Prayer_SKINpermanent/80533901010_history.csv",
+                "icon_path": "item_histories/SKIN/SKIN/Thorax_Prayer_SKINpermanent/90533901010.png"
+            },
             "Thorax_Trainer_Exoplanets_Hunter_SKINpermanent": {
                 "history_path": "item_histories/SKIN/SKIN/Thorax_Trainer_Exoplanets_Hunter_SKINpermanent/80002201110_history.csv",
                 "icon_path": "item_histories/SKIN/SKIN/Thorax_Trainer_Exoplanets_Hunter_SKINpermanent/80000000020.png"
@@ -22259,6 +22333,10 @@
                 "history_path": "item_histories/Structure/Corporation_Citadel/Corporation_Outpost_I/23009000000_history.csv",
                 "icon_path": "item_histories/Structure/Corporation_Citadel/Corporation_Outpost_I/23009000003.png"
             },
+            "Corporation_Reconnaissance_Outpost": {
+                "history_path": "item_histories/Structure/Corporation_Citadel/Corporation_Reconnaissance_Outpost/23009000100_history.csv",
+                "icon_path": "item_histories/Structure/Corporation_Citadel/Corporation_Reconnaissance_Outpost/23009000100.png"
+            },
             "Fortizar": {
                 "history_path": "item_histories/Structure/Corporation_Citadel/Fortizar/23009100000_history.csv",
                 "icon_path": "item_histories/Structure/Corporation_Citadel/Fortizar/23006000000.png"
@@ -22422,6 +22500,12 @@
             "Ore_Gravity_Well_Trap": {
                 "history_path": "item_histories/Structure_Modules/Nihilus_Construction_Device/Ore_Gravity_Well_Trap/24029000002_history.csv",
                 "icon_path": "item_histories/Structure_Modules/Nihilus_Construction_Device/Ore_Gravity_Well_Trap/24029000000.png"
+            }
+        },
+        "Power_Transfer_Array": {
+            "Structure_Power_Transmission_Array": {
+                "history_path": "item_histories/Structure_Modules/Power_Transfer_Array/Structure_Power_Transmission_Array/24034000000_history.csv",
+                "icon_path": "item_histories/Structure_Modules/Power_Transfer_Array/Structure_Power_Transmission_Array/24034000000.png"
             }
         },
         "Production_Service_Center": {
@@ -23605,6 +23689,10 @@
                 "history_path": "item_histories/unknown/Station_Components/Structure_Office_Center/27000000010_history.csv",
                 "icon_path": "item_histories/unknown/Station_Components/Structure_Office_Center/27000000010.png"
             },
+            "Structure_Reactor_Network": {
+                "history_path": "item_histories/unknown/Station_Components/Structure_Reactor_Network/27000000017_history.csv",
+                "icon_path": "item_histories/unknown/Station_Components/Structure_Reactor_Network/27000000017.png"
+            },
             "Structure_Repair_Facility": {
                 "history_path": "item_histories/unknown/Station_Components/Structure_Repair_Facility/27000000005_history.csv",
                 "icon_path": "item_histories/unknown/Station_Components/Structure_Repair_Facility/27000000005.png"
@@ -24006,6 +24094,10 @@
             "Expert_Remote_Shield_Reinforcement_Theory_Level_1": {
                 "history_path": "item_histories/unknown/test\u6280\u80fd\u690d\u5165\u82af\u7247/Expert_Remote_Shield_Reinforcement_Theory_Level_1/28010002041_history.csv",
                 "icon_path": "item_histories/unknown/test\u6280\u80fd\u690d\u5165\u82af\u7247/Expert_Remote_Shield_Reinforcement_Theory_Level_1/16300000304.png"
+            },
+            "Expert_Remote_Shield_Transmission_Array_Theory_Level_1": {
+                "history_path": "item_histories/unknown/test\u6280\u80fd\u690d\u5165\u82af\u7247/Expert_Remote_Shield_Transmission_Array_Theory_Level_1/28010002044_history.csv",
+                "icon_path": "item_histories/unknown/test\u6280\u80fd\u690d\u5165\u82af\u7247/Expert_Remote_Shield_Transmission_Array_Theory_Level_1/16300000304.png"
             },
             "Expert_Sharpshooter_Level_1": {
                 "history_path": "item_histories/unknown/test\u6280\u80fd\u690d\u5165\u82af\u7247/Expert_Sharpshooter_Level_1/28010002035_history.csv",
