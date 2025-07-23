@@ -1107,6 +1107,10 @@
                 "history_path": "item_histories/Drones/Light_Battlecruiser/Lightweight_Hurricane/14730010210_history.csv",
                 "icon_path": "item_histories/Drones/Light_Battlecruiser/Lightweight_Hurricane/14730000210.png"
             },
+            "Lightweight_Naga": {
+                "history_path": "item_histories/Drones/Light_Battlecruiser/Lightweight_Naga/14730020110_history.csv",
+                "icon_path": "item_histories/Drones/Light_Battlecruiser/Lightweight_Naga/14730001110.png"
+            },
             "Lightweight_Talos": {
                 "history_path": "item_histories/Drones/Light_Battlecruiser/Lightweight_Talos/14730020410_history.csv",
                 "icon_path": "item_histories/Drones/Light_Battlecruiser/Lightweight_Talos/14730001410.png"
@@ -1312,6 +1316,10 @@
             "Augmented__Pulsar_Heavy": {
                 "history_path": "item_histories/Drones/Light_Fighter/Augmented__Pulsar_Heavy/14600150022_history.csv",
                 "icon_path": "item_histories/Drones/Light_Fighter/Augmented__Pulsar_Heavy/14600150013.png"
+            },
+            "Augmented__Pulsar_Light": {
+                "history_path": "item_histories/Drones/Light_Fighter/Augmented__Pulsar_Light/14600050022_history.csv",
+                "icon_path": "item_histories/Drones/Light_Fighter/Augmented__Pulsar_Light/14600050013.png"
             },
             "Augmented__Sextant_Sentinel": {
                 "history_path": "item_histories/Drones/Light_Fighter/Augmented__Sextant_Sentinel/14600060022_history.csv",
@@ -7619,6 +7627,10 @@
                 "history_path": "item_histories/Membrane/Membrane/Gila_Tungsten_Age_Core/81001000247_history.csv",
                 "icon_path": "item_histories/Membrane/Membrane/Gila_Tungsten_Age_Core/81000000001.png"
             },
+            "Griffin_Breeze_Core": {
+                "history_path": "item_histories/Membrane/Membrane/Griffin_Breeze_Core/81000040031_history.csv",
+                "icon_path": "item_histories/Membrane/Membrane/Griffin_Breeze_Core/81000000000.png"
+            },
             "Griffin_Breeze_II_Core": {
                 "history_path": "item_histories/Membrane/Membrane/Griffin_Breeze_II_Core/81000570031_history.csv",
                 "icon_path": "item_histories/Membrane/Membrane/Griffin_Breeze_II_Core/81000000000.png"
@@ -8376,6 +8388,12 @@
             "Mono_Lightweight_Ship_Hangar_Modification_II": {
                 "history_path": "item_histories/Module/Advanced_Engineering_Rigs/Mono_Lightweight_Ship_Hangar_Modification_II/11727010012_history.csv",
                 "icon_path": "item_histories/Module/Advanced_Engineering_Rigs/Mono_Lightweight_Ship_Hangar_Modification_II/11727010002.png"
+            }
+        },
+        "Annihilator_Lance": {
+            "Starblade_Exterminator_Lance": {
+                "history_path": "item_histories/Module/Annihilator_Lance/Starblade_Exterminator_Lance/11046500012_history.csv",
+                "icon_path": "item_histories/Module/Annihilator_Lance/Starblade_Exterminator_Lance/11046500012.png"
             }
         },
         "Anti-Drone_Pulse_Bombs": {
@@ -9631,6 +9649,10 @@
                 "history_path": "item_histories/Module/Capacitor_Batteries/Corpus_C-Type_Capital_Cap_Battery/11309400025_history.csv",
                 "icon_path": "item_histories/Module/Capacitor_Batteries/Corpus_C-Type_Capital_Cap_Battery/11309200000.png"
             },
+            "Domination_Medium_Capacitor_Batteries": {
+                "history_path": "item_histories/Module/Capacitor_Batteries/Domination_Medium_Capacitor_Batteries/11309200017_history.csv",
+                "icon_path": "item_histories/Module/Capacitor_Batteries/Domination_Medium_Capacitor_Batteries/11309100000.png"
+            },
             "Domination_Small_Capacitor_Battery": {
                 "history_path": "item_histories/Module/Capacitor_Batteries/Domination_Small_Capacitor_Battery/11309100017_history.csv",
                 "icon_path": "item_histories/Module/Capacitor_Batteries/Domination_Small_Capacitor_Battery/11309100000.png"
@@ -10554,6 +10576,10 @@
             "Capital_Targeting_System_Subcontroller_I": {
                 "history_path": "item_histories/Module/Engineer_Rigs/Capital_Targeting_System_Subcontroller_I/11711070006_history.csv",
                 "icon_path": "item_histories/Module/Engineer_Rigs/Capital_Targeting_System_Subcontroller_I/11711100000.png"
+            },
+            "Capital_Targeting_System_Subcontroller_II": {
+                "history_path": "item_histories/Module/Engineer_Rigs/Capital_Targeting_System_Subcontroller_II/11711070008_history.csv",
+                "icon_path": "item_histories/Module/Engineer_Rigs/Capital_Targeting_System_Subcontroller_II/11711100001.png"
             },
             "Mineral_Hold_Optimization_I": {
                 "history_path": "item_histories/Module/Engineer_Rigs/Mineral_Hold_Optimization_I/11711100002_history.csv",
@@ -11851,6 +11877,10 @@
             }
         },
         "Micro_Jump_Drive_Field_Generators": {
+            "Prototype_Capital_Micro_Jump_Drive_Field_Generator": {
+                "history_path": "item_histories/Module/Micro_Jump_Drive_Field_Generators/Prototype_Capital_Micro_Jump_Drive_Field_Generator/11375100002_history.csv",
+                "icon_path": "item_histories/Module/Micro_Jump_Drive_Field_Generators/Prototype_Capital_Micro_Jump_Drive_Field_Generator/11375100000.png"
+            },
             "Prototype_Micro_Jump_Drive_Field_Generators": {
                 "history_path": "item_histories/Module/Micro_Jump_Drive_Field_Generators/Prototype_Micro_Jump_Drive_Field_Generators/11375000002_history.csv",
                 "icon_path": "item_histories/Module/Micro_Jump_Drive_Field_Generators/Prototype_Micro_Jump_Drive_Field_Generators/11375000000.png"
@@ -12214,6 +12244,10 @@
             "Capital_Hyperspatial_Velocity_Optimizer_I": {
                 "history_path": "item_histories/Module/Navigation_Rig/Capital_Hyperspatial_Velocity_Optimizer_I/11710130006_history.csv",
                 "icon_path": "item_histories/Module/Navigation_Rig/Capital_Hyperspatial_Velocity_Optimizer_I/11710100000.png"
+            },
+            "Capital_Hyperspatial_Velocity_Optimizer_II": {
+                "history_path": "item_histories/Module/Navigation_Rig/Capital_Hyperspatial_Velocity_Optimizer_II/11710130008_history.csv",
+                "icon_path": "item_histories/Module/Navigation_Rig/Capital_Hyperspatial_Velocity_Optimizer_II/11710100001.png"
             },
             "Capital_Polycarbon_Engine_Housing_I": {
                 "history_path": "item_histories/Module/Navigation_Rig/Capital_Polycarbon_Engine_Housing_I/11710090006_history.csv",
@@ -15650,6 +15684,10 @@
             "Inferno_Thermal_Annihilator_Blueprint": {
                 "history_path": "item_histories/Module_Blueprint/Doomsday_Weapon_Blueprints/Inferno_Thermal_Annihilator_Blueprint/61046020012_history.csv",
                 "icon_path": "item_histories/Module_Blueprint/Doomsday_Weapon_Blueprints/Inferno_Thermal_Annihilator_Blueprint/11046020000.png"
+            },
+            "Starblade_Exterminator_Lance_Blueprint": {
+                "history_path": "item_histories/Module_Blueprint/Doomsday_Weapon_Blueprints/Starblade_Exterminator_Lance_Blueprint/61046500012_history.csv",
+                "icon_path": "item_histories/Module_Blueprint/Doomsday_Weapon_Blueprints/Starblade_Exterminator_Lance_Blueprint/11046500012.png"
             }
         },
         "Drone_Rig_Blueprints": {
@@ -19242,6 +19280,10 @@
             "Annihilator_Blueprints": {
                 "history_path": "item_histories/Ship_Blueprints/Battleship_Blueprints/Annihilator_Blueprints/60500012001_history.csv",
                 "icon_path": "item_histories/Ship_Blueprints/Battleship_Blueprints/Annihilator_Blueprints/10500012001.png"
+            },
+            "Anubis_Blueprints": {
+                "history_path": "item_histories/Ship_Blueprints/Battleship_Blueprints/Anubis_Blueprints/60500011801_history.csv",
+                "icon_path": "item_histories/Ship_Blueprints/Battleship_Blueprints/Anubis_Blueprints/10500011801.png"
             },
             "Apocalypse_Blueprint": {
                 "history_path": "item_histories/Ship_Blueprints/Battleship_Blueprints/Apocalypse_Blueprint/60500000303_history.csv",
