@@ -10,7 +10,7 @@ API_BASE_URL_ITEMS = "https://echoes.mobi/api/items"
 API_BASE_URL_HISTORY = "https://echoes.mobi/api/item_weekly_average_prices?page=1&itemId="
 ITEMS_OUTPUT_CSV_FILE = "item_lists.csv"
 HISTORIES_BASE_DIR = "item_histories"
-REQUEST_DELAY_SECONDS = 0.5
+REQUEST_DELAY_SECONDS = 0.05
 FINAL_CSV_HEADERS = ['id', 'name', 'category_name', 'group_name', 'weekly_average_price', 'icon_id', 'date_created', 'date_updated', 'icon_url', 'icon_downloaded', 'needs_history_update']
 
 def sanitize_for_path(name_str):
