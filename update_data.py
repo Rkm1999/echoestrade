@@ -107,9 +107,7 @@ def fetch_and_save_items():
                                 existing_item[key] = value
                             existing_item['icon_downloaded'] = icon_downloaded_status
                             existing_item['needs_history_update'] = 'True'
-                        else:
-                            # API data not newer or local/API date missing, keep existing, set history update to False
-                            existing_item['needs_history_update'] = 'False'
+
                         all_items_data[item_id] = existing_item # Ensure reference is updated if dict was copied
                     else:
                         # New item
