@@ -1605,27 +1605,27 @@
             },
             "Beatnik_Large_Armor_Maintenance_Drone": {
                 "history_path": "item_histories/Drone/Support_Drones/Beatnik_Large_Armor_Maintenance_Drone/14200410010_history.csv",
-                "icon_path": "item_histories/Drone/Support_Drones/Beatnik_Large_Armor_Maintenance_Drone/14000200002.png"
+                "icon_path": "item_histories/Drone/Support_Drones/Beatnik_Large_Armor_Maintenance_Drone/14000200000.png"
             },
             "Beatnik_Superheavy_Armor_Maintenance_Drone": {
                 "history_path": "item_histories/Drone/Support_Drones/Beatnik_Superheavy_Armor_Maintenance_Drone/14200420010_history.csv",
-                "icon_path": "item_histories/Drone/Support_Drones/Beatnik_Superheavy_Armor_Maintenance_Drone/14000300002.png"
+                "icon_path": "item_histories/Drone/Support_Drones/Beatnik_Superheavy_Armor_Maintenance_Drone/14000300000.png"
             },
             "Caldari_Navy_Large_Shield_Maintenance_Drone": {
                 "history_path": "item_histories/Drone/Support_Drones/Caldari_Navy_Large_Shield_Maintenance_Drone/14200510011_history.csv",
-                "icon_path": "item_histories/Drone/Support_Drones/Caldari_Navy_Large_Shield_Maintenance_Drone/14000200007.png"
+                "icon_path": "item_histories/Drone/Support_Drones/Caldari_Navy_Large_Shield_Maintenance_Drone/14000200005.png"
             },
             "Caldari_Navy_Superheavy_Shield_Maintenance_Drone": {
                 "history_path": "item_histories/Drone/Support_Drones/Caldari_Navy_Superheavy_Shield_Maintenance_Drone/14200520011_history.csv",
-                "icon_path": "item_histories/Drone/Support_Drones/Caldari_Navy_Superheavy_Shield_Maintenance_Drone/14000300005.png"
+                "icon_path": "item_histories/Drone/Support_Drones/Caldari_Navy_Superheavy_Shield_Maintenance_Drone/14000300003.png"
             },
             "Imperial_Navy_Large_Armor_Maintenance_Drone": {
                 "history_path": "item_histories/Drone/Support_Drones/Imperial_Navy_Large_Armor_Maintenance_Drone/14200410011_history.csv",
-                "icon_path": "item_histories/Drone/Support_Drones/Imperial_Navy_Large_Armor_Maintenance_Drone/14000200002.png"
+                "icon_path": "item_histories/Drone/Support_Drones/Imperial_Navy_Large_Armor_Maintenance_Drone/14000200000.png"
             },
             "Imperial_Navy_Superheavy_Armor_Maintenance_Drone": {
                 "history_path": "item_histories/Drone/Support_Drones/Imperial_Navy_Superheavy_Armor_Maintenance_Drone/14200420011_history.csv",
-                "icon_path": "item_histories/Drone/Support_Drones/Imperial_Navy_Superheavy_Armor_Maintenance_Drone/14000300002.png"
+                "icon_path": "item_histories/Drone/Support_Drones/Imperial_Navy_Superheavy_Armor_Maintenance_Drone/14000300000.png"
             },
             "Integrated_Bolide": {
                 "history_path": "item_histories/Drone/Support_Drones/Integrated_Bolide/14200430021_history.csv",
@@ -1637,11 +1637,11 @@
             },
             "Micro_Large_Shield_Maintenance_Drone": {
                 "history_path": "item_histories/Drone/Support_Drones/Micro_Large_Shield_Maintenance_Drone/14200510010_history.csv",
-                "icon_path": "item_histories/Drone/Support_Drones/Micro_Large_Shield_Maintenance_Drone/14000200007.png"
+                "icon_path": "item_histories/Drone/Support_Drones/Micro_Large_Shield_Maintenance_Drone/14000200005.png"
             },
             "Micro_Superheavy_Shield_Maintenance_Drone": {
                 "history_path": "item_histories/Drone/Support_Drones/Micro_Superheavy_Shield_Maintenance_Drone/14200520010_history.csv",
-                "icon_path": "item_histories/Drone/Support_Drones/Micro_Superheavy_Shield_Maintenance_Drone/14000300005.png"
+                "icon_path": "item_histories/Drone/Support_Drones/Micro_Superheavy_Shield_Maintenance_Drone/14000300003.png"
             }
         }
     },
@@ -2807,27 +2807,27 @@
             },
             "Beatnik_Large_Armor_Maintenance_Drone_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Beatnik_Large_Armor_Maintenance_Drone_Blueprint/64200410010_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Beatnik_Large_Armor_Maintenance_Drone_Blueprint/14000200002.png"
+                "icon_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Beatnik_Large_Armor_Maintenance_Drone_Blueprint/14000200000.png"
             },
             "Beatnik_Superheavy_Armor_Maintenance_Drone_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Beatnik_Superheavy_Armor_Maintenance_Drone_Blueprint/64200420010_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Beatnik_Superheavy_Armor_Maintenance_Drone_Blueprint/14000300002.png"
+                "icon_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Beatnik_Superheavy_Armor_Maintenance_Drone_Blueprint/14000300000.png"
             },
             "Caldari_Navy_Large_Shield_Maintenance_Drone_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Caldari_Navy_Large_Shield_Maintenance_Drone_Blueprint/64200510011_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Caldari_Navy_Large_Shield_Maintenance_Drone_Blueprint/14000200007.png"
+                "icon_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Caldari_Navy_Large_Shield_Maintenance_Drone_Blueprint/14000200005.png"
             },
             "Caldari_Navy_Superheavy_Shield_Maintenance_Drone_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Caldari_Navy_Superheavy_Shield_Maintenance_Drone_Blueprint/64200520011_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Caldari_Navy_Superheavy_Shield_Maintenance_Drone_Blueprint/14000300005.png"
+                "icon_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Caldari_Navy_Superheavy_Shield_Maintenance_Drone_Blueprint/14000300003.png"
             },
             "Imperial_Navy_Large_Armor_Maintenance_Drone_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Imperial_Navy_Large_Armor_Maintenance_Drone_Blueprint/64200410011_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Imperial_Navy_Large_Armor_Maintenance_Drone_Blueprint/14000200002.png"
+                "icon_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Imperial_Navy_Large_Armor_Maintenance_Drone_Blueprint/14000200000.png"
             },
             "Imperial_Navy_Superheavy_Armor_Maintenance_Drone_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Imperial_Navy_Superheavy_Armor_Maintenance_Drone_Blueprint/64200420011_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Imperial_Navy_Superheavy_Armor_Maintenance_Drone_Blueprint/14000300002.png"
+                "icon_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Imperial_Navy_Superheavy_Armor_Maintenance_Drone_Blueprint/14000300000.png"
             },
             "Integrated_Bolide_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Integrated_Bolide_Blueprint/64200430021_history.csv",
@@ -2839,11 +2839,11 @@
             },
             "Micro_Large_Shield_Maintenance_Drone_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Micro_Large_Shield_Maintenance_Drone_Blueprint/64200510010_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Micro_Large_Shield_Maintenance_Drone_Blueprint/14000200007.png"
+                "icon_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Micro_Large_Shield_Maintenance_Drone_Blueprint/14000200005.png"
             },
             "Micro_Superheavy_Shield_Maintenance_Drone_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Micro_Superheavy_Shield_Maintenance_Drone_Blueprint/64200520010_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Micro_Superheavy_Shield_Maintenance_Drone_Blueprint/14000300005.png"
+                "icon_path": "item_histories/Drone_Blueprints/Logistic_Drone_Blueprint/Micro_Superheavy_Shield_Maintenance_Drone_Blueprint/14000300003.png"
             }
         },
         "Mining_Drone_Blueprint": {
@@ -9443,6 +9443,10 @@
                 "history_path": "item_histories/Modules/Capacitor_Battery/Acolyte_Small_Capacitor_Battery/11309100012_history.csv",
                 "icon_path": "item_histories/Modules/Capacitor_Battery/Acolyte_Small_Capacitor_Battery/11309100000.png"
             },
+            "Corpus_B-Type_Capital_Cap_Batteries": {
+                "history_path": "item_histories/Modules/Capacitor_Battery/Corpus_B-Type_Capital_Cap_Batteries/11309400029_history.csv",
+                "icon_path": "item_histories/Modules/Capacitor_Battery/Corpus_B-Type_Capital_Cap_Batteries/11309200000.png"
+            },
             "Corpus_C-Type_Capital_Cap_Batteries": {
                 "history_path": "item_histories/Modules/Capacitor_Battery/Corpus_C-Type_Capital_Cap_Batteries/11309400025_history.csv",
                 "icon_path": "item_histories/Modules/Capacitor_Battery/Corpus_C-Type_Capital_Cap_Batteries/11309200000.png"
@@ -11797,6 +11801,10 @@
                 "history_path": "item_histories/Modules/Navigation_Rig/Capital_Cargohold_Optimization_I/11710100006_history.csv",
                 "icon_path": "item_histories/Modules/Navigation_Rig/Capital_Cargohold_Optimization_I/11710100000.png"
             },
+            "Capital_Cargohold_Optimization_II": {
+                "history_path": "item_histories/Modules/Navigation_Rig/Capital_Cargohold_Optimization_II/11710100008_history.csv",
+                "icon_path": "item_histories/Modules/Navigation_Rig/Capital_Cargohold_Optimization_II/11710100001.png"
+            },
             "Capital_Dynamic_Fuel_Valve_I": {
                 "history_path": "item_histories/Modules/Navigation_Rig/Capital_Dynamic_Fuel_Valve_I/11710070006_history.csv",
                 "icon_path": "item_histories/Modules/Navigation_Rig/Capital_Dynamic_Fuel_Valve_I/11710100000.png"
@@ -12568,6 +12576,10 @@
             "Capital_Railgun_Burst_Aerator_I": {
                 "history_path": "item_histories/Modules/Railgun_Rigs/Capital_Railgun_Burst_Aerator_I/11700080006_history.csv",
                 "icon_path": "item_histories/Modules/Railgun_Rigs/Capital_Railgun_Burst_Aerator_I/11700100000.png"
+            },
+            "Capital_Railgun_Burst_Aerator_II": {
+                "history_path": "item_histories/Modules/Railgun_Rigs/Capital_Railgun_Burst_Aerator_II/11700080008_history.csv",
+                "icon_path": "item_histories/Modules/Railgun_Rigs/Capital_Railgun_Burst_Aerator_II/11700100001.png"
             },
             "Capital_Railgun_Collision_Accelerator_I": {
                 "history_path": "item_histories/Modules/Railgun_Rigs/Capital_Railgun_Collision_Accelerator_I/11700050006_history.csv",
@@ -13741,6 +13753,10 @@
                 "history_path": "item_histories/Modules/Rig_Shield/Capital_Anti-EM_Screen_Reinforcer_I/11707130006_history.csv",
                 "icon_path": "item_histories/Modules/Rig_Shield/Capital_Anti-EM_Screen_Reinforcer_I/11707000000.png"
             },
+            "Capital_Anti-EM_Screen_Reinforcer_II": {
+                "history_path": "item_histories/Modules/Rig_Shield/Capital_Anti-EM_Screen_Reinforcer_II/11707130008_history.csv",
+                "icon_path": "item_histories/Modules/Rig_Shield/Capital_Anti-EM_Screen_Reinforcer_II/11707000001.png"
+            },
             "Capital_Anti-Explosive_Screen_Reinforcer_I": {
                 "history_path": "item_histories/Modules/Rig_Shield/Capital_Anti-Explosive_Screen_Reinforcer_I/11707120006_history.csv",
                 "icon_path": "item_histories/Modules/Rig_Shield/Capital_Anti-Explosive_Screen_Reinforcer_I/11707000000.png"
@@ -13951,37 +13967,69 @@
             }
         },
         "Sensor_Dampener": {
+            "Code_Cracker_Sensor_Dampener": {
+                "history_path": "item_histories/Modules/Sensor_Dampener/Code_Cracker_Sensor_Dampener/11319000021_history.csv",
+                "icon_path": "item_histories/Modules/Sensor_Dampener/Code_Cracker_Sensor_Dampener/11319000000.png"
+            },
             "Code_Cracker_Sensor_Dampening": {
                 "history_path": "item_histories/Modules/Sensor_Dampener/Code_Cracker_Sensor_Dampening/11319000021_history.csv",
-                "icon_path": "item_histories/Modules/Sensor_Dampener/Code_Cracker_Sensor_Dampening/11319000000.png"
+                "icon_path": ""
+            },
+            "Federation_Navy_Sensor_Dampener": {
+                "history_path": "item_histories/Modules/Sensor_Dampener/Federation_Navy_Sensor_Dampener/11319000013_history.csv",
+                "icon_path": "item_histories/Modules/Sensor_Dampener/Federation_Navy_Sensor_Dampener/11319000000.png"
             },
             "Federation_Navy_Sensor_Dampening": {
                 "history_path": "item_histories/Modules/Sensor_Dampener/Federation_Navy_Sensor_Dampening/11319000013_history.csv",
-                "icon_path": "item_histories/Modules/Sensor_Dampener/Federation_Navy_Sensor_Dampening/11319000000.png"
+                "icon_path": ""
+            },
+            "MK3_Sensor_Dampener": {
+                "history_path": "item_histories/Modules/Sensor_Dampener/MK3_Sensor_Dampener/11319000004_history.csv",
+                "icon_path": "item_histories/Modules/Sensor_Dampener/MK3_Sensor_Dampener/11319000000.png"
             },
             "MK3_Sensor_Dampening": {
                 "history_path": "item_histories/Modules/Sensor_Dampener/MK3_Sensor_Dampening/11319000004_history.csv",
-                "icon_path": "item_histories/Modules/Sensor_Dampener/MK3_Sensor_Dampening/11319000000.png"
+                "icon_path": ""
+            },
+            "MK5_Sensor_Dampener": {
+                "history_path": "item_histories/Modules/Sensor_Dampener/MK5_Sensor_Dampener/11319000006_history.csv",
+                "icon_path": "item_histories/Modules/Sensor_Dampener/MK5_Sensor_Dampener/11319000000.png"
             },
             "MK5_Sensor_Dampening": {
                 "history_path": "item_histories/Modules/Sensor_Dampener/MK5_Sensor_Dampening/11319000006_history.csv",
-                "icon_path": "item_histories/Modules/Sensor_Dampener/MK5_Sensor_Dampening/11319000000.png"
+                "icon_path": ""
+            },
+            "MK7_Sensor_Dampener": {
+                "history_path": "item_histories/Modules/Sensor_Dampener/MK7_Sensor_Dampener/11319000008_history.csv",
+                "icon_path": "item_histories/Modules/Sensor_Dampener/MK7_Sensor_Dampener/11319000000.png"
             },
             "MK7_Sensor_Dampening": {
                 "history_path": "item_histories/Modules/Sensor_Dampener/MK7_Sensor_Dampening/11319000008_history.csv",
-                "icon_path": "item_histories/Modules/Sensor_Dampener/MK7_Sensor_Dampening/11319000000.png"
+                "icon_path": ""
+            },
+            "MK9_Sensor_Dampener": {
+                "history_path": "item_histories/Modules/Sensor_Dampener/MK9_Sensor_Dampener/11319000010_history.csv",
+                "icon_path": "item_histories/Modules/Sensor_Dampener/MK9_Sensor_Dampener/11319000000.png"
             },
             "MK9_Sensor_Dampening": {
                 "history_path": "item_histories/Modules/Sensor_Dampener/MK9_Sensor_Dampening/11319000010_history.csv",
-                "icon_path": "item_histories/Modules/Sensor_Dampener/MK9_Sensor_Dampening/11319000000.png"
+                "icon_path": ""
+            },
+            "Shadow_Serpentis_Sensor_Dampener": {
+                "history_path": "item_histories/Modules/Sensor_Dampener/Shadow_Serpentis_Sensor_Dampener/11319000017_history.csv",
+                "icon_path": "item_histories/Modules/Sensor_Dampener/Shadow_Serpentis_Sensor_Dampener/11319000000.png"
             },
             "Shadow_Serpentis_Sensor_Dampening": {
                 "history_path": "item_histories/Modules/Sensor_Dampener/Shadow_Serpentis_Sensor_Dampening/11319000017_history.csv",
-                "icon_path": "item_histories/Modules/Sensor_Dampener/Shadow_Serpentis_Sensor_Dampening/11319000000.png"
+                "icon_path": ""
+            },
+            "Smoke_Sensor_Dampener": {
+                "history_path": "item_histories/Modules/Sensor_Dampener/Smoke_Sensor_Dampener/11319000012_history.csv",
+                "icon_path": "item_histories/Modules/Sensor_Dampener/Smoke_Sensor_Dampener/11319000000.png"
             },
             "Smoke_Sensor_Dampening": {
                 "history_path": "item_histories/Modules/Sensor_Dampener/Smoke_Sensor_Dampening/11319000012_history.csv",
-                "icon_path": "item_histories/Modules/Sensor_Dampener/Smoke_Sensor_Dampening/11319000000.png"
+                "icon_path": ""
             }
         },
         "Shield_Booster": {
@@ -14180,6 +14228,10 @@
             "Pithum_C-Type_Medium_Shield_Booster": {
                 "history_path": "item_histories/Modules/Shield_Booster/Pithum_C-Type_Medium_Shield_Booster/11302100025_history.csv",
                 "icon_path": "item_histories/Modules/Shield_Booster/Pithum_C-Type_Medium_Shield_Booster/130020001.png"
+            },
+            "Pith_A-Type_Large_Shield_Booster": {
+                "history_path": "item_histories/Modules/Shield_Booster/Pith_A-Type_Large_Shield_Booster/11302200033_history.csv",
+                "icon_path": "item_histories/Modules/Shield_Booster/Pith_A-Type_Large_Shield_Booster/130020001.png"
             },
             "Pith_B-Type_Capital_Shield_Boosters": {
                 "history_path": "item_histories/Modules/Shield_Booster/Pith_B-Type_Capital_Shield_Boosters/11302300029_history.csv",
@@ -14529,6 +14581,10 @@
             }
         },
         "Short-Range_Jump_Drive": {
+            "Prototype_Capital_Micro_Jump_Drive": {
+                "history_path": "item_histories/Modules/Short-Range_Jump_Drive/Prototype_Capital_Micro_Jump_Drive/11374100002_history.csv",
+                "icon_path": "item_histories/Modules/Short-Range_Jump_Drive/Prototype_Capital_Micro_Jump_Drive/11374100000.png"
+            },
             "Prototype_Short-Range_Jump_Drive": {
                 "history_path": "item_histories/Modules/Short-Range_Jump_Drive/Prototype_Short-Range_Jump_Drive/11374000002_history.csv",
                 "icon_path": "item_histories/Modules/Short-Range_Jump_Drive/Prototype_Short-Range_Jump_Drive/11374000000.png"
@@ -15332,6 +15388,10 @@
             "Heavy_Fighter_Siege_Modification_I_Blueprint": {
                 "history_path": "item_histories/Module_Blueprints/Carrier_Hangar_Hull_Modification_System_Blueprint/Heavy_Fighter_Siege_Modification_I_Blueprint/61727010041_history.csv",
                 "icon_path": "item_histories/Module_Blueprints/Carrier_Hangar_Hull_Modification_System_Blueprint/Heavy_Fighter_Siege_Modification_I_Blueprint/11727020007.png"
+            },
+            "Lightweight_Ship_Hangar_Refactoring_I_Blueprint": {
+                "history_path": "item_histories/Module_Blueprints/Carrier_Hangar_Hull_Modification_System_Blueprint/Lightweight_Ship_Hangar_Refactoring_I_Blueprint/61727010031_history.csv",
+                "icon_path": "item_histories/Module_Blueprints/Carrier_Hangar_Hull_Modification_System_Blueprint/Lightweight_Ship_Hangar_Refactoring_I_Blueprint/11727020013.png"
             },
             "Light_Fighter_Siege_Modification_III_Blueprint": {
                 "history_path": "item_histories/Module_Blueprints/Carrier_Hangar_Hull_Modification_System_Blueprint/Light_Fighter_Siege_Modification_III_Blueprint/61727010053_history.csv",
@@ -20241,6 +20301,10 @@
             }
         },
         "Supercarrier_Blueprints": {
+            "Aeon_Blueprint": {
+                "history_path": "item_histories/Ship_Blueprints/Supercarrier_Blueprints/Aeon_Blueprint/60801000301_history.csv",
+                "icon_path": "item_histories/Ship_Blueprints/Supercarrier_Blueprints/Aeon_Blueprint/10801000301.png"
+            },
             "Hel_Blueprint": {
                 "history_path": "item_histories/Ship_Blueprints/Supercarrier_Blueprints/Hel_Blueprint/60801000201_history.csv",
                 "icon_path": "item_histories/Ship_Blueprints/Supercarrier_Blueprints/Hel_Blueprint/10801000201.png"
@@ -21659,6 +21723,10 @@
                 "history_path": "item_histories/SKIN/SKIN/Oracle_II_Star_Beat_Iristar_the_Diva_SKINpermanent/80555801980_history.csv",
                 "icon_path": "item_histories/SKIN/SKIN/Oracle_II_Star_Beat_Iristar_the_Diva_SKINpermanent/80100000214.png"
             },
+            "Oracle_Prayer_SKINpermanent": {
+                "history_path": "item_histories/SKIN/SKIN/Oracle_Prayer_SKINpermanent/80533801730_history.csv",
+                "icon_path": "item_histories/SKIN/SKIN/Oracle_Prayer_SKINpermanent/90533801730.png"
+            },
             "Oracle_Snowfield_Adventure_SKINpermanent": {
                 "history_path": "item_histories/SKIN/SKIN/Oracle_Snowfield_Adventure_SKINpermanent/80504101730_history.csv",
                 "icon_path": "item_histories/SKIN/SKIN/Oracle_Snowfield_Adventure_SKINpermanent/80100000032.png"
@@ -22019,6 +22087,10 @@
                 "history_path": "item_histories/SKIN/SKIN/Talwar_Air_SKINpermanent/80502100390_history.csv",
                 "icon_path": "item_histories/SKIN/SKIN/Talwar_Air_SKINpermanent/80100000015.png"
             },
+            "Talwar_Assault_Bull_SKINpermanent": {
+                "history_path": "item_histories/SKIN/SKIN/Talwar_Assault_Bull_SKINpermanent/80525501260_history.csv",
+                "icon_path": "item_histories/SKIN/SKIN/Talwar_Assault_Bull_SKINpermanent/80525500390.png"
+            },
             "Talwar_Assault_Yoiul_Envoy_SKINpermanent": {
                 "history_path": "item_histories/SKIN/SKIN/Talwar_Assault_Yoiul_Envoy_SKINpermanent/80504001260_history.csv",
                 "icon_path": "item_histories/SKIN/SKIN/Talwar_Assault_Yoiul_Envoy_SKINpermanent/80100000031.png"
@@ -22294,6 +22366,10 @@
             "Wyvern_Star_Beat_Iristar_the_Diva_SKINpermanent": {
                 "history_path": "item_histories/SKIN/SKIN/Wyvern_Star_Beat_Iristar_the_Diva_SKINpermanent/80556104130_history.csv",
                 "icon_path": "item_histories/SKIN/SKIN/Wyvern_Star_Beat_Iristar_the_Diva_SKINpermanent/80100000214.png"
+            },
+            "Wyvern_Star_Beat_Vance_SKINpermanent": {
+                "history_path": "item_histories/SKIN/SKIN/Wyvern_Star_Beat_Vance_SKINpermanent/80557804210_history.csv",
+                "icon_path": "item_histories/SKIN/SKIN/Wyvern_Star_Beat_Vance_SKINpermanent/80100000215.png"
             },
             "Xian-Yue_Prototype_Lunar_Eclipse_SKINpermanent": {
                 "history_path": "item_histories/SKIN/SKIN/Xian-Yue_Prototype_Lunar_Eclipse_SKINpermanent/80501400870_history.csv",
