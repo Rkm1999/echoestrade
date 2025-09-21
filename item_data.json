@@ -1385,6 +1385,10 @@
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Firbolg/14600120021_history.csv",
                 "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Firbolg/15100000420.png"
             },
+            "Integrated_Gram": {
+                "history_path": "item_histories/Drone/Light_Fighter/Integrated_Gram/14600030021_history.csv",
+                "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Gram/15100000430.png"
+            },
             "Integrated_Guard": {
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Guard/14600160021_history.csv",
                 "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Guard/14600160010.png"
@@ -8107,6 +8111,10 @@
                 "history_path": "item_histories/Membrane/Membrane/Sigil_Sansha_Recruit_Core/81000220189_history.csv",
                 "icon_path": "item_histories/Membrane/Membrane/Sigil_Sansha_Recruit_Core/81000000000.png"
             },
+            "Sigil_Sansha_Veteran_Core": {
+                "history_path": "item_histories/Membrane/Membrane/Sigil_Sansha_Veteran_Core/81000270189_history.csv",
+                "icon_path": "item_histories/Membrane/Membrane/Sigil_Sansha_Veteran_Core/81000000001.png"
+            },
             "Slasher_Angel_Recruit_Core": {
                 "history_path": "item_histories/Membrane/Membrane/Slasher_Angel_Recruit_Core/81000250013_history.csv",
                 "icon_path": "item_histories/Membrane/Membrane/Slasher_Angel_Recruit_Core/81000000000.png"
@@ -9681,6 +9689,10 @@
             }
         },
         "Decomposer": {
+            "Cheng_C_Medium_Jetstream_Decomposer": {
+                "history_path": "item_histories/Modules/Decomposer/Cheng_C_Medium_Jetstream_Decomposer/11005050024_history.csv",
+                "icon_path": "item_histories/Modules/Decomposer/Cheng_C_Medium_Jetstream_Decomposer/11005050001.png"
+            },
             "The_Returned_Medium_Jetstream_Decomposer": {
                 "history_path": "item_histories/Modules/Decomposer/The_Returned_Medium_Jetstream_Decomposer/11005050012_history.csv",
                 "icon_path": "item_histories/Modules/Decomposer/The_Returned_Medium_Jetstream_Decomposer/11005050001.png"
@@ -9688,6 +9700,18 @@
             "The_Returned_Small_Jetstream_Decomposer": {
                 "history_path": "item_histories/Modules/Decomposer/The_Returned_Small_Jetstream_Decomposer/11005000012_history.csv",
                 "icon_path": "item_histories/Modules/Decomposer/The_Returned_Small_Jetstream_Decomposer/11005000001.png"
+            },
+            "Wei_C_Small_Jetstream_Decomposer": {
+                "history_path": "item_histories/Modules/Decomposer/Wei_C_Small_Jetstream_Decomposer/11005000024_history.csv",
+                "icon_path": "item_histories/Modules/Decomposer/Wei_C_Small_Jetstream_Decomposer/11005000001.png"
+            },
+            "Yan-Jung_Large_Jetstream_Decomposer_-_Plural": {
+                "history_path": "item_histories/Modules/Decomposer/Yan-Jung_Large_Jetstream_Decomposer_-_Plural/11005100013_history.csv",
+                "icon_path": "item_histories/Modules/Decomposer/Yan-Jung_Large_Jetstream_Decomposer_-_Plural/11005050009.png"
+            },
+            "Yan-Jung_Small_Jetstream_Decomposer": {
+                "history_path": "item_histories/Modules/Decomposer/Yan-Jung_Small_Jetstream_Decomposer/11005000013_history.csv",
+                "icon_path": "item_histories/Modules/Decomposer/Yan-Jung_Small_Jetstream_Decomposer/11005000001.png"
             }
         },
         "Decomposer_Rig": {
@@ -13901,6 +13925,10 @@
                 "history_path": "item_histories/Modules/Rig_Shield/Remote_Shield_Booster_Enhancer_III/11707190006_history.csv",
                 "icon_path": "item_histories/Modules/Rig_Shield/Remote_Shield_Booster_Enhancer_III/11707000002.png"
             },
+            "Remote_Shield_Booster_Enhancer_IV": {
+                "history_path": "item_histories/Modules/Rig_Shield/Remote_Shield_Booster_Enhancer_IV/11707190008_history.csv",
+                "icon_path": "item_histories/Modules/Rig_Shield/Remote_Shield_Booster_Enhancer_IV/11707000003.png"
+            },
             "Remote_Shield_Booster_Stabilizer_I": {
                 "history_path": "item_histories/Modules/Rig_Shield/Remote_Shield_Booster_Stabilizer_I/11707160002_history.csv",
                 "icon_path": "item_histories/Modules/Rig_Shield/Remote_Shield_Booster_Stabilizer_I/11707000000.png"
@@ -15416,6 +15444,10 @@
             "Mono_Experimental_Carrier_Hangar_Hull_MOD-I_Blueprint": {
                 "history_path": "item_histories/Module_Blueprints/Carrier_Hangar_Hull_Modification_System_Blueprint/Mono_Experimental_Carrier_Hangar_Hull_MOD-I_Blueprint/61727010001_history.csv",
                 "icon_path": "item_histories/Module_Blueprints/Carrier_Hangar_Hull_Modification_System_Blueprint/Mono_Experimental_Carrier_Hangar_Hull_MOD-I_Blueprint/11727010001.png"
+            },
+            "Tactical_Carrier_Hangar_Advanced_Modification_Blueprint_IV": {
+                "history_path": "item_histories/Module_Blueprints/Carrier_Hangar_Hull_Modification_System_Blueprint/Tactical_Carrier_Hangar_Advanced_Modification_Blueprint_IV/61727021014_history.csv",
+                "icon_path": "item_histories/Module_Blueprints/Carrier_Hangar_Hull_Modification_System_Blueprint/Tactical_Carrier_Hangar_Advanced_Modification_Blueprint_IV/11727020028.png"
             }
         },
         "Combat_Rig_Integration_Blueprint": {
@@ -18594,6 +18626,10 @@
             "Thrasher_Interdictor": {
                 "history_path": "item_histories/Ship/Destroyer/Thrasher_Interdictor/10200000202_history.csv",
                 "icon_path": "item_histories/Ship/Destroyer/Thrasher_Interdictor/10201000003.png"
+            },
+            "Xian-Yue": {
+                "history_path": "item_histories/Ship/Destroyer/Xian-Yue/10200002202_history.csv",
+                "icon_path": "item_histories/Ship/Destroyer/Xian-Yue/10200000020.png"
             }
         },
         "Dreadnoughts": {
@@ -21006,6 +21042,10 @@
             "Cyclone_Guardian_Grimace_SKINpermanent": {
                 "history_path": "item_histories/SKIN/SKIN/Cyclone_Guardian_Grimace_SKINpermanent/80505602090_history.csv",
                 "icon_path": "item_histories/SKIN/SKIN/Cyclone_Guardian_Grimace_SKINpermanent/80100000035.png"
+            },
+            "Cyclone_Guardian_High_Noon_SKINpermanent": {
+                "history_path": "item_histories/SKIN/SKIN/Cyclone_Guardian_High_Noon_SKINpermanent/80519202090_history.csv",
+                "icon_path": "item_histories/SKIN/SKIN/Cyclone_Guardian_High_Noon_SKINpermanent/80100000115.png"
             },
             "Cyclone_Guardian_Late_Night_SKINpermanent": {
                 "history_path": "item_histories/SKIN/SKIN/Cyclone_Guardian_Late_Night_SKINpermanent/80519602090_history.csv",
@@ -23503,6 +23543,10 @@
             }
         },
         "g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4": {
+            "Blood_Raiders_Homecoming-1_Spatial_Rift_Fiber": {
+                "history_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/Blood_Raiders_Homecoming-1_Spatial_Rift_Fiber/32010011530_history.csv",
+                "icon_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/Blood_Raiders_Homecoming-1_Spatial_Rift_Fiber/32010020000.png"
+            },
             "Frontline-10_Spatial_Rift_Filament": {
                 "history_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/Frontline-10_Spatial_Rift_Filament/32010001502_history.csv",
                 "icon_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/Frontline-10_Spatial_Rift_Filament/32010040001.png"
@@ -23551,6 +23595,14 @@
                 "history_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/Medium_Expedition_Wasteland_Domain-4_Spatial_Rift_Filaments/32010040300_history.csv",
                 "icon_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/Medium_Expedition_Wasteland_Domain-4_Spatial_Rift_Filaments/32010040300.png"
             },
+            "Northwind-1_Spatial_Rift_Filament": {
+                "history_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/Northwind-1_Spatial_Rift_Filament/32010033500_history.csv",
+                "icon_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/Northwind-1_Spatial_Rift_Filament/32010000000.png"
+            },
+            "Serpentis_Homeward-1_Spatial_Rift_Filament": {
+                "history_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/Serpentis_Homeward-1_Spatial_Rift_Filament/32010011540_history.csv",
+                "icon_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/Serpentis_Homeward-1_Spatial_Rift_Filament/32010020000.png"
+            },
             "Small_Expedition_-_The_Kalevala_Expanse_-_4_Spatial_Rift_Filament": {
                 "history_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/Small_Expedition_-_The_Kalevala_Expanse_-_4_Spatial_Rift_Filament/32010000100_history.csv",
                 "icon_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/Small_Expedition_-_The_Kalevala_Expanse_-_4_Spatial_Rift_Filament/32010000001.png"
@@ -23558,6 +23610,10 @@
             "Small_Expedition_Wasteland_Domain-4_Spatial_Rift_Filaments": {
                 "history_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/Small_Expedition_Wasteland_Domain-4_Spatial_Rift_Filaments/32010040100_history.csv",
                 "icon_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/Small_Expedition_Wasteland_Domain-4_Spatial_Rift_Filaments/32010040100.png"
+            },
+            "Westwind-1_Spatial_Rift_Filament": {
+                "history_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/Westwind-1_Spatial_Rift_Filament/32010033530_history.csv",
+                "icon_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/Westwind-1_Spatial_Rift_Filament/32010000000.png"
             },
             "_Noise-10_Needlejack_Filament": {
                 "history_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/_Noise-10_Needlejack_Filament/32010031502_history.csv",
@@ -23816,6 +23872,24 @@
             "Structure_Storage_Bay": {
                 "history_path": "item_histories/unknown/Station_Components/Structure_Storage_Bay/27000000002_history.csv",
                 "icon_path": "item_histories/unknown/Station_Components/Structure_Storage_Bay/27000000002.png"
+            }
+        },
+        "Supply_Boxes": {
+            "Battleship_SKIN_Opt_Supply_Astral_Cat": {
+                "history_path": "item_histories/unknown/Supply_Boxes/Battleship_SKIN_Opt_Supply_Astral_Cat/28011200239_history.csv",
+                "icon_path": "item_histories/unknown/Supply_Boxes/Battleship_SKIN_Opt_Supply_Astral_Cat/28011200164.png"
+            },
+            "Capital_Ship_SKIN_Opt_Supply_Astral_Cat": {
+                "history_path": "item_histories/unknown/Supply_Boxes/Capital_Ship_SKIN_Opt_Supply_Astral_Cat/28011200238_history.csv",
+                "icon_path": "item_histories/unknown/Supply_Boxes/Capital_Ship_SKIN_Opt_Supply_Astral_Cat/28011200164.png"
+            },
+            "Cruiser_SKIN_Opt_Supply_Astral_Cat": {
+                "history_path": "item_histories/unknown/Supply_Boxes/Cruiser_SKIN_Opt_Supply_Astral_Cat/28011200240_history.csv",
+                "icon_path": "item_histories/unknown/Supply_Boxes/Cruiser_SKIN_Opt_Supply_Astral_Cat/28011200164.png"
+            },
+            "Supercapital_Ship_SKIN_Opt_Supply_Astral_Cat": {
+                "history_path": "item_histories/unknown/Supply_Boxes/Supercapital_Ship_SKIN_Opt_Supply_Astral_Cat/28011200237_history.csv",
+                "icon_path": "item_histories/unknown/Supply_Boxes/Supercapital_Ship_SKIN_Opt_Supply_Astral_Cat/28011200164.png"
             }
         },
         "test\u6280\u80fd\u690d\u5165\u82af\u7247": {
@@ -24746,6 +24820,10 @@
             "Yan-Jung_Capital_Hull": {
                 "history_path": "item_histories/Vessel_Debris/Yan-Jung_Ship_Debris/Yan-Jung_Capital_Hull/44120000000_history.csv",
                 "icon_path": "item_histories/Vessel_Debris/Yan-Jung_Ship_Debris/Yan-Jung_Capital_Hull/210000011.png"
+            },
+            "Yan-Jung_Ship_Debris": {
+                "history_path": "item_histories/Vessel_Debris/Yan-Jung_Ship_Debris/Yan-Jung_Ship_Debris/44120000001_history.csv",
+                "icon_path": "item_histories/Vessel_Debris/Yan-Jung_Ship_Debris/Yan-Jung_Ship_Debris/210000011.png"
             }
         }
     }
