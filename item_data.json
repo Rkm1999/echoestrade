@@ -1187,6 +1187,10 @@
                 "history_path": "item_histories/Drone/Light_Destroyer/Lightweight_Corax/14710010110_history.csv",
                 "icon_path": "item_histories/Drone/Light_Destroyer/Lightweight_Corax/14710010110.png"
             },
+            "Lightweight_Corax_Assault": {
+                "history_path": "item_histories/Drone/Light_Destroyer/Lightweight_Corax_Assault/14710040110_history.csv",
+                "icon_path": "item_histories/Drone/Light_Destroyer/Lightweight_Corax_Assault/14710010110.png"
+            },
             "Lightweight_Corax_Offense": {
                 "history_path": "item_histories/Drone/Light_Destroyer/Lightweight_Corax_Offense/14710020110_history.csv",
                 "icon_path": "item_histories/Drone/Light_Destroyer/Lightweight_Corax_Offense/14710020110.png"
@@ -1235,339 +1239,339 @@
         "Light_Fighter": {
             "Assault_Cyclops": {
                 "history_path": "item_histories/Drone/Light_Fighter/Assault_Cyclops/14600220013_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Assault_Cyclops/14600220000.png"
+                "icon_path": ""
             },
             "Assault_Dragonfly": {
                 "history_path": "item_histories/Drone/Light_Fighter/Assault_Dragonfly/14600110013_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Assault_Dragonfly/15100000210.png"
+                "icon_path": ""
             },
             "Assault_Einherji": {
                 "history_path": "item_histories/Drone/Light_Fighter/Assault_Einherji/14600130013_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Assault_Einherji/15100000230.png"
+                "icon_path": ""
             },
             "Assault_Firbolg": {
                 "history_path": "item_histories/Drone/Light_Fighter/Assault_Firbolg/14600120013_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Assault_Firbolg/15100000220.png"
+                "icon_path": ""
             },
             "Assault_Gram": {
                 "history_path": "item_histories/Drone/Light_Fighter/Assault_Gram/14600030013_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Assault_Gram/15100000230.png"
+                "icon_path": ""
             },
             "Assault_Guard": {
                 "history_path": "item_histories/Drone/Light_Fighter/Assault_Guard/14600160013_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Assault_Guard/14600160010.png"
+                "icon_path": ""
             },
             "Assault_Hot_Steel": {
                 "history_path": "item_histories/Drone/Light_Fighter/Assault_Hot_Steel/14600240013_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Assault_Hot_Steel/14600240013.png"
+                "icon_path": ""
             },
             "Assault_Iron_Guard": {
                 "history_path": "item_histories/Drone/Light_Fighter/Assault_Iron_Guard/14600260013_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Assault_Iron_Guard/14600260000.png"
+                "icon_path": ""
             },
             "Assault_Knight": {
                 "history_path": "item_histories/Drone/Light_Fighter/Assault_Knight/14600000013_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Assault_Knight/15100000200.png"
+                "icon_path": ""
             },
             "Assault_Locust": {
                 "history_path": "item_histories/Drone/Light_Fighter/Assault_Locust/14600010013_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Assault_Locust/15100000210.png"
+                "icon_path": ""
             },
             "Assault_Malleus": {
                 "history_path": "item_histories/Drone/Light_Fighter/Assault_Malleus/14600200013_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Assault_Malleus/14600200000.png"
+                "icon_path": ""
             },
             "Assault_Mantis": {
                 "history_path": "item_histories/Drone/Light_Fighter/Assault_Mantis/14600210013_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Assault_Mantis/14600210000.png"
+                "icon_path": ""
             },
             "Assault_Pulsar_Heavy": {
                 "history_path": "item_histories/Drone/Light_Fighter/Assault_Pulsar_Heavy/14600150013_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Assault_Pulsar_Heavy/14600150013.png"
+                "icon_path": ""
             },
             "Assault_Pulsar_Light": {
                 "history_path": "item_histories/Drone/Light_Fighter/Assault_Pulsar_Light/14600050013_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Assault_Pulsar_Light/14600050013.png"
+                "icon_path": ""
             },
             "Assault_Red-tailed_Hawk": {
                 "history_path": "item_histories/Drone/Light_Fighter/Assault_Red-tailed_Hawk/14600140013_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Assault_Red-tailed_Hawk/15100000240.png"
+                "icon_path": ""
             },
             "Assault_Satyr": {
                 "history_path": "item_histories/Drone/Light_Fighter/Assault_Satyr/14600020013_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Assault_Satyr/15100000220.png"
+                "icon_path": ""
             },
             "Assault_Shrike": {
                 "history_path": "item_histories/Drone/Light_Fighter/Assault_Shrike/14600040013_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Assault_Shrike/15100000240.png"
+                "icon_path": ""
             },
             "Assault_Templar": {
                 "history_path": "item_histories/Drone/Light_Fighter/Assault_Templar/14600100013_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Assault_Templar/15100000200.png"
+                "icon_path": ""
             },
             "Assault_Tyrfing": {
                 "history_path": "item_histories/Drone/Light_Fighter/Assault_Tyrfing/14600230013_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Assault_Tyrfing/14600230000.png"
+                "icon_path": ""
             },
             "Augmented__Guard": {
                 "history_path": "item_histories/Drone/Light_Fighter/Augmented__Guard/14600160022_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Augmented__Guard/14600160010.png"
+                "icon_path": ""
             },
             "Augmented__Pulsar_Heavy": {
                 "history_path": "item_histories/Drone/Light_Fighter/Augmented__Pulsar_Heavy/14600150022_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Augmented__Pulsar_Heavy/14600150013.png"
+                "icon_path": ""
             },
             "Augmented__Pulsar_Light": {
                 "history_path": "item_histories/Drone/Light_Fighter/Augmented__Pulsar_Light/14600050022_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Augmented__Pulsar_Light/14600050013.png"
+                "icon_path": ""
             },
             "Augmented__Sextant_Sentinel": {
                 "history_path": "item_histories/Drone/Light_Fighter/Augmented__Sextant_Sentinel/14600060022_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Augmented__Sextant_Sentinel/14600060013.png"
+                "icon_path": ""
             },
             "Basic_Red-tailed_Hawk": {
                 "history_path": "item_histories/Drone/Light_Fighter/Basic_Red-tailed_Hawk/14600140012_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Basic_Red-tailed_Hawk/15100000040.png"
+                "icon_path": ""
             },
             "Basic_Shrike": {
                 "history_path": "item_histories/Drone/Light_Fighter/Basic_Shrike/14600040012_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Basic_Shrike/15100000040.png"
+                "icon_path": ""
             },
             "Caldari_Navy_Dragonfly": {
                 "history_path": "item_histories/Drone/Light_Fighter/Caldari_Navy_Dragonfly/14600110012_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Caldari_Navy_Dragonfly/15100000010.png"
+                "icon_path": ""
             },
             "Caldari_Navy_Locust": {
                 "history_path": "item_histories/Drone/Light_Fighter/Caldari_Navy_Locust/14600010012_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Caldari_Navy_Locust/15100000010.png"
+                "icon_path": ""
             },
             "Caldari_Navy_Mantis": {
                 "history_path": "item_histories/Drone/Light_Fighter/Caldari_Navy_Mantis/14600210012_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Caldari_Navy_Mantis/14600210000.png"
+                "icon_path": ""
             },
             "Federation_Navy_Cyclops": {
                 "history_path": "item_histories/Drone/Light_Fighter/Federation_Navy_Cyclops/14600220012_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Federation_Navy_Cyclops/14600220000.png"
+                "icon_path": ""
             },
             "Federation_Navy_Firbolg": {
                 "history_path": "item_histories/Drone/Light_Fighter/Federation_Navy_Firbolg/14600120012_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Federation_Navy_Firbolg/15100000020.png"
+                "icon_path": ""
             },
             "Federation_Navy_Satyr": {
                 "history_path": "item_histories/Drone/Light_Fighter/Federation_Navy_Satyr/14600020012_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Federation_Navy_Satyr/15100000020.png"
+                "icon_path": ""
             },
             "Imperial_Navy_Knight": {
                 "history_path": "item_histories/Drone/Light_Fighter/Imperial_Navy_Knight/14600000012_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Imperial_Navy_Knight/15100000000.png"
+                "icon_path": ""
             },
             "Imperial_Navy_Malleus": {
                 "history_path": "item_histories/Drone/Light_Fighter/Imperial_Navy_Malleus/14600200012_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Imperial_Navy_Malleus/14600200000.png"
+                "icon_path": ""
             },
             "Imperial_Navy_Templar": {
                 "history_path": "item_histories/Drone/Light_Fighter/Imperial_Navy_Templar/14600100012_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Imperial_Navy_Templar/15100000000.png"
+                "icon_path": ""
             },
             "Integrated_Cyclops": {
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Cyclops/14600220021_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Cyclops/14600220000.png"
+                "icon_path": ""
             },
             "Integrated_Dragonfly": {
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Dragonfly/14600110021_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Dragonfly/15100000410.png"
+                "icon_path": ""
             },
             "Integrated_Einherji": {
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Einherji/14600130021_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Einherji/15100000430.png"
+                "icon_path": ""
             },
             "Integrated_Firbolg": {
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Firbolg/14600120021_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Firbolg/15100000420.png"
+                "icon_path": ""
             },
             "Integrated_Gram": {
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Gram/14600030021_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Gram/15100000430.png"
+                "icon_path": ""
             },
             "Integrated_Guard": {
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Guard/14600160021_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Guard/14600160010.png"
+                "icon_path": ""
             },
             "Integrated_Hot_Steel": {
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Hot_Steel/14600240021_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Hot_Steel/14600240013.png"
+                "icon_path": ""
             },
             "Integrated_Iron_Guard": {
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Iron_Guard/14600260021_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Iron_Guard/14600260000.png"
+                "icon_path": ""
             },
             "Integrated_Knight": {
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Knight/14600000021_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Knight/15100000400.png"
+                "icon_path": ""
             },
             "Integrated_Locust": {
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Locust/14600010021_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Locust/15100000410.png"
+                "icon_path": ""
             },
             "Integrated_Malleus": {
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Malleus/14600200021_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Malleus/14600200000.png"
+                "icon_path": ""
             },
             "Integrated_Mantis": {
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Mantis/14600210021_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Mantis/14600210000.png"
+                "icon_path": ""
             },
             "Integrated_Pulsar_Heavy": {
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Pulsar_Heavy/14600150021_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Pulsar_Heavy/14600150013.png"
+                "icon_path": ""
             },
             "Integrated_Pulsar_Light": {
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Pulsar_Light/14600050021_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Pulsar_Light/14600050013.png"
+                "icon_path": ""
             },
             "Integrated_Red-tailed_Hawk": {
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Red-tailed_Hawk/14600140021_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Red-tailed_Hawk/15100000440.png"
+                "icon_path": ""
             },
             "Integrated_Satyr": {
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Satyr/14600020021_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Satyr/15100000420.png"
+                "icon_path": ""
             },
             "Integrated_Sextant_Sentinel": {
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Sextant_Sentinel/14600060021_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Sextant_Sentinel/14600060021.png"
+                "icon_path": ""
             },
             "Integrated_Shrike": {
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Shrike/14600040021_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Shrike/15100000440.png"
+                "icon_path": ""
             },
             "Integrated_Templar": {
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Templar/14600100021_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Templar/15100000400.png"
+                "icon_path": ""
             },
             "Integrated_Tyrfing": {
                 "history_path": "item_histories/Drone/Light_Fighter/Integrated_Tyrfing/14600230021_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Integrated_Tyrfing/14600230000.png"
+                "icon_path": ""
             },
             "Offense_Cyclops": {
                 "history_path": "item_histories/Drone/Light_Fighter/Offense_Cyclops/14600220017_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Offense_Cyclops/14600220000.png"
+                "icon_path": ""
             },
             "Offense_Dragonfly": {
                 "history_path": "item_histories/Drone/Light_Fighter/Offense_Dragonfly/14600110017_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Offense_Dragonfly/15100000310.png"
+                "icon_path": ""
             },
             "Offense_Einherji": {
                 "history_path": "item_histories/Drone/Light_Fighter/Offense_Einherji/14600130017_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Offense_Einherji/15100000330.png"
+                "icon_path": ""
             },
             "Offense_Firbolg": {
                 "history_path": "item_histories/Drone/Light_Fighter/Offense_Firbolg/14600120017_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Offense_Firbolg/15100000320.png"
+                "icon_path": ""
             },
             "Offense_Gram": {
                 "history_path": "item_histories/Drone/Light_Fighter/Offense_Gram/14600030017_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Offense_Gram/15100000330.png"
+                "icon_path": ""
             },
             "Offense_Knight": {
                 "history_path": "item_histories/Drone/Light_Fighter/Offense_Knight/14600000017_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Offense_Knight/15100000300.png"
+                "icon_path": ""
             },
             "Offense_Locust": {
                 "history_path": "item_histories/Drone/Light_Fighter/Offense_Locust/14600010017_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Offense_Locust/15100000310.png"
+                "icon_path": ""
             },
             "Offense_Malleus": {
                 "history_path": "item_histories/Drone/Light_Fighter/Offense_Malleus/14600200017_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Offense_Malleus/14600200000.png"
+                "icon_path": ""
             },
             "Offense_Mantis": {
                 "history_path": "item_histories/Drone/Light_Fighter/Offense_Mantis/14600210017_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Offense_Mantis/14600210000.png"
+                "icon_path": ""
             },
             "Offense_Red-tailed_Hawk": {
                 "history_path": "item_histories/Drone/Light_Fighter/Offense_Red-tailed_Hawk/14600140017_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Offense_Red-tailed_Hawk/15100000340.png"
+                "icon_path": ""
             },
             "Offense_Satyr": {
                 "history_path": "item_histories/Drone/Light_Fighter/Offense_Satyr/14600020017_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Offense_Satyr/15100000320.png"
+                "icon_path": ""
             },
             "Offense_Shrike": {
                 "history_path": "item_histories/Drone/Light_Fighter/Offense_Shrike/14600040017_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Offense_Shrike/15100000340.png"
+                "icon_path": ""
             },
             "Offense_Templar": {
                 "history_path": "item_histories/Drone/Light_Fighter/Offense_Templar/14600100017_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Offense_Templar/15100000300.png"
+                "icon_path": ""
             },
             "Offense_Tyrfing": {
                 "history_path": "item_histories/Drone/Light_Fighter/Offense_Tyrfing/14600230017_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Offense_Tyrfing/14600230000.png"
+                "icon_path": ""
             },
             "Prototype_Cyclops": {
                 "history_path": "item_histories/Drone/Light_Fighter/Prototype_Cyclops/14600220010_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Prototype_Cyclops/14600220000.png"
+                "icon_path": ""
             },
             "Prototype_Dragonfly": {
                 "history_path": "item_histories/Drone/Light_Fighter/Prototype_Dragonfly/14600110010_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Prototype_Dragonfly/15100000010.png"
+                "icon_path": ""
             },
             "Prototype_Einherji": {
                 "history_path": "item_histories/Drone/Light_Fighter/Prototype_Einherji/14600130010_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Prototype_Einherji/15100000030.png"
+                "icon_path": ""
             },
             "Prototype_Firbolg": {
                 "history_path": "item_histories/Drone/Light_Fighter/Prototype_Firbolg/14600120010_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Prototype_Firbolg/15100000020.png"
+                "icon_path": ""
             },
             "Prototype_Gram": {
                 "history_path": "item_histories/Drone/Light_Fighter/Prototype_Gram/14600030010_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Prototype_Gram/15100000030.png"
+                "icon_path": ""
             },
             "Prototype_Knight": {
                 "history_path": "item_histories/Drone/Light_Fighter/Prototype_Knight/14600000010_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Prototype_Knight/15100000000.png"
+                "icon_path": ""
             },
             "Prototype_Locust": {
                 "history_path": "item_histories/Drone/Light_Fighter/Prototype_Locust/14600010010_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Prototype_Locust/15100000010.png"
+                "icon_path": ""
             },
             "Prototype_Malleus": {
                 "history_path": "item_histories/Drone/Light_Fighter/Prototype_Malleus/14600200010_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Prototype_Malleus/14600200000.png"
+                "icon_path": ""
             },
             "Prototype_Mantis": {
                 "history_path": "item_histories/Drone/Light_Fighter/Prototype_Mantis/14600210010_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Prototype_Mantis/14600210000.png"
+                "icon_path": ""
             },
             "Prototype_Satyr": {
                 "history_path": "item_histories/Drone/Light_Fighter/Prototype_Satyr/14600020010_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Prototype_Satyr/15100000020.png"
+                "icon_path": ""
             },
             "Prototype_Templar": {
                 "history_path": "item_histories/Drone/Light_Fighter/Prototype_Templar/14600100010_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Prototype_Templar/15100000000.png"
+                "icon_path": ""
             },
             "Prototype_Tyrfing": {
                 "history_path": "item_histories/Drone/Light_Fighter/Prototype_Tyrfing/14600230010_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Prototype_Tyrfing/14600230000.png"
+                "icon_path": ""
             },
             "Republic_Fleet_Einherji": {
                 "history_path": "item_histories/Drone/Light_Fighter/Republic_Fleet_Einherji/14600130012_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Republic_Fleet_Einherji/15100000030.png"
+                "icon_path": ""
             },
             "Republic_Fleet_Gram": {
                 "history_path": "item_histories/Drone/Light_Fighter/Republic_Fleet_Gram/14600030012_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Republic_Fleet_Gram/15100000030.png"
+                "icon_path": ""
             },
             "Republic_Fleet_Tyrfing": {
                 "history_path": "item_histories/Drone/Light_Fighter/Republic_Fleet_Tyrfing/14600230012_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Republic_Fleet_Tyrfing/14600230000.png"
+                "icon_path": ""
             },
             "Sniper_Sextant_Sentinel": {
                 "history_path": "item_histories/Drone/Light_Fighter/Sniper_Sextant_Sentinel/14600060013_history.csv",
-                "icon_path": "item_histories/Drone/Light_Fighter/Sniper_Sextant_Sentinel/14600060022.png"
+                "icon_path": ""
             }
         },
         "Mining_Drone": {
@@ -1578,6 +1582,344 @@
             "Starfish_Mining_Drone": {
                 "history_path": "item_histories/Drone/Mining_Drone/Starfish_Mining_Drone/14501000012_history.csv",
                 "icon_path": "item_histories/Drone/Mining_Drone/Starfish_Mining_Drone/14503000000.png"
+            }
+        },
+        "Offense_Fighter": {
+            "Assault_Cyclops": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Assault_Cyclops/14600220013_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Assault_Cyclops/14600220000.png"
+            },
+            "Assault_Dragonfly": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Assault_Dragonfly/14600110013_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Assault_Dragonfly/15100000210.png"
+            },
+            "Assault_Einherji": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Assault_Einherji/14600130013_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Assault_Einherji/15100000230.png"
+            },
+            "Assault_Firbolg": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Assault_Firbolg/14600120013_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Assault_Firbolg/15100000220.png"
+            },
+            "Assault_Gram": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Assault_Gram/14600030013_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Assault_Gram/15100000230.png"
+            },
+            "Assault_Guard": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Assault_Guard/14600160013_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Assault_Guard/14600160010.png"
+            },
+            "Assault_Hot_Steel": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Assault_Hot_Steel/14600240013_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Assault_Hot_Steel/14600240013.png"
+            },
+            "Assault_Iron_Guard": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Assault_Iron_Guard/14600260013_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Assault_Iron_Guard/14600260000.png"
+            },
+            "Assault_Knight": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Assault_Knight/14600000013_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Assault_Knight/15100000200.png"
+            },
+            "Assault_Locust": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Assault_Locust/14600010013_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Assault_Locust/15100000210.png"
+            },
+            "Assault_Malleus": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Assault_Malleus/14600200013_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Assault_Malleus/14600200000.png"
+            },
+            "Assault_Mantis": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Assault_Mantis/14600210013_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Assault_Mantis/14600210000.png"
+            },
+            "Assault_Pulsar_Heavy": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Assault_Pulsar_Heavy/14600150013_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Assault_Pulsar_Heavy/14600150013.png"
+            },
+            "Assault_Pulsar_Light": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Assault_Pulsar_Light/14600050013_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Assault_Pulsar_Light/14600050013.png"
+            },
+            "Assault_Red-tailed_Hawk": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Assault_Red-tailed_Hawk/14600140013_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Assault_Red-tailed_Hawk/15100000240.png"
+            },
+            "Assault_Satyr": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Assault_Satyr/14600020013_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Assault_Satyr/15100000220.png"
+            },
+            "Assault_Shrike": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Assault_Shrike/14600040013_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Assault_Shrike/15100000240.png"
+            },
+            "Assault_Templar": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Assault_Templar/14600100013_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Assault_Templar/15100000200.png"
+            },
+            "Assault_Tyrfing": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Assault_Tyrfing/14600230013_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Assault_Tyrfing/14600230000.png"
+            },
+            "Augmented__Guard": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Augmented__Guard/14600160022_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Augmented__Guard/14600160010.png"
+            },
+            "Augmented__Pulsar_Heavy": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Augmented__Pulsar_Heavy/14600150022_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Augmented__Pulsar_Heavy/14600150013.png"
+            },
+            "Augmented__Pulsar_Light": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Augmented__Pulsar_Light/14600050022_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Augmented__Pulsar_Light/14600050013.png"
+            },
+            "Augmented__Sextant_Sentinel": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Augmented__Sextant_Sentinel/14600060022_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Augmented__Sextant_Sentinel/14600060013.png"
+            },
+            "Basic_Red-tailed_Hawk": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Basic_Red-tailed_Hawk/14600140012_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Basic_Red-tailed_Hawk/15100000040.png"
+            },
+            "Basic_Shrike": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Basic_Shrike/14600040012_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Basic_Shrike/15100000040.png"
+            },
+            "Caldari_Navy_Dragonfly": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Caldari_Navy_Dragonfly/14600110012_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Caldari_Navy_Dragonfly/15100000010.png"
+            },
+            "Caldari_Navy_Locust": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Caldari_Navy_Locust/14600010012_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Caldari_Navy_Locust/15100000010.png"
+            },
+            "Caldari_Navy_Mantis": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Caldari_Navy_Mantis/14600210012_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Caldari_Navy_Mantis/14600210000.png"
+            },
+            "Federation_Navy_Cyclops": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Federation_Navy_Cyclops/14600220012_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Federation_Navy_Cyclops/14600220000.png"
+            },
+            "Federation_Navy_Firbolg": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Federation_Navy_Firbolg/14600120012_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Federation_Navy_Firbolg/15100000020.png"
+            },
+            "Federation_Navy_Satyr": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Federation_Navy_Satyr/14600020012_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Federation_Navy_Satyr/15100000020.png"
+            },
+            "Imperial_Navy_Knight": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Imperial_Navy_Knight/14600000012_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Imperial_Navy_Knight/15100000000.png"
+            },
+            "Imperial_Navy_Malleus": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Imperial_Navy_Malleus/14600200012_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Imperial_Navy_Malleus/14600200000.png"
+            },
+            "Imperial_Navy_Templar": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Imperial_Navy_Templar/14600100012_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Imperial_Navy_Templar/15100000000.png"
+            },
+            "Integrated_Cyclops": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Integrated_Cyclops/14600220021_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Integrated_Cyclops/14600220000.png"
+            },
+            "Integrated_Dragonfly": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Integrated_Dragonfly/14600110021_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Integrated_Dragonfly/15100000410.png"
+            },
+            "Integrated_Einherji": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Integrated_Einherji/14600130021_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Integrated_Einherji/15100000430.png"
+            },
+            "Integrated_Firbolg": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Integrated_Firbolg/14600120021_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Integrated_Firbolg/15100000420.png"
+            },
+            "Integrated_Gram": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Integrated_Gram/14600030021_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Integrated_Gram/15100000430.png"
+            },
+            "Integrated_Guard": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Integrated_Guard/14600160021_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Integrated_Guard/14600160010.png"
+            },
+            "Integrated_Hot_Steel": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Integrated_Hot_Steel/14600240021_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Integrated_Hot_Steel/14600240013.png"
+            },
+            "Integrated_Iron_Guard": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Integrated_Iron_Guard/14600260021_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Integrated_Iron_Guard/14600260000.png"
+            },
+            "Integrated_Knight": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Integrated_Knight/14600000021_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Integrated_Knight/15100000400.png"
+            },
+            "Integrated_Locust": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Integrated_Locust/14600010021_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Integrated_Locust/15100000410.png"
+            },
+            "Integrated_Malleus": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Integrated_Malleus/14600200021_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Integrated_Malleus/14600200000.png"
+            },
+            "Integrated_Mantis": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Integrated_Mantis/14600210021_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Integrated_Mantis/14600210000.png"
+            },
+            "Integrated_Pulsar_Heavy": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Integrated_Pulsar_Heavy/14600150021_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Integrated_Pulsar_Heavy/14600150013.png"
+            },
+            "Integrated_Pulsar_Light": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Integrated_Pulsar_Light/14600050021_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Integrated_Pulsar_Light/14600050013.png"
+            },
+            "Integrated_Red-tailed_Hawk": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Integrated_Red-tailed_Hawk/14600140021_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Integrated_Red-tailed_Hawk/15100000440.png"
+            },
+            "Integrated_Satyr": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Integrated_Satyr/14600020021_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Integrated_Satyr/15100000420.png"
+            },
+            "Integrated_Sextant_Sentinel": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Integrated_Sextant_Sentinel/14600060021_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Integrated_Sextant_Sentinel/14600060021.png"
+            },
+            "Integrated_Shrike": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Integrated_Shrike/14600040021_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Integrated_Shrike/15100000440.png"
+            },
+            "Integrated_Templar": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Integrated_Templar/14600100021_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Integrated_Templar/15100000400.png"
+            },
+            "Integrated_Tyrfing": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Integrated_Tyrfing/14600230021_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Integrated_Tyrfing/14600230000.png"
+            },
+            "Offense_Cyclops": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Offense_Cyclops/14600220017_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Offense_Cyclops/14600220000.png"
+            },
+            "Offense_Dragonfly": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Offense_Dragonfly/14600110017_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Offense_Dragonfly/15100000310.png"
+            },
+            "Offense_Einherji": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Offense_Einherji/14600130017_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Offense_Einherji/15100000330.png"
+            },
+            "Offense_Firbolg": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Offense_Firbolg/14600120017_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Offense_Firbolg/15100000320.png"
+            },
+            "Offense_Gram": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Offense_Gram/14600030017_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Offense_Gram/15100000330.png"
+            },
+            "Offense_Knight": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Offense_Knight/14600000017_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Offense_Knight/15100000300.png"
+            },
+            "Offense_Locust": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Offense_Locust/14600010017_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Offense_Locust/15100000310.png"
+            },
+            "Offense_Malleus": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Offense_Malleus/14600200017_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Offense_Malleus/14600200000.png"
+            },
+            "Offense_Mantis": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Offense_Mantis/14600210017_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Offense_Mantis/14600210000.png"
+            },
+            "Offense_Red-tailed_Hawk": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Offense_Red-tailed_Hawk/14600140017_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Offense_Red-tailed_Hawk/15100000340.png"
+            },
+            "Offense_Satyr": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Offense_Satyr/14600020017_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Offense_Satyr/15100000320.png"
+            },
+            "Offense_Shrike": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Offense_Shrike/14600040017_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Offense_Shrike/15100000340.png"
+            },
+            "Offense_Templar": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Offense_Templar/14600100017_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Offense_Templar/15100000300.png"
+            },
+            "Offense_Tyrfing": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Offense_Tyrfing/14600230017_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Offense_Tyrfing/14600230000.png"
+            },
+            "Prototype_Cyclops": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Prototype_Cyclops/14600220010_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Prototype_Cyclops/14600220000.png"
+            },
+            "Prototype_Dragonfly": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Prototype_Dragonfly/14600110010_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Prototype_Dragonfly/15100000010.png"
+            },
+            "Prototype_Einherji": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Prototype_Einherji/14600130010_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Prototype_Einherji/15100000030.png"
+            },
+            "Prototype_Firbolg": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Prototype_Firbolg/14600120010_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Prototype_Firbolg/15100000020.png"
+            },
+            "Prototype_Gram": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Prototype_Gram/14600030010_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Prototype_Gram/15100000030.png"
+            },
+            "Prototype_Knight": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Prototype_Knight/14600000010_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Prototype_Knight/15100000000.png"
+            },
+            "Prototype_Locust": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Prototype_Locust/14600010010_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Prototype_Locust/15100000010.png"
+            },
+            "Prototype_Malleus": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Prototype_Malleus/14600200010_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Prototype_Malleus/14600200000.png"
+            },
+            "Prototype_Mantis": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Prototype_Mantis/14600210010_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Prototype_Mantis/14600210000.png"
+            },
+            "Prototype_Satyr": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Prototype_Satyr/14600020010_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Prototype_Satyr/15100000020.png"
+            },
+            "Prototype_Templar": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Prototype_Templar/14600100010_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Prototype_Templar/15100000000.png"
+            },
+            "Prototype_Tyrfing": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Prototype_Tyrfing/14600230010_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Prototype_Tyrfing/14600230000.png"
+            },
+            "Republic_Fleet_Einherji": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Republic_Fleet_Einherji/14600130012_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Republic_Fleet_Einherji/15100000030.png"
+            },
+            "Republic_Fleet_Gram": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Republic_Fleet_Gram/14600030012_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Republic_Fleet_Gram/15100000030.png"
+            },
+            "Republic_Fleet_Tyrfing": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Republic_Fleet_Tyrfing/14600230012_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Republic_Fleet_Tyrfing/14600230000.png"
+            },
+            "Sniper_Sextant_Sentinel": {
+                "history_path": "item_histories/Drone/Offense_Fighter/Sniper_Sextant_Sentinel/14600060013_history.csv",
+                "icon_path": "item_histories/Drone/Offense_Fighter/Sniper_Sextant_Sentinel/14600060022.png"
             }
         },
         "Salvage_Drone": {
@@ -2413,383 +2755,383 @@
         "Light_Fighter_Blueprint": {
             "Assault_Cyclops_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Cyclops_Blueprint/64600220013_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Cyclops_Blueprint/14600220000.png"
+                "icon_path": ""
             },
             "Assault_Dragonfly_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Dragonfly_Blueprint/64600110013_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Dragonfly_Blueprint/15100000210.png"
+                "icon_path": ""
             },
             "Assault_Einherji_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Einherji_Blueprint/64600130013_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Einherji_Blueprint/15100000230.png"
+                "icon_path": ""
             },
             "Assault_Equite_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Equite_Blueprint/64600000013_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Equite_Blueprint/15100000200.png"
+                "icon_path": ""
             },
             "Assault_Firbolg_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Firbolg_Blueprint/64600120013_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Firbolg_Blueprint/15100000220.png"
+                "icon_path": ""
             },
             "Assault_Gram_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Gram_Blueprint/64600030013_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Gram_Blueprint/15100000230.png"
+                "icon_path": ""
             },
             "Assault_Guard_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Guard_Blueprint/64600160013_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Guard_Blueprint/14600160010.png"
+                "icon_path": ""
             },
             "Assault_Hot_Steel_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Hot_Steel_Blueprint/64600240013_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Hot_Steel_Blueprint/14600240013.png"
+                "icon_path": ""
             },
             "Assault_Iron_Guard_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Iron_Guard_Blueprint/64600260013_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Iron_Guard_Blueprint/14600260000.png"
+                "icon_path": ""
             },
             "Assault_Locust_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Locust_Blueprint/64600010013_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Locust_Blueprint/15100000210.png"
+                "icon_path": ""
             },
             "Assault_Malleus_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Malleus_Blueprint/64600200013_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Malleus_Blueprint/14600200000.png"
+                "icon_path": ""
             },
             "Assault_Mantis_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Mantis_Blueprint/64600210013_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Mantis_Blueprint/14600210000.png"
+                "icon_path": ""
             },
             "Assault_Pulsar_Heavy_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Pulsar_Heavy_Blueprint/64600150013_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Pulsar_Heavy_Blueprint/14600150013.png"
+                "icon_path": ""
             },
             "Assault_Pulsar_Light_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Pulsar_Light_Blueprint/64600050013_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Pulsar_Light_Blueprint/14600050013.png"
+                "icon_path": ""
             },
             "Assault_Red-tailed_Hawk_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Red-tailed_Hawk_Blueprint/64600140013_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Red-tailed_Hawk_Blueprint/15100000240.png"
+                "icon_path": ""
             },
             "Assault_Satyr_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Satyr_Blueprint/64600020013_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Satyr_Blueprint/15100000220.png"
+                "icon_path": ""
             },
             "Assault_Shrike_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Shrike_Blueprint/64600040013_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Shrike_Blueprint/15100000240.png"
+                "icon_path": ""
             },
             "Assault_Templar_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Templar_Blueprint/64600100013_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Templar_Blueprint/15100000200.png"
+                "icon_path": ""
             },
             "Assault_Tyrfing_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Tyrfing_Blueprint/64600230013_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Assault_Tyrfing_Blueprint/14600230000.png"
+                "icon_path": ""
             },
             "Augmented_Dragonfly_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Dragonfly_Blueprint/64600110022_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Dragonfly_Blueprint/15100000010.png"
+                "icon_path": ""
             },
             "Augmented_Einherji_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Einherji_Blueprint/64600130022_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Einherji_Blueprint/15100000030.png"
+                "icon_path": ""
             },
             "Augmented_Firbolg_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Firbolg_Blueprint/64600120022_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Firbolg_Blueprint/15100000020.png"
+                "icon_path": ""
             },
             "Augmented_Gram_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Gram_Blueprint/64600030022_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Gram_Blueprint/15100000030.png"
+                "icon_path": ""
             },
             "Augmented_Guard_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Guard_Blueprint/64600160022_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Guard_Blueprint/14600160010.png"
+                "icon_path": ""
             },
             "Augmented_Hot_Steel_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Hot_Steel_Blueprint/64600240022_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Hot_Steel_Blueprint/14600240013.png"
+                "icon_path": ""
             },
             "Augmented_Iron_Guard_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Iron_Guard_Blueprint/64600260022_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Iron_Guard_Blueprint/14600260000.png"
+                "icon_path": ""
             },
             "Augmented_Knight_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Knight_Blueprint/64600000022_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Knight_Blueprint/15100000000.png"
+                "icon_path": ""
             },
             "Augmented_Locust_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Locust_Blueprint/64600010022_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Locust_Blueprint/15100000010.png"
+                "icon_path": ""
             },
             "Augmented_Malleus_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Malleus_Blueprint/64600200022_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Malleus_Blueprint/14600200000.png"
+                "icon_path": ""
             },
             "Augmented_Mantis_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Mantis_Blueprint/64600210022_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Mantis_Blueprint/14600210000.png"
+                "icon_path": ""
             },
             "Augmented_Pulsar_Heavy_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Pulsar_Heavy_Blueprint/64600150022_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Pulsar_Heavy_Blueprint/14600150013.png"
+                "icon_path": ""
             },
             "Augmented_Pulsar_Light_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Pulsar_Light_Blueprint/64600050022_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Pulsar_Light_Blueprint/14600050013.png"
+                "icon_path": ""
             },
             "Augmented_Satyr_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Satyr_Blueprint/64600020022_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Satyr_Blueprint/15100000020.png"
+                "icon_path": ""
             },
             "Augmented_Sextant_Sentinel_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Sextant_Sentinel_Blueprint/64600060022_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Sextant_Sentinel_Blueprint/14600060013.png"
+                "icon_path": ""
             },
             "Augmented_Templar_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Templar_Blueprint/64600100022_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Augmented_Templar_Blueprint/15100000000.png"
+                "icon_path": ""
             },
             "Basic_Red-tailed_Hawk_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Basic_Red-tailed_Hawk_Blueprint/64600140012_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Basic_Red-tailed_Hawk_Blueprint/15100000040.png"
+                "icon_path": ""
             },
             "Basic_Shrike_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Basic_Shrike_Blueprint/64600040012_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Basic_Shrike_Blueprint/15100000040.png"
+                "icon_path": ""
             },
             "Caldari_Navy_Dragonfly_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Caldari_Navy_Dragonfly_Blueprint/64600110012_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Caldari_Navy_Dragonfly_Blueprint/15100000010.png"
+                "icon_path": ""
             },
             "Caldari_Navy_Locust_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Caldari_Navy_Locust_Blueprint/64600010012_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Caldari_Navy_Locust_Blueprint/15100000010.png"
+                "icon_path": ""
             },
             "Caldari_Navy_Mantis_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Caldari_Navy_Mantis_Blueprint/64600210012_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Caldari_Navy_Mantis_Blueprint/14600210000.png"
+                "icon_path": ""
             },
             "Federation_Navy_Cyclops_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Federation_Navy_Cyclops_Blueprint/64600220012_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Federation_Navy_Cyclops_Blueprint/14600220000.png"
+                "icon_path": ""
             },
             "Federation_Navy_Firbolg_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Federation_Navy_Firbolg_Blueprint/64600120012_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Federation_Navy_Firbolg_Blueprint/15100000020.png"
+                "icon_path": ""
             },
             "Federation_Navy_Satyr_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Federation_Navy_Satyr_Blueprint/64600020012_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Federation_Navy_Satyr_Blueprint/15100000020.png"
+                "icon_path": ""
             },
             "Imperial_Navy_Knight_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Imperial_Navy_Knight_Blueprint/64600000012_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Imperial_Navy_Knight_Blueprint/15100000000.png"
+                "icon_path": ""
             },
             "Imperial_Navy_Malleus_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Imperial_Navy_Malleus_Blueprint/64600200012_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Imperial_Navy_Malleus_Blueprint/14600200000.png"
+                "icon_path": ""
             },
             "Imperial_Navy_Templar_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Imperial_Navy_Templar_Blueprint/64600100012_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Imperial_Navy_Templar_Blueprint/15100000000.png"
+                "icon_path": ""
             },
             "Integrated_Cyclops_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Cyclops_Blueprint/64600220021_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Cyclops_Blueprint/14600220000.png"
+                "icon_path": ""
             },
             "Integrated_Dragonfly_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Dragonfly_Blueprint/64600110021_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Dragonfly_Blueprint/15100000410.png"
+                "icon_path": ""
             },
             "Integrated_Einherji_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Einherji_Blueprint/64600130021_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Einherji_Blueprint/15100000430.png"
+                "icon_path": ""
             },
             "Integrated_Firbolg_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Firbolg_Blueprint/64600120021_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Firbolg_Blueprint/15100000420.png"
+                "icon_path": ""
             },
             "Integrated_Gram_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Gram_Blueprint/64600030021_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Gram_Blueprint/15100000430.png"
+                "icon_path": ""
             },
             "Integrated_Guard_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Guard_Blueprint/64600160021_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Guard_Blueprint/14600160010.png"
+                "icon_path": ""
             },
             "Integrated_Hot_Steel_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Hot_Steel_Blueprint/64600240021_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Hot_Steel_Blueprint/14600240013.png"
+                "icon_path": ""
             },
             "Integrated_Iron_Guard_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Iron_Guard_Blueprint/64600260021_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Iron_Guard_Blueprint/14600260000.png"
+                "icon_path": ""
             },
             "Integrated_Knight_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Knight_Blueprint/64600000021_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Knight_Blueprint/15100000400.png"
+                "icon_path": ""
             },
             "Integrated_Locust_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Locust_Blueprint/64600010021_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Locust_Blueprint/15100000410.png"
+                "icon_path": ""
             },
             "Integrated_Malleus_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Malleus_Blueprint/64600200021_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Malleus_Blueprint/14600200000.png"
+                "icon_path": ""
             },
             "Integrated_Mantis_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Mantis_Blueprint/64600210021_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Mantis_Blueprint/14600210000.png"
+                "icon_path": ""
             },
             "Integrated_Pulsar_Heavy_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Pulsar_Heavy_Blueprint/64600150021_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Pulsar_Heavy_Blueprint/14600150013.png"
+                "icon_path": ""
             },
             "Integrated_Pulsar_Light_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Pulsar_Light_Blueprint/64600050021_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Pulsar_Light_Blueprint/14600050013.png"
+                "icon_path": ""
             },
             "Integrated_Red-tailed_Hawk_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Red-tailed_Hawk_Blueprint/64600140021_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Red-tailed_Hawk_Blueprint/15100000440.png"
+                "icon_path": ""
             },
             "Integrated_Satyr_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Satyr_Blueprint/64600020021_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Satyr_Blueprint/15100000420.png"
+                "icon_path": ""
             },
             "Integrated_Sextant_Sentinel_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Sextant_Sentinel_Blueprint/64600060021_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Sextant_Sentinel_Blueprint/14600060021.png"
+                "icon_path": ""
             },
             "Integrated_Shrike_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Shrike_Blueprint/64600040021_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Shrike_Blueprint/15100000440.png"
+                "icon_path": ""
             },
             "Integrated_Templar_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Templar_Blueprint/64600100021_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Templar_Blueprint/15100000400.png"
+                "icon_path": ""
             },
             "Integrated_Tyrfing_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Tyrfing_Blueprint/64600230021_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Integrated_Tyrfing_Blueprint/14600230000.png"
+                "icon_path": ""
             },
             "Offense_Cyclops_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Cyclops_Blueprint/64600220017_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Cyclops_Blueprint/14600220000.png"
+                "icon_path": ""
             },
             "Offense_Dragonfly_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Dragonfly_Blueprint/64600110017_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Dragonfly_Blueprint/15100000310.png"
+                "icon_path": ""
             },
             "Offense_Einherji_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Einherji_Blueprint/64600130017_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Einherji_Blueprint/15100000330.png"
+                "icon_path": ""
             },
             "Offense_Equite_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Equite_Blueprint/64600000017_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Equite_Blueprint/15100000300.png"
+                "icon_path": ""
             },
             "Offense_Firbolg_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Firbolg_Blueprint/64600120017_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Firbolg_Blueprint/15100000320.png"
+                "icon_path": ""
             },
             "Offense_Gram_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Gram_Blueprint/64600030017_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Gram_Blueprint/15100000330.png"
+                "icon_path": ""
             },
             "Offense_Locust_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Locust_Blueprint/64600010017_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Locust_Blueprint/15100000310.png"
+                "icon_path": ""
             },
             "Offense_Malleus_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Malleus_Blueprint/64600200017_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Malleus_Blueprint/14600200000.png"
+                "icon_path": ""
             },
             "Offense_Mantis_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Mantis_Blueprint/64600210017_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Mantis_Blueprint/14600210000.png"
+                "icon_path": ""
             },
             "Offense_Red-tailed_Hawk_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Red-tailed_Hawk_Blueprint/64600140017_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Red-tailed_Hawk_Blueprint/15100000340.png"
+                "icon_path": ""
             },
             "Offense_Satyr_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Satyr_Blueprint/64600020017_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Satyr_Blueprint/15100000320.png"
+                "icon_path": ""
             },
             "Offense_Shrike_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Shrike_Blueprint/64600040017_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Shrike_Blueprint/15100000340.png"
+                "icon_path": ""
             },
             "Offense_Templar_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Templar_Blueprint/64600100017_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Templar_Blueprint/15100000300.png"
+                "icon_path": ""
             },
             "Offense_Tyrfing_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Tyrfing_Blueprint/64600230017_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Offense_Tyrfing_Blueprint/14600230000.png"
+                "icon_path": ""
             },
             "Prototype_Cyclops_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Cyclops_Blueprint/64600220010_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Cyclops_Blueprint/14600220000.png"
+                "icon_path": ""
             },
             "Prototype_Dragonfly_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Dragonfly_Blueprint/64600110010_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Dragonfly_Blueprint/15100000010.png"
+                "icon_path": ""
             },
             "Prototype_Einherji_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Einherji_Blueprint/64600130010_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Einherji_Blueprint/15100000030.png"
+                "icon_path": ""
             },
             "Prototype_Firbolg_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Firbolg_Blueprint/64600120010_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Firbolg_Blueprint/15100000020.png"
+                "icon_path": ""
             },
             "Prototype_Gram_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Gram_Blueprint/64600030010_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Gram_Blueprint/15100000030.png"
+                "icon_path": ""
             },
             "Prototype_Knight_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Knight_Blueprint/64600000010_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Knight_Blueprint/15100000000.png"
+                "icon_path": ""
             },
             "Prototype_Locust_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Locust_Blueprint/64600010010_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Locust_Blueprint/15100000010.png"
+                "icon_path": ""
             },
             "Prototype_Malleus_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Malleus_Blueprint/64600200010_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Malleus_Blueprint/14600200000.png"
+                "icon_path": ""
             },
             "Prototype_Mantis_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Mantis_Blueprint/64600210010_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Mantis_Blueprint/14600210000.png"
+                "icon_path": ""
             },
             "Prototype_Satyr_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Satyr_Blueprint/64600020010_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Satyr_Blueprint/15100000020.png"
+                "icon_path": ""
             },
             "Prototype_Templar_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Templar_Blueprint/64600100010_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Templar_Blueprint/15100000000.png"
+                "icon_path": ""
             },
             "Prototype_Tyrfing_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Tyrfing_Blueprint/64600230010_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Prototype_Tyrfing_Blueprint/14600230000.png"
+                "icon_path": ""
             },
             "Republic_Fleet_Einherji_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Republic_Fleet_Einherji_Blueprint/64600130012_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Republic_Fleet_Einherji_Blueprint/15100000030.png"
+                "icon_path": ""
             },
             "Republic_Fleet_Gram_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Republic_Fleet_Gram_Blueprint/64600030012_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Republic_Fleet_Gram_Blueprint/15100000030.png"
+                "icon_path": ""
             },
             "Republic_Fleet_Tyrfing_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Republic_Fleet_Tyrfing_Blueprint/64600230012_history.csv",
-                "icon_path": "item_histories/Drone_Blueprints/Light_Fighter_Blueprint/Republic_Fleet_Tyrfing_Blueprint/14600230000.png"
+                "icon_path": ""
             }
         },
         "Logistic_Drone_Blueprint": {
@@ -2866,6 +3208,388 @@
             "Starfish_Mining_Drone_Blueprint": {
                 "history_path": "item_histories/Drone_Blueprints/Mining_Drone_Blueprint/Starfish_Mining_Drone_Blueprint/64501000012_history.csv",
                 "icon_path": "item_histories/Drone_Blueprints/Mining_Drone_Blueprint/Starfish_Mining_Drone_Blueprint/14503000000.png"
+            }
+        },
+        "Offense_Fighter_Blueprint": {
+            "Assault_Cyclops_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Cyclops_Blueprint/64600220013_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Cyclops_Blueprint/14600220000.png"
+            },
+            "Assault_Dragonfly_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Dragonfly_Blueprint/64600110013_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Dragonfly_Blueprint/15100000210.png"
+            },
+            "Assault_Einherji_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Einherji_Blueprint/64600130013_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Einherji_Blueprint/15100000230.png"
+            },
+            "Assault_Equite_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Equite_Blueprint/64600000013_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Equite_Blueprint/15100000200.png"
+            },
+            "Assault_Firbolg_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Firbolg_Blueprint/64600120013_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Firbolg_Blueprint/15100000220.png"
+            },
+            "Assault_Gram_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Gram_Blueprint/64600030013_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Gram_Blueprint/15100000230.png"
+            },
+            "Assault_Guard_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Guard_Blueprint/64600160013_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Guard_Blueprint/14600160010.png"
+            },
+            "Assault_Hot_Steel_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Hot_Steel_Blueprint/64600240013_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Hot_Steel_Blueprint/14600240013.png"
+            },
+            "Assault_Iron_Guard_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Iron_Guard_Blueprint/64600260013_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Iron_Guard_Blueprint/14600260000.png"
+            },
+            "Assault_Locust_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Locust_Blueprint/64600010013_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Locust_Blueprint/15100000210.png"
+            },
+            "Assault_Malleus_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Malleus_Blueprint/64600200013_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Malleus_Blueprint/14600200000.png"
+            },
+            "Assault_Mantis_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Mantis_Blueprint/64600210013_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Mantis_Blueprint/14600210000.png"
+            },
+            "Assault_Pulsar_Heavy_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Pulsar_Heavy_Blueprint/64600150013_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Pulsar_Heavy_Blueprint/14600150013.png"
+            },
+            "Assault_Pulsar_Light_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Pulsar_Light_Blueprint/64600050013_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Pulsar_Light_Blueprint/14600050013.png"
+            },
+            "Assault_Red-tailed_Hawk_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Red-tailed_Hawk_Blueprint/64600140013_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Red-tailed_Hawk_Blueprint/15100000240.png"
+            },
+            "Assault_Satyr_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Satyr_Blueprint/64600020013_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Satyr_Blueprint/15100000220.png"
+            },
+            "Assault_Shrike_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Shrike_Blueprint/64600040013_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Shrike_Blueprint/15100000240.png"
+            },
+            "Assault_Templar_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Templar_Blueprint/64600100013_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Templar_Blueprint/15100000200.png"
+            },
+            "Assault_Tyrfing_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Tyrfing_Blueprint/64600230013_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Assault_Tyrfing_Blueprint/14600230000.png"
+            },
+            "Augmented_Dragonfly_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Dragonfly_Blueprint/64600110022_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Dragonfly_Blueprint/15100000010.png"
+            },
+            "Augmented_Einherji_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Einherji_Blueprint/64600130022_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Einherji_Blueprint/15100000030.png"
+            },
+            "Augmented_Firbolg_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Firbolg_Blueprint/64600120022_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Firbolg_Blueprint/15100000020.png"
+            },
+            "Augmented_Gram_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Gram_Blueprint/64600030022_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Gram_Blueprint/15100000030.png"
+            },
+            "Augmented_Guard_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Guard_Blueprint/64600160022_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Guard_Blueprint/14600160010.png"
+            },
+            "Augmented_Hot_Steel_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Hot_Steel_Blueprint/64600240022_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Hot_Steel_Blueprint/14600240013.png"
+            },
+            "Augmented_Iron_Guard_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Iron_Guard_Blueprint/64600260022_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Iron_Guard_Blueprint/14600260000.png"
+            },
+            "Augmented_Knight_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Knight_Blueprint/64600000022_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Knight_Blueprint/15100000000.png"
+            },
+            "Augmented_Locust_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Locust_Blueprint/64600010022_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Locust_Blueprint/15100000010.png"
+            },
+            "Augmented_Malleus_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Malleus_Blueprint/64600200022_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Malleus_Blueprint/14600200000.png"
+            },
+            "Augmented_Mantis_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Mantis_Blueprint/64600210022_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Mantis_Blueprint/14600210000.png"
+            },
+            "Augmented_Pulsar_Heavy_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Pulsar_Heavy_Blueprint/64600150022_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Pulsar_Heavy_Blueprint/14600150013.png"
+            },
+            "Augmented_Pulsar_Light_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Pulsar_Light_Blueprint/64600050022_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Pulsar_Light_Blueprint/14600050013.png"
+            },
+            "Augmented_Satyr_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Satyr_Blueprint/64600020022_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Satyr_Blueprint/15100000020.png"
+            },
+            "Augmented_Sextant_Sentinel_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Sextant_Sentinel_Blueprint/64600060022_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Sextant_Sentinel_Blueprint/14600060013.png"
+            },
+            "Augmented_Templar_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Templar_Blueprint/64600100022_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Augmented_Templar_Blueprint/15100000000.png"
+            },
+            "Basic_Red-tailed_Hawk_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Basic_Red-tailed_Hawk_Blueprint/64600140012_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Basic_Red-tailed_Hawk_Blueprint/15100000040.png"
+            },
+            "Basic_Shrike_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Basic_Shrike_Blueprint/64600040012_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Basic_Shrike_Blueprint/15100000040.png"
+            },
+            "Caldari_Navy_Dragonfly_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Caldari_Navy_Dragonfly_Blueprint/64600110012_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Caldari_Navy_Dragonfly_Blueprint/15100000010.png"
+            },
+            "Caldari_Navy_Locust_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Caldari_Navy_Locust_Blueprint/64600010012_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Caldari_Navy_Locust_Blueprint/15100000010.png"
+            },
+            "Caldari_Navy_Mantis_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Caldari_Navy_Mantis_Blueprint/64600210012_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Caldari_Navy_Mantis_Blueprint/14600210000.png"
+            },
+            "Federation_Navy_Cyclops_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Federation_Navy_Cyclops_Blueprint/64600220012_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Federation_Navy_Cyclops_Blueprint/14600220000.png"
+            },
+            "Federation_Navy_Firbolg_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Federation_Navy_Firbolg_Blueprint/64600120012_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Federation_Navy_Firbolg_Blueprint/15100000020.png"
+            },
+            "Federation_Navy_Satyr_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Federation_Navy_Satyr_Blueprint/64600020012_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Federation_Navy_Satyr_Blueprint/15100000020.png"
+            },
+            "Imperial_Navy_Knight_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Imperial_Navy_Knight_Blueprint/64600000012_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Imperial_Navy_Knight_Blueprint/15100000000.png"
+            },
+            "Imperial_Navy_Malleus_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Imperial_Navy_Malleus_Blueprint/64600200012_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Imperial_Navy_Malleus_Blueprint/14600200000.png"
+            },
+            "Imperial_Navy_Templar_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Imperial_Navy_Templar_Blueprint/64600100012_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Imperial_Navy_Templar_Blueprint/15100000000.png"
+            },
+            "Integrated_Cyclops_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Cyclops_Blueprint/64600220021_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Cyclops_Blueprint/14600220000.png"
+            },
+            "Integrated_Dragonfly_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Dragonfly_Blueprint/64600110021_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Dragonfly_Blueprint/15100000410.png"
+            },
+            "Integrated_Einherji_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Einherji_Blueprint/64600130021_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Einherji_Blueprint/15100000430.png"
+            },
+            "Integrated_Firbolg_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Firbolg_Blueprint/64600120021_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Firbolg_Blueprint/15100000420.png"
+            },
+            "Integrated_Gram_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Gram_Blueprint/64600030021_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Gram_Blueprint/15100000430.png"
+            },
+            "Integrated_Guard_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Guard_Blueprint/64600160021_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Guard_Blueprint/14600160010.png"
+            },
+            "Integrated_Hot_Steel_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Hot_Steel_Blueprint/64600240021_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Hot_Steel_Blueprint/14600240013.png"
+            },
+            "Integrated_Iron_Guard_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Iron_Guard_Blueprint/64600260021_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Iron_Guard_Blueprint/14600260000.png"
+            },
+            "Integrated_Knight_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Knight_Blueprint/64600000021_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Knight_Blueprint/15100000400.png"
+            },
+            "Integrated_Locust_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Locust_Blueprint/64600010021_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Locust_Blueprint/15100000410.png"
+            },
+            "Integrated_Malleus_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Malleus_Blueprint/64600200021_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Malleus_Blueprint/14600200000.png"
+            },
+            "Integrated_Mantis_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Mantis_Blueprint/64600210021_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Mantis_Blueprint/14600210000.png"
+            },
+            "Integrated_Pulsar_Heavy_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Pulsar_Heavy_Blueprint/64600150021_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Pulsar_Heavy_Blueprint/14600150013.png"
+            },
+            "Integrated_Pulsar_Light_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Pulsar_Light_Blueprint/64600050021_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Pulsar_Light_Blueprint/14600050013.png"
+            },
+            "Integrated_Red-tailed_Hawk_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Red-tailed_Hawk_Blueprint/64600140021_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Red-tailed_Hawk_Blueprint/15100000440.png"
+            },
+            "Integrated_Satyr_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Satyr_Blueprint/64600020021_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Satyr_Blueprint/15100000420.png"
+            },
+            "Integrated_Sextant_Sentinel_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Sextant_Sentinel_Blueprint/64600060021_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Sextant_Sentinel_Blueprint/14600060021.png"
+            },
+            "Integrated_Shrike_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Shrike_Blueprint/64600040021_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Shrike_Blueprint/15100000440.png"
+            },
+            "Integrated_Templar_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Templar_Blueprint/64600100021_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Templar_Blueprint/15100000400.png"
+            },
+            "Integrated_Tyrfing_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Tyrfing_Blueprint/64600230021_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Integrated_Tyrfing_Blueprint/14600230000.png"
+            },
+            "Offense_Cyclops_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Cyclops_Blueprint/64600220017_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Cyclops_Blueprint/14600220000.png"
+            },
+            "Offense_Dragonfly_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Dragonfly_Blueprint/64600110017_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Dragonfly_Blueprint/15100000310.png"
+            },
+            "Offense_Einherji_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Einherji_Blueprint/64600130017_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Einherji_Blueprint/15100000330.png"
+            },
+            "Offense_Equite_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Equite_Blueprint/64600000017_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Equite_Blueprint/15100000300.png"
+            },
+            "Offense_Firbolg_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Firbolg_Blueprint/64600120017_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Firbolg_Blueprint/15100000320.png"
+            },
+            "Offense_Gram_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Gram_Blueprint/64600030017_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Gram_Blueprint/15100000330.png"
+            },
+            "Offense_Locust_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Locust_Blueprint/64600010017_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Locust_Blueprint/15100000310.png"
+            },
+            "Offense_Malleus_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Malleus_Blueprint/64600200017_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Malleus_Blueprint/14600200000.png"
+            },
+            "Offense_Mantis_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Mantis_Blueprint/64600210017_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Mantis_Blueprint/14600210000.png"
+            },
+            "Offense_Red-tailed_Hawk_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Red-tailed_Hawk_Blueprint/64600140017_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Red-tailed_Hawk_Blueprint/15100000340.png"
+            },
+            "Offense_Satyr_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Satyr_Blueprint/64600020017_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Satyr_Blueprint/15100000320.png"
+            },
+            "Offense_Shrike_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Shrike_Blueprint/64600040017_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Shrike_Blueprint/15100000340.png"
+            },
+            "Offense_Templar_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Templar_Blueprint/64600100017_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Templar_Blueprint/15100000300.png"
+            },
+            "Offense_Tyrfing_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Tyrfing_Blueprint/64600230017_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Offense_Tyrfing_Blueprint/14600230000.png"
+            },
+            "Prototype_Cyclops_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Cyclops_Blueprint/64600220010_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Cyclops_Blueprint/14600220000.png"
+            },
+            "Prototype_Dragonfly_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Dragonfly_Blueprint/64600110010_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Dragonfly_Blueprint/15100000010.png"
+            },
+            "Prototype_Einherji_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Einherji_Blueprint/64600130010_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Einherji_Blueprint/15100000030.png"
+            },
+            "Prototype_Firbolg_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Firbolg_Blueprint/64600120010_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Firbolg_Blueprint/15100000020.png"
+            },
+            "Prototype_Gram_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Gram_Blueprint/64600030010_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Gram_Blueprint/15100000030.png"
+            },
+            "Prototype_Knight_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Knight_Blueprint/64600000010_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Knight_Blueprint/15100000000.png"
+            },
+            "Prototype_Locust_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Locust_Blueprint/64600010010_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Locust_Blueprint/15100000010.png"
+            },
+            "Prototype_Malleus_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Malleus_Blueprint/64600200010_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Malleus_Blueprint/14600200000.png"
+            },
+            "Prototype_Mantis_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Mantis_Blueprint/64600210010_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Mantis_Blueprint/14600210000.png"
+            },
+            "Prototype_Satyr_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Satyr_Blueprint/64600020010_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Satyr_Blueprint/15100000020.png"
+            },
+            "Prototype_Templar_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Templar_Blueprint/64600100010_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Templar_Blueprint/15100000000.png"
+            },
+            "Prototype_Tyrfing_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Tyrfing_Blueprint/64600230010_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Prototype_Tyrfing_Blueprint/14600230000.png"
+            },
+            "Republic_Fleet_Einherji_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Republic_Fleet_Einherji_Blueprint/64600130012_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Republic_Fleet_Einherji_Blueprint/15100000030.png"
+            },
+            "Republic_Fleet_Gram_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Republic_Fleet_Gram_Blueprint/64600030012_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Republic_Fleet_Gram_Blueprint/15100000030.png"
+            },
+            "Republic_Fleet_Tyrfing_Blueprint": {
+                "history_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Republic_Fleet_Tyrfing_Blueprint/64600230012_history.csv",
+                "icon_path": "item_histories/Drone_Blueprints/Offense_Fighter_Blueprint/Republic_Fleet_Tyrfing_Blueprint/14600230000.png"
             }
         },
         "Salvage_Drone_Blueprints": {
@@ -7731,6 +8455,10 @@
                 "history_path": "item_histories/Membrane/Membrane/Incursus_Serpentis_Veteran_Core/81000290022_history.csv",
                 "icon_path": "item_histories/Membrane/Membrane/Incursus_Serpentis_Veteran_Core/81000000001.png"
             },
+            "Inquisitor_Probe_Breeze_Core": {
+                "history_path": "item_histories/Membrane/Membrane/Inquisitor_Probe_Breeze_Core/81000030053_history.csv",
+                "icon_path": "item_histories/Membrane/Membrane/Inquisitor_Probe_Breeze_Core/81000000000.png"
+            },
             "Kestrel_Breeze_Core": {
                 "history_path": "item_histories/Membrane/Membrane/Kestrel_Breeze_Core/81000040020_history.csv",
                 "icon_path": "item_histories/Membrane/Membrane/Kestrel_Breeze_Core/81000000000.png"
@@ -9424,6 +10152,10 @@
             "Capital_Cannon_Burst_Aerator_I": {
                 "history_path": "item_histories/Modules/Cannon_Rigs/Capital_Cannon_Burst_Aerator_I/11704060006_history.csv",
                 "icon_path": "item_histories/Modules/Cannon_Rigs/Capital_Cannon_Burst_Aerator_I/11704100000.png"
+            },
+            "Capital_Cannon_Burst_Aerator_II": {
+                "history_path": "item_histories/Modules/Cannon_Rigs/Capital_Cannon_Burst_Aerator_II/11704060008_history.csv",
+                "icon_path": "item_histories/Modules/Cannon_Rigs/Capital_Cannon_Burst_Aerator_II/11704100001.png"
             },
             "Capital_Cannon_Collision_Accelerator_I": {
                 "history_path": "item_histories/Modules/Cannon_Rigs/Capital_Cannon_Collision_Accelerator_I/11704040006_history.csv",
@@ -14364,6 +15096,10 @@
             "Centus_C-Type_Capital_Shield_Extenders": {
                 "history_path": "item_histories/Modules/Shield_Extender/Centus_C-Type_Capital_Shield_Extenders/11300400024_history.csv",
                 "icon_path": "item_histories/Modules/Shield_Extender/Centus_C-Type_Capital_Shield_Extenders/130030101.png"
+            },
+            "Dread_Guristas_Medium_Shield_Extender": {
+                "history_path": "item_histories/Modules/Shield_Extender/Dread_Guristas_Medium_Shield_Extender/11300200017_history.csv",
+                "icon_path": "item_histories/Modules/Shield_Extender/Dread_Guristas_Medium_Shield_Extender/11300100000.png"
             },
             "Dread_Guristas_Small_Shield_Extender": {
                 "history_path": "item_histories/Modules/Shield_Extender/Dread_Guristas_Small_Shield_Extender/11300100017_history.csv",
@@ -20851,6 +21587,10 @@
                 "history_path": "item_histories/SKIN/SKIN/Capsule_Gramophone_SKINpermanent/80505700010_history.csv",
                 "icon_path": "item_histories/SKIN/SKIN/Capsule_Gramophone_SKINpermanent/80100000036.png"
             },
+            "Caracal_Dawn_SKIN_Permanent": {
+                "history_path": "item_histories/SKIN/SKIN/Caracal_Dawn_SKIN_Permanent/80508300660_history.csv",
+                "icon_path": "item_histories/SKIN/SKIN/Caracal_Dawn_SKIN_Permanent/80100000043.png"
+            },
             "Caracal_II_Late_Night_SKINpermanent": {
                 "history_path": "item_histories/SKIN/SKIN/Caracal_II_Late_Night_SKINpermanent/80519403130_history.csv",
                 "icon_path": "item_histories/SKIN/SKIN/Caracal_II_Late_Night_SKINpermanent/80100000116.png"
@@ -21223,6 +21963,10 @@
                 "history_path": "item_histories/SKIN/SKIN/Ferox_Command_Late_Night_SKINpermanent/80519401780_history.csv",
                 "icon_path": "item_histories/SKIN/SKIN/Ferox_Command_Late_Night_SKINpermanent/80100000116.png"
             },
+            "Ferox_Dawn_SKIN_Permanent": {
+                "history_path": "item_histories/SKIN/SKIN/Ferox_Dawn_SKIN_Permanent/80508301400_history.csv",
+                "icon_path": "item_histories/SKIN/SKIN/Ferox_Dawn_SKIN_Permanent/80100000043.png"
+            },
             "Ferox_Grimace_SKINpermanent": {
                 "history_path": "item_histories/SKIN/SKIN/Ferox_Grimace_SKINpermanent/80505401400_history.csv",
                 "icon_path": "item_histories/SKIN/SKIN/Ferox_Grimace_SKINpermanent/80100000035.png"
@@ -21298,6 +22042,10 @@
             "Harbinger_Late_Night_SKINpermanent": {
                 "history_path": "item_histories/SKIN/SKIN/Harbinger_Late_Night_SKINpermanent/80519301660_history.csv",
                 "icon_path": "item_histories/SKIN/SKIN/Harbinger_Late_Night_SKINpermanent/80100000116.png"
+            },
+            "Harbinger_Logistics_Dawn_SKIN_Permanent": {
+                "history_path": "item_histories/SKIN/SKIN/Harbinger_Logistics_Dawn_SKIN_Permanent/80508202020_history.csv",
+                "icon_path": "item_histories/SKIN/SKIN/Harbinger_Logistics_Dawn_SKIN_Permanent/80100000043.png"
             },
             "Harbinger_Logistics_High_Noon_SKINpermanent": {
                 "history_path": "item_histories/SKIN/SKIN/Harbinger_Logistics_High_Noon_SKINpermanent/80518902020_history.csv",
@@ -21678,6 +22426,10 @@
             "Omen_Late_Night_SKINpermanent": {
                 "history_path": "item_histories/SKIN/SKIN/Omen_Late_Night_SKINpermanent/80519300650_history.csv",
                 "icon_path": "item_histories/SKIN/SKIN/Omen_Late_Night_SKINpermanent/80100000116.png"
+            },
+            "Omen_Navy_Issue_Dawn_SKIN_Permanent": {
+                "history_path": "item_histories/SKIN/SKIN/Omen_Navy_Issue_Dawn_SKIN_Permanent/80508201050_history.csv",
+                "icon_path": "item_histories/SKIN/SKIN/Omen_Navy_Issue_Dawn_SKIN_Permanent/80100000043.png"
             },
             "Omen_Navy_Issue_High_Noon_SKINpermanent": {
                 "history_path": "item_histories/SKIN/SKIN/Omen_Navy_Issue_High_Noon_SKINpermanent/80518901050_history.csv",
@@ -23610,6 +24362,10 @@
             "Small_Expedition_Wasteland_Domain-4_Spatial_Rift_Filaments": {
                 "history_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/Small_Expedition_Wasteland_Domain-4_Spatial_Rift_Filaments/32010040100_history.csv",
                 "icon_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/Small_Expedition_Wasteland_Domain-4_Spatial_Rift_Filaments/32010040100.png"
+            },
+            "Southwind-1_Spatial_Rift_Filament": {
+                "history_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/Southwind-1_Spatial_Rift_Filament/32010033520_history.csv",
+                "icon_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/Southwind-1_Spatial_Rift_Filament/32010000000.png"
             },
             "Westwind-1_Spatial_Rift_Filament": {
                 "history_path": "item_histories/unknown/g85tr\u7a7a\u95f4\u88c2\u9699\u7ea4\u7ef4/Westwind-1_Spatial_Rift_Filament/32010033530_history.csv",
